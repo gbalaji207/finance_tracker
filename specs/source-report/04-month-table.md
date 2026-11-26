@@ -35,6 +35,6 @@
 
 ## Verify
 
-- [ ] Six rows exactly as above, closing balance in bold.
-- [ ] The full Source report matches the wireframe: header, four tiles, chart, table; no placeholders remain.
-- [ ] `flutter analyze` is clean.
+- [x] Six rows exactly as above, closing balance in bold.
+- [x] The full Source report matches the wireframe: header, four tiles, chart, table; no placeholders remain.
+- [x] `flutter analyze` is clean.
