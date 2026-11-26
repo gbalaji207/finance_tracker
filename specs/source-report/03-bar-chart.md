@@ -38,6 +38,6 @@ Add tooltips, axes or interactivity.
 
 ## Verify
 
-- [ ] Six groups in the order Jun to Nov with a teal income bar and an amber expense bar each, sitting on a thin baseline.
-- [ ] Legend on the top right shows teal "Income" and amber "Expense".
-- [ ] Expense bars are visibly lower than income bars with the heights above; nothing overflows when the window narrows to about 700px. `flutter analyze` is clean.
+- [x] Six groups in the order Jun to Nov with a teal income bar and an amber expense bar each, sitting on a thin baseline.
+- [x] Legend on the top right shows teal "Income" and amber "Expense".
+- [x] Expense bars are visibly lower than income bars with the heights above; nothing overflows when the window narrows to about 700px. `flutter analyze` is clean.

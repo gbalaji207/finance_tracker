@@ -6,6 +6,7 @@ import 'package:finance_tracker/core/widgets/page_header.dart';
 import 'package:finance_tracker/core/widgets/section_placeholder.dart';
 import 'package:finance_tracker/features/source_report/cubit/source_report_cubit.dart';
 import 'package:finance_tracker/features/source_report/cubit/source_report_state.dart';
+import 'package:finance_tracker/features/source_report/widgets/income_vs_spend_card.dart';
 import 'package:finance_tracker/features/source_report/widgets/source_summary_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,7 +63,7 @@ class _SourceReportView extends StatelessWidget {
               ],
             ),
             SourceSummaryTiles(report: state.report!),
-            const SectionPlaceholder(name: 'Income vs spend chart', height: 300),
+            IncomeVsSpendCard(months: state.report!.months),
             const SectionPlaceholder(name: 'Month by month', height: 320),
           ],
         );
