@@ -174,5 +174,5 @@ Add Cubits, pages or widgets. Do not wire anything into `main.dart`.
 
 ## Verify
 
-- [ ] `flutter analyze` is clean and `flutter test` passes (money tests and these).
-- [ ] No file under `lib/` other than `mock_finance_repository.dart` contains the sample numbers.
+- [x] `flutter analyze` is clean and `flutter test` passes (money tests and these).
+- [x] No file under `lib/` other than `mock_finance_repository.dart` contains the sample numbers.
