@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' show PointerDeviceKind;
 
 import 'package:finance_tracker/core/theme/app_colors.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
@@ -76,8 +77,7 @@ class AppTable extends StatelessWidget {
     final min = minWidth;
     if (min == null) return table;
     return LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+      builder: (context, constraints) => _HorizontalScroll(
         child: SizedBox(
           width: math.max(min, constraints.maxWidth),
           child: table,
@@ -133,5 +133,55 @@ class AppTable extends StatelessWidget {
       return SizedBox(width: column.width, child: aligned);
     }
     return Expanded(flex: math.max(1, (column.flex * 10).round()), child: aligned);
+  }
+}
+
+/// Horizontal scroller for wide tables.
+///
+/// Flutter web does not scroll with a mouse drag by default and shows no
+/// scrollbar, so a wide table looked stuck on desktop browsers. This enables
+/// mouse (and trackpad) dragging and shows a visible scrollbar whenever the
+/// content is wider than the viewport.
+class _HorizontalScroll extends StatefulWidget {
+  const _HorizontalScroll({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_HorizontalScroll> createState() => _HorizontalScrollState();
+}
+
+class _HorizontalScrollState extends State<_HorizontalScroll> {
+  final _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(
+        dragDevices: {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.trackpad,
+          PointerDeviceKind.stylus,
+        },
+        scrollbars: false,
+      ),
+      child: Scrollbar(
+        controller: _controller,
+        thumbVisibility: true,
+        child: SingleChildScrollView(
+          controller: _controller,
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.only(bottom: AppSpacing.s12),
+          child: widget.child,
+        ),
+      ),
+    );
   }
 }

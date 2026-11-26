@@ -7,6 +7,7 @@ import 'package:finance_tracker/core/widgets/page_header.dart';
 import 'package:finance_tracker/core/widgets/section_placeholder.dart';
 import 'package:finance_tracker/features/monthly_report/cubit/monthly_report_cubit.dart';
 import 'package:finance_tracker/features/monthly_report/cubit/monthly_report_state.dart';
+import 'package:finance_tracker/features/monthly_report/widgets/by_source_card.dart';
 import 'package:finance_tracker/features/monthly_report/widgets/report_kpis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,7 +61,7 @@ class _MonthlyReportView extends StatelessWidget {
               ],
             ),
             ReportKpis(report: state.report!),
-            const SectionPlaceholder(name: 'By source', height: 300),
+            BySourceCard(report: state.report!),
             const SectionPlaceholder(name: 'Expenses by category', height: 260),
           ],
         );

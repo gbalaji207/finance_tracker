@@ -37,6 +37,6 @@ Add sorting or row actions.
 
 ## Verify
 
-- [ ] Table values match the table above; the Total row is shaded and bold.
-- [ ] With the window narrower than about 900px the table scrolls horizontally instead of overflowing.
-- [ ] The footnote is visible under the table. `flutter analyze` is clean.
+- [x] Table values match the table above; the Total row is shaded and bold.
+- [x] With the window narrower than about 900px the table scrolls horizontally instead of overflowing.
+- [x] The footnote is visible under the table. `flutter analyze` is clean.
