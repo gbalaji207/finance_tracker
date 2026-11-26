@@ -11,6 +11,7 @@ import 'package:finance_tracker/core/widgets/section_placeholder.dart';
 import 'package:finance_tracker/core/widgets/two_pane.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_cubit.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_state.dart';
+import 'package:finance_tracker/features/dashboard/widgets/reconciliation_strip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -29,6 +30,14 @@ class DashboardPage extends StatelessWidget {
 
 class _DashboardView extends StatelessWidget {
   const _DashboardView();
+
+  void _notWired(BuildContext context) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(content: Text('Not wired yet (sample data)')),
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +63,10 @@ class _DashboardView extends StatelessWidget {
                 ),
               ],
             ),
-            const SectionPlaceholder(name: 'Bank reconciliation', height: 80),
+            ReconciliationStrip(
+              data: state.reconciliation!,
+              onUpdateBankBalance: () => _notWired(context),
+            ),
             const SectionPlaceholder(name: 'Source balance cards', height: 300),
             const TwoPane(
               primary: SectionPlaceholder(name: 'Recent entries', height: 360),

@@ -36,6 +36,6 @@ Add editing of the bank balance.
 
 ## Verify
 
-- [ ] The strip matches the numbers above, with large bold values and small grey captions.
-- [ ] The green pill shows; temporarily changing the mock bank balance to 132000 turns it into a red-tinted "Off by ₹400" (revert afterwards).
-- [ ] Clicking "Update bank balance" shows the SnackBar. `flutter analyze` is clean.
+- [x] The strip matches the numbers above, with large bold values and small grey captions.
+- [x] The green pill shows; temporarily changing the mock bank balance to 132000 turns it into a red-tinted "Off by ₹400" (revert afterwards).
+- [x] Clicking "Update bank balance" shows the SnackBar. `flutter analyze` is clean.
