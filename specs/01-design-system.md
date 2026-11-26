@@ -179,6 +179,6 @@ Create any reusable widgets, routes or Cubits yet.
 
 ## Verify
 
-- [ ] `flutter analyze` is clean; `flutter test` passes.
-- [ ] The page background is warm light grey (#F6F6F3) and text is Inter.
-- [ ] All swatches, 22 text styles, 4 badges and the money rows show; `₹1,32,400` uses Indian grouping.
+- [x] `flutter analyze` is clean; `flutter test` passes.
+- [x] The page background is warm light grey (#F6F6F3) and text is Inter.
+- [x] All swatches, 22 text styles, 4 badges and the money rows show; `₹1,32,400` uses Indian grouping.

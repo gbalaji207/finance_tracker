@@ -61,7 +61,7 @@
 
 ## Verify
 
-- [ ] `flutter analyze` reports no issues.
-- [ ] `flutter run -d chrome --web-port=5000` opens a page showing "Money Tracker" and the tab title is "Money Tracker".
-- [ ] The folder tree above exists and `specs/` contains these files.
-- [ ] `pubspec.yaml` lists exactly: flutter_bloc, equatable, go_router, google_fonts, intl, flutter_web_plugins (sdk: flutter).
+- [x] `flutter analyze` reports no issues.
+- [x] `flutter run -d chrome --web-port=5000` opens a page showing "Money Tracker" and the tab title is "Money Tracker".
+- [x] The folder tree above exists and `specs/` contains these files.
+- [x] `pubspec.yaml` lists exactly: flutter_bloc, equatable, go_router, google_fonts, intl, flutter_web_plugins (sdk: flutter).
