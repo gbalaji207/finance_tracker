@@ -39,5 +39,5 @@ Build the sections.
 
 ## Verify
 
-- [ ] `/reports/monthly` shows the header, month selector (changes the label) and an "Export CSV" button (SnackBar on click).
-- [ ] Three placeholder boxes below. `flutter analyze` is clean.
+- [x] `/reports/monthly` shows the header, month selector (changes the label) and an "Export CSV" button (SnackBar on click).
+- [x] Three placeholder boxes below. `flutter analyze` is clean.
