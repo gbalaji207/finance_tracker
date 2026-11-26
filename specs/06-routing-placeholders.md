@@ -70,8 +70,8 @@ Build any real page content or Cubits yet.
 
 ## Verify
 
-- [ ] App opens on `/dashboard` with the sidebar; clicking each item changes the URL (e.g. `/reports/monthly`) and the highlighted item.
-- [ ] Reloading the browser on `/templates` stays on Templates.
-- [ ] Each page shows its title, subtitle and one placeholder box.
-- [ ] `/dev/gallery` and `/dev/design-system` open without the sidebar (debug mode).
-- [ ] The browser back button works between pages. `flutter analyze` is clean.
+- [x] App opens on `/dashboard` with the sidebar; clicking each item changes the URL (e.g. `/reports/monthly`) and the highlighted item.
+- [x] Reloading the browser on `/templates` stays on Templates.
+- [x] Each page shows its title, subtitle and one placeholder box.
+- [x] `/dev/gallery` and `/dev/design-system` open without the sidebar (debug mode).
+- [x] The browser back button works between pages. `flutter analyze` is clean.

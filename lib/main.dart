@@ -1,10 +1,8 @@
-import 'package:finance_tracker/core/theme/app_theme.dart';
-import 'package:finance_tracker/dev/component_gallery.dart';
+import 'package:finance_tracker/app/app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
-void main() => runApp(MaterialApp(
-      theme: AppTheme.light(),
-      home: const ComponentGallery(),
-      debugShowCheckedModeBanner: false,
-      title: 'Money Tracker',
-    ));
+void main() {
+  usePathUrlStrategy();
+  runApp(const App());
+}
