@@ -75,8 +75,8 @@ Use go_router yet, or add buttons (they arrive in spec 03).
 
 ## Verify
 
-- [ ] Left sidebar 232px wide with the six items; clicking an item moves the teal-tinted highlight to it; hovering an inactive item shows a grey background.
-- [ ] Content area has the page background, title "Dashboard" (26px bold), subtitle "Sample data" in grey.
-- [ ] The month selector shows "November 2026"; the arrows change the label month by month (and roll over years).
-- [ ] Resizing the window below ~900px wraps the header actions under the title instead of overflowing.
-- [ ] `flutter analyze` is clean.
+- [x] Left sidebar 232px wide with the six items; clicking an item moves the teal-tinted highlight to it; hovering an inactive item shows a grey background.
+- [x] Content area has the page background, title "Dashboard" (26px bold), subtitle "Sample data" in grey.
+- [x] The month selector shows "November 2026"; the arrows change the label month by month (and roll over years).
+- [x] Resizing the window below ~900px wraps the header actions under the title instead of overflowing.
+- [x] `flutter analyze` is clean.
