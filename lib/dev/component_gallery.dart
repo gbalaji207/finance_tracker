@@ -1,7 +1,19 @@
 import 'package:finance_tracker/core/models/tx_type.dart';
+import 'package:finance_tracker/core/theme/app_colors.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
+import 'package:finance_tracker/core/widgets/amount_text.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
+import 'package:finance_tracker/core/widgets/app_card.dart';
+import 'package:finance_tracker/core/widgets/app_table.dart';
+import 'package:finance_tracker/core/widgets/category_bar_row.dart';
+import 'package:finance_tracker/core/widgets/key_value_row.dart';
+import 'package:finance_tracker/core/widgets/kpi_tile.dart';
+import 'package:finance_tracker/core/widgets/responsive_wrap.dart';
+import 'package:finance_tracker/core/widgets/section_header.dart';
+import 'package:finance_tracker/core/widgets/status_pill.dart';
+import 'package:finance_tracker/core/widgets/two_pane.dart';
+import 'package:finance_tracker/core/widgets/type_badge.dart';
 import 'package:finance_tracker/core/widgets/app_date_field.dart';
 import 'package:finance_tracker/core/widgets/app_dropdown.dart';
 import 'package:finance_tracker/core/widgets/app_text_field.dart';
@@ -120,6 +132,138 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                     value: _checkB,
                     onChanged: (v) => setState(() => _checkB = v),
                     label: Text('Repeat every month', style: AppTextStyles.body),
+                  ),
+                ]),
+                Text('Display', style: AppTextStyles.pageTitle),
+                _section('Cards and badges', [
+                  AppCard(
+                    child: SectionHeader(
+                      title: 'Recent entries',
+                      actionLabel: 'View all',
+                      onAction: _notWired,
+                    ),
+                  ),
+                  Wrap(
+                    spacing: AppSpacing.s8,
+                    runSpacing: AppSpacing.s8,
+                    children: [
+                      for (final t in TxType.values) TypeBadge(t),
+                    ],
+                  ),
+                  const Wrap(
+                    spacing: AppSpacing.s16,
+                    runSpacing: AppSpacing.s8,
+                    children: [
+                      AmountText(amount: 45000, type: TxType.income),
+                      AmountText(amount: 32000, type: TxType.expense),
+                      AmountText(amount: 20000, type: TxType.investment),
+                      AmountText(amount: 0, type: TxType.savings),
+                    ],
+                  ),
+                ]),
+                _section('KPI tiles', [
+                  const ResponsiveWrap(
+                    minItemWidth: 170,
+                    children: [
+                      KpiTile(label: 'Income', value: '₹1,32,400'),
+                      KpiTile(label: 'Expenses', value: '₹68,500'),
+                      KpiTile(label: 'Investments', value: '₹20,000'),
+                      KpiTile(label: 'Savings', value: '₹15,000'),
+                      KpiTile(label: 'Net', value: '₹28,900'),
+                    ],
+                  ),
+                ]),
+                _section('Key-value rows and status', [
+                  const AppCard(
+                    child: Column(
+                      spacing: AppSpacing.s8,
+                      children: [
+                        KeyValueRow(label: 'Opening balance', value: '₹50,000'),
+                        KeyValueRow(
+                          label: 'Received this month',
+                          value: '+₹45,000',
+                          valueColor: AppColors.income,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Wrap(
+                    spacing: AppSpacing.s12,
+                    children: [
+                      StatusPill(text: 'Matches'),
+                      StatusPill(text: 'Needs review', tone: StatusTone.warning),
+                    ],
+                  ),
+                ]),
+                _section('Category bars', [
+                  const CategoryBarRow(
+                    label: 'Rent',
+                    amountText: '₹32,000',
+                    fraction: 1.0,
+                  ),
+                  const CategoryBarRow(
+                    label: 'Groceries',
+                    amountText: '₹15,000',
+                    fraction: 0.47,
+                  ),
+                  const CategoryBarRow(
+                    label: 'Transport',
+                    amountText: '₹9,000',
+                    fraction: 0.28,
+                  ),
+                ]),
+                _section('Two pane', [
+                  const TwoPane(
+                    primaryMin: 300,
+                    secondaryMin: 200,
+                    primary: AppCard(
+                      child: SizedBox(height: 160, child: Text('Primary pane')),
+                    ),
+                    secondary: AppCard(
+                      child: SizedBox(height: 80, child: Text('Secondary pane')),
+                    ),
+                  ),
+                ]),
+                _section('Table', [
+                  AppCard(
+                    child: AppTable(
+                      minWidth: 520,
+                      columns: const [
+                        AppTableColumn('Date', width: 64),
+                        AppTableColumn('Description'),
+                        AppTableColumn('Type', width: 104),
+                        AppTableColumn('Amount', width: 110, align: TextAlign.right),
+                      ],
+                      rows: [
+                        AppTableRow([
+                          const AppTableText('05 Nov', secondary: true),
+                          const AppTableText('Salary'),
+                          const TypeBadge(TxType.income),
+                          const AmountText(amount: 45000, type: TxType.income),
+                        ]),
+                        AppTableRow([
+                          const AppTableText('08 Nov', secondary: true),
+                          const AppTableText('Rent'),
+                          const TypeBadge(TxType.expense),
+                          const AmountText(amount: 32000, type: TxType.expense),
+                        ]),
+                        AppTableRow([
+                          const AppTableText('12 Nov', secondary: true),
+                          const AppTableText('Index fund SIP'),
+                          const TypeBadge(TxType.investment),
+                          const AmountText(amount: 20000, type: TxType.investment),
+                        ]),
+                        AppTableRow(
+                          [
+                            const AppTableText(''),
+                            const AppTableText('Total', bold: true),
+                            const AppTableText(''),
+                            const AppTableText('₹97,000', bold: true),
+                          ],
+                          highlight: true,
+                        ),
+                      ],
+                    ),
                   ),
                 ]),
               ],

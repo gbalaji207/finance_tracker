@@ -78,9 +78,9 @@ Read any repository or Cubit. These are pure widgets.
 
 ## Verify
 
-- [ ] Cards are white with a thin warm-grey border and rounded corners.
-- [ ] Badges show four distinct tints; `AmountText` shows `+₹45,000` in green, `−₹32,000` in dark text, `₹0` unsigned.
-- [ ] The five KPI tiles wrap to fewer columns as you narrow the window and never overflow.
-- [ ] Bars are teal on a light track; widths follow the fractions.
-- [ ] `TwoPane` shows side by side when wide and stacks when narrow.
-- [ ] The table has a thin line under each row, right-aligned amounts, and a shaded totals row. `flutter analyze` is clean.
+- [x] Cards are white with a thin warm-grey border and rounded corners.
+- [x] Badges show four distinct tints; `AmountText` shows `+₹45,000` in green, `−₹32,000` in dark text, `₹0` unsigned.
+- [x] The five KPI tiles wrap to fewer columns as you narrow the window and never overflow.
+- [x] Bars are teal on a light track; widths follow the fractions.
+- [x] `TwoPane` shows side by side when wide and stacks when narrow.
+- [x] The table has a thin line under each row, right-aligned amounts, and a shaded totals row. `flutter analyze` is clean.
