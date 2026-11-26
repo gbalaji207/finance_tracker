@@ -39,7 +39,7 @@ Pass the chosen template to the Transactions page. "Use" is plain navigation in 
 
 ## Verify
 
-- [ ] The card shows the four rows with small outlined "Use" buttons.
-- [ ] "Use" opens `/transactions`; "Manage" and "Copy entries from last month" open `/templates`.
-- [ ] The whole Dashboard now matches the wireframe: header, reconciliation strip, four source cards, recent entries beside quick add.
-- [ ] No placeholder boxes remain on the Dashboard. `flutter analyze` is clean.
+- [x] The card shows the four rows with small outlined "Use" buttons.
+- [x] "Use" opens `/transactions`; "Manage" and "Copy entries from last month" open `/templates`.
+- [x] The whole Dashboard now matches the wireframe: header, reconciliation strip, four source cards, recent entries beside quick add.
+- [x] No placeholder boxes remain on the Dashboard. `flutter analyze` is clean.

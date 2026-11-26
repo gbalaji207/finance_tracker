@@ -7,10 +7,10 @@ import 'package:finance_tracker/core/utils/app_dates.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/month_selector.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
-import 'package:finance_tracker/core/widgets/section_placeholder.dart';
 import 'package:finance_tracker/core/widgets/two_pane.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_cubit.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_state.dart';
+import 'package:finance_tracker/features/dashboard/widgets/quick_add_card.dart';
 import 'package:finance_tracker/features/dashboard/widgets/recent_entries_card.dart';
 import 'package:finance_tracker/features/dashboard/widgets/reconciliation_strip.dart';
 import 'package:finance_tracker/features/dashboard/widgets/source_cards_section.dart';
@@ -76,8 +76,13 @@ class _DashboardView extends StatelessWidget {
                 sourceName: state.sourceName,
                 onViewAll: () => context.go(AppRoutes.transactions),
               ),
-              secondary:
-                  const SectionPlaceholder(name: 'Quick add', height: 360),
+              secondary: QuickAddCard(
+                templates: state.quickAdd,
+                sourceName: state.sourceName,
+                onUse: (_) => context.go(AppRoutes.transactions),
+                onManage: () => context.go(AppRoutes.templates),
+                onCopyLastMonth: () => context.go(AppRoutes.templates),
+              ),
             ),
           ],
         );
