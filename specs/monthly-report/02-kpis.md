@@ -33,5 +33,5 @@ Compute totals in the widget; use the getters on `MonthlyReport`.
 
 ## Verify
 
-- [ ] Five tiles in one row on a wide window, wrapping on narrower ones, showing the values above.
-- [ ] `flutter analyze` is clean.
+- [x] Five tiles in one row on a wide window, wrapping on narrower ones, showing the values above.
+- [x] `flutter analyze` is clean.
