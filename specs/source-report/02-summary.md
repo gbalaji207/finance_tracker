@@ -28,5 +28,5 @@
 
 ## Verify
 
-- [ ] Four tiles with the values above, wrapping on narrower windows.
-- [ ] `flutter analyze` is clean.
+- [x] Four tiles with the values above, wrapping on narrower windows.
+- [x] `flutter analyze` is clean.
