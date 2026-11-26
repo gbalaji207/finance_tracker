@@ -47,6 +47,6 @@ Make the cards clickable or compute any value in the widget.
 
 ## Verify
 
-- [ ] Four cards in one row on a wide window (≥ about 1100px content width), two rows of two on a medium window, one column on a narrow one.
-- [ ] Each card shows exactly the numbers in the table; income values are green.
-- [ ] Cards have equal widths and consistent spacing (16px). `flutter analyze` is clean.
+- [x] Four cards in one row on a wide window (≥ about 1100px content width), two rows of two on a medium window, one column on a narrow one.
+- [x] Each card shows exactly the numbers in the table; income values are green.
+- [x] Cards have equal widths and consistent spacing (16px). `flutter analyze` is clean.

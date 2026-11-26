@@ -12,6 +12,7 @@ import 'package:finance_tracker/core/widgets/two_pane.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_cubit.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_state.dart';
 import 'package:finance_tracker/features/dashboard/widgets/reconciliation_strip.dart';
+import 'package:finance_tracker/features/dashboard/widgets/source_cards_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -67,7 +68,7 @@ class _DashboardView extends StatelessWidget {
               data: state.reconciliation!,
               onUpdateBankBalance: () => _notWired(context),
             ),
-            const SectionPlaceholder(name: 'Source balance cards', height: 300),
+            SourceCardsSection(summaries: state.summaries),
             const TwoPane(
               primary: SectionPlaceholder(name: 'Recent entries', height: 360),
               secondary: SectionPlaceholder(name: 'Quick add', height: 360),
