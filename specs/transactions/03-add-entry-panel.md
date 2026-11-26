@@ -51,8 +51,8 @@ Validate fields, store anything, or add keyboard shortcuts.
 
 ## Verify
 
-- [ ] Panel has a teal border and the fields in the order above.
-- [ ] Picking Income hides the Category field; picking Expense/Investment/Savings shows it with only matching categories (Investment shows just Mutual funds; Savings just Fixed deposit).
-- [ ] Choosing the template "Home EMI · Salary" sets Type Expense, Source Salary, Category Housing, Amount 32000.
-- [ ] Both save buttons show the SnackBar and clear the form.
-- [ ] The full Transactions page matches the wireframe; no placeholders remain. `flutter analyze` is clean.
+- [x] Panel has a teal border and the fields in the order above.
+- [x] Picking Income hides the Category field; picking Expense/Investment/Savings shows it with only matching categories (Investment shows just Mutual funds; Savings just Fixed deposit).
+- [x] Choosing the template "Home EMI · Salary" sets Type Expense, Source Salary, Category Housing, Amount 32000.
+- [x] Both save buttons show the SnackBar and clear the form.
+- [x] The full Transactions page matches the wireframe; no placeholders remain. `flutter analyze` is clean.

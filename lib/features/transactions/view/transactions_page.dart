@@ -4,10 +4,11 @@ import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
-import 'package:finance_tracker/core/widgets/section_placeholder.dart';
 import 'package:finance_tracker/core/widgets/two_pane.dart';
+import 'package:finance_tracker/features/transactions/cubit/add_entry_cubit.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_cubit.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_state.dart';
+import 'package:finance_tracker/features/transactions/widgets/add_entry_panel.dart';
 import 'package:finance_tracker/features/transactions/widgets/transactions_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,9 +68,17 @@ class _TransactionsView extends StatelessWidget {
                 onTypeChanged: cubit.setTypeFilter,
                 onQueryChanged: cubit.setQuery,
               ),
-              secondary: const SectionPlaceholder(
-                name: 'New entry panel',
-                height: 560,
+              secondary: BlocProvider(
+                create: (_) => AddEntryCubit(
+                  categories: state.categories,
+                  sources: state.sources,
+                ),
+                child: AddEntryPanel(
+                  templates: state.templates,
+                  sourceName: state.sourceName,
+                  sources: state.sources,
+                  categories: state.categories,
+                ),
               ),
             ),
           ],
