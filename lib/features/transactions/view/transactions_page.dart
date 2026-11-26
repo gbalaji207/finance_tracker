@@ -8,6 +8,7 @@ import 'package:finance_tracker/core/widgets/section_placeholder.dart';
 import 'package:finance_tracker/core/widgets/two_pane.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_cubit.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_state.dart';
+import 'package:finance_tracker/features/transactions/widgets/transactions_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -34,6 +35,7 @@ class _TransactionsView extends StatelessWidget {
         if (state.status == LoadStatus.loading) {
           return const Center(child: CircularProgressIndicator());
         }
+        final cubit = context.read<TransactionsCubit>();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: AppSpacing.s20,
@@ -49,12 +51,26 @@ class _TransactionsView extends StatelessWidget {
                 ),
               ],
             ),
-            const TwoPane(
+            TwoPane(
               primaryMin: 560,
               secondaryWidth: 340,
-              primary: SectionPlaceholder(name: 'Filters and list', height: 560),
-              secondary:
-                  SectionPlaceholder(name: 'New entry panel', height: 560),
+              primary: TransactionsListCard(
+                page: state.page!,
+                sources: state.sources,
+                month: state.month,
+                sourceFilter: state.sourceFilter,
+                typeFilter: state.typeFilter,
+                sourceName: state.sourceName,
+                categoryName: state.categoryName,
+                onMonthChanged: cubit.setMonth,
+                onSourceChanged: cubit.setSourceFilter,
+                onTypeChanged: cubit.setTypeFilter,
+                onQueryChanged: cubit.setQuery,
+              ),
+              secondary: const SectionPlaceholder(
+                name: 'New entry panel',
+                height: 560,
+              ),
             ),
           ],
         );

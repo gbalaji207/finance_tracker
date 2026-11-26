@@ -64,7 +64,7 @@ Implement real filtering, search or pagination. Do not add row actions.
 
 ## Verify
 
-- [ ] Filter row shows Month, Source, Type and Search; dropdowns open with the listed options.
-- [ ] Table shows the 10 rows with badges and signed amounts (income green, others dark).
-- [ ] Footer reads "Showing 10 of 38 entries" and "Page 1 of 4".
-- [ ] The "New entry panel" placeholder is still present on the right. `flutter analyze` is clean.
+- [x] Filter row shows Month, Source, Type and Search; dropdowns open with the listed options.
+- [x] Table shows the 10 rows with badges and signed amounts (income green, others dark).
+- [x] Footer reads "Showing 10 of 38 entries" and "Page 1 of 4".
+- [x] The "New entry panel" placeholder is still present on the right. `flutter analyze` is clean.
