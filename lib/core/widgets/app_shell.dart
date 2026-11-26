@@ -1,5 +1,4 @@
 import 'package:finance_tracker/core/theme/app_colors.dart';
-import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/app_sidebar.dart';
 import 'package:flutter/material.dart';
 
@@ -23,15 +22,8 @@ class AppShell extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppSidebar(location: location, onNavigate: onNavigate),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                vertical: AppSpacing.pageV,
-                horizontal: AppSpacing.pageH,
-              ),
-              child: SizedBox(width: double.infinity, child: child),
-            ),
-          ),
+          // The page scrolls itself (see PageBody); the shell only bounds it.
+          Expanded(child: child),
         ],
       ),
     );

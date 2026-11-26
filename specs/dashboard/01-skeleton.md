@@ -47,7 +47,7 @@ Build any of the sections. Do not hardcode data in the page.
 
 ## Verify
 
-- [ ] `/dashboard` shows the header with the subtitle "Sample data · balances as on 26 Nov 2026", the month selector and a teal "+ New entry" button.
-- [ ] Below it: four placeholder boxes (the last two side by side when the window is wide, stacked when narrow).
-- [ ] "+ New entry" goes to `/transactions`; the month arrows change the label.
-- [ ] `flutter analyze` is clean.
+- [x] `/dashboard` shows the header with the subtitle "Sample data · balances as on 26 Nov 2026", the month selector and a teal "+ New entry" button.
+- [x] Below it: four placeholder boxes (the last two side by side when the window is wide, stacked when narrow).
+- [x] "+ New entry" goes to `/transactions`; the month arrows change the label.
+- [x] `flutter analyze` is clean.

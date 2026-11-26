@@ -1,6 +1,7 @@
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/widgets/app_shell.dart';
 import 'package:finance_tracker/core/widgets/app_text_link.dart';
+import 'package:finance_tracker/core/widgets/page_body.dart';
 import 'package:finance_tracker/dev/component_gallery.dart';
 import 'package:finance_tracker/dev/design_system_preview.dart';
 import 'package:finance_tracker/features/dashboard/view/dashboard_page.dart';
@@ -17,7 +18,10 @@ GoRouter createRouter() {
   GoRoute page(String path, Widget Function() build) => GoRoute(
         path: path,
         pageBuilder: (context, state) =>
-            NoTransitionPage(key: state.pageKey, child: build()),
+            NoTransitionPage(
+              key: state.pageKey,
+              child: PageBody(child: build()),
+            ),
       );
 
   return GoRouter(

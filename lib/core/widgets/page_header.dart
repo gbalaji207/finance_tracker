@@ -18,32 +18,38 @@ class PageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      crossAxisAlignment: crossAlignment,
-      spacing: AppSpacing.s16,
-      runSpacing: AppSpacing.s16,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Semantics(
-              header: true,
-              child: Text(title, style: AppTextStyles.pageTitle),
-            ),
-            if (subtitle != null) ...[
-              const SizedBox(height: AppSpacing.s4),
-              Text(subtitle!, style: AppTextStyles.subtitle),
+    // Full width so spaceBetween pushes the actions to the right edge even
+    // when the header sits in a start-aligned Column (loose constraints).
+    return SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: crossAlignment,
+        spacing: AppSpacing.s16,
+        runSpacing: AppSpacing.s16,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Semantics(
+                header: true,
+                child: Text(title, style: AppTextStyles.pageTitle),
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: AppSpacing.s4),
+                Text(subtitle!, style: AppTextStyles.subtitle),
+              ],
             ],
-          ],
-        ),
-        if (actions.isNotEmpty)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            spacing: AppSpacing.s12,
-            children: actions,
           ),
-      ],
+          if (actions.isNotEmpty)
+            Wrap(
+              spacing: AppSpacing.s12,
+              runSpacing: AppSpacing.s12,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: actions,
+            ),
+        ],
+      ),
     );
   }
 }
