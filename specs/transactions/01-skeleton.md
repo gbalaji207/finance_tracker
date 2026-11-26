@@ -45,6 +45,6 @@ Build the list or the panel. Do not implement filtering.
 
 ## Verify
 
-- [ ] `/transactions` shows the header with a secondary "Copy from last month" button (goes to `/templates`).
-- [ ] Two placeholders: a wide one on the left and a 340px one on the right; stacked on a narrow window.
-- [ ] `flutter analyze` is clean.
+- [x] `/transactions` shows the header with a secondary "Copy from last month" button (goes to `/templates`).
+- [x] Two placeholders: a wide one on the left and a 340px one on the right; stacked on a narrow window.
+- [x] `flutter analyze` is clean.
