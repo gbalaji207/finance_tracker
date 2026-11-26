@@ -48,6 +48,6 @@ Add row click behavior, sorting or pagination.
 
 ## Verify
 
-- [ ] The card shows the six rows above with colored type badges; income amounts are green.
-- [ ] "View all" goes to `/transactions`.
-- [ ] Next to it the "Quick add" placeholder is still there (wide window), stacked below when narrow. `flutter analyze` is clean.
+- [x] The card shows the six rows above with colored type badges; income amounts are green.
+- [x] "View all" goes to `/transactions`.
+- [x] Next to it the "Quick add" placeholder is still there (wide window), stacked below when narrow. `flutter analyze` is clean.
