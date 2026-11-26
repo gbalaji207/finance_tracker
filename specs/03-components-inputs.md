@@ -90,8 +90,8 @@ Add validation, error states or form logic.
 
 ## Verify
 
-- [ ] Primary buttons are teal with white text; secondary are white with a teal outline; heights are 40/44/48.
-- [ ] Fields are 44px tall with grey borders that turn teal when focused; labels sit above in small bold grey.
-- [ ] The dropdown opens and changes value; the date field opens a calendar and shows `26 Nov 2026`-style text after picking.
-- [ ] `TypeSelector` highlights the clicked option in teal tint; the four options fit within a 300px-wide column (try it by narrowing the window).
-- [ ] Checkboxes toggle by clicking the label text. `flutter analyze` is clean.
+- [x] Primary buttons are teal with white text; secondary are white with a teal outline; heights are 40/44/48.
+- [x] Fields are 44px tall with grey borders that turn teal when focused; labels sit above in small bold grey.
+- [x] The dropdown opens and changes value; the date field opens a calendar and shows `26 Nov 2026`-style text after picking.
+- [x] `TypeSelector` highlights the clicked option in teal tint; the four options fit within a 300px-wide column (try it by narrowing the window).
+- [x] Checkboxes toggle by clicking the label text. `flutter analyze` is clean.
