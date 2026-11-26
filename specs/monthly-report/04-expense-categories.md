@@ -33,5 +33,5 @@ Sort or filter in the widget; render in the order given.
 
 ## Verify
 
-- [ ] Five rows with teal bars whose lengths follow the fractions above and amounts right-aligned.
-- [ ] The whole Monthly report matches the wireframe; no placeholder boxes remain. `flutter analyze` is clean.
+- [x] Five rows with teal bars whose lengths follow the fractions above and amounts right-aligned.
+- [x] The whole Monthly report matches the wireframe; no placeholder boxes remain. `flutter analyze` is clean.
