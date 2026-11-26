@@ -43,5 +43,5 @@ Build the sections or add more sources to the dropdown.
 
 ## Verify
 
-- [ ] `/reports/source` shows the header with two labelled dropdowns aligned to the bottom of the title block.
-- [ ] Three placeholder boxes below. `flutter analyze` is clean.
+- [x] `/reports/source` shows the header with two labelled dropdowns aligned to the bottom of the title block.
+- [x] Three placeholder boxes below. `flutter analyze` is clean.
