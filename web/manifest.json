@@ -1,6 +1,6 @@
 {
-    "name": "finance_tracker",
-    "short_name": "finance_tracker",
+    "name": "Money Tracker",
+    "short_name": "Money Tracker",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
