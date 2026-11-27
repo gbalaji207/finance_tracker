@@ -10,6 +10,7 @@ import 'package:finance_tracker/core/widgets/page_header.dart';
 import 'package:finance_tracker/core/widgets/two_pane.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_cubit.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_state.dart';
+import 'package:finance_tracker/features/dashboard/widgets/bank_balance_dialog.dart';
 import 'package:finance_tracker/features/dashboard/widgets/quick_add_card.dart';
 import 'package:finance_tracker/features/dashboard/widgets/recent_entries_card.dart';
 import 'package:finance_tracker/features/dashboard/widgets/reconciliation_strip.dart';
@@ -33,12 +34,18 @@ class DashboardPage extends StatelessWidget {
 class _DashboardView extends StatelessWidget {
   const _DashboardView();
 
-  void _notWired(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(content: Text('Not wired yet (sample data)')),
-      );
+  /// Opens the dialog with the current values; a result updates the strip.
+  Future<void> _updateBankBalance(BuildContext context) async {
+    final cubit = context.read<DashboardCubit>();
+    final current = cubit.state.reconciliation;
+    if (current == null) return;
+    final result = await showBankBalanceDialog(
+      context,
+      sourcesTotal: current.sourcesTotal,
+      currentBankBalance: current.bankBalance,
+      asOf: current.asOf,
+    );
+    if (result != null) cubit.updateBankBalance(result.balance, result.asOf);
   }
 
   @override
@@ -55,7 +62,8 @@ class _DashboardView extends StatelessWidget {
           children: [
             PageHeader(
               title: 'Dashboard',
-              subtitle: 'Sample data · balances as on '
+              subtitle:
+                  'Sample data · balances as on '
                   '${AppDates.dayMonthYear(mockToday)}',
               actions: [
                 MonthSelector(month: state.month, onChanged: cubit.changeMonth),
@@ -67,7 +75,7 @@ class _DashboardView extends StatelessWidget {
             ),
             ReconciliationStrip(
               data: state.reconciliation!,
-              onUpdateBankBalance: () => _notWired(context),
+              onUpdateBankBalance: () => _updateBankBalance(context),
             ),
             SourceCardsSection(summaries: state.summaries),
             TwoPane(

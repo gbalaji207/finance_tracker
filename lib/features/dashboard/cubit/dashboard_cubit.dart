@@ -1,4 +1,5 @@
 import 'package:finance_tracker/core/data/finance_repository.dart';
+import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,22 @@ class DashboardCubit extends Cubit<DashboardState> {
         summaries: summaries,
         recent: recent,
         quickAdd: quickAdd,
+      ),
+    );
+  }
+
+  /// Replaces the bank balance and its date. In memory only: reloading the
+  /// page resets it. The sum of source balances is unchanged.
+  void updateBankBalance(double balance, DateTime asOf) {
+    final current = state.reconciliation;
+    if (current == null) return;
+    emit(
+      state.copyWith(
+        reconciliation: BankReconciliation(
+          sourcesTotal: current.sourcesTotal,
+          bankBalance: balance,
+          asOf: asOf,
+        ),
       ),
     );
   }

@@ -47,7 +47,7 @@ Persist the balance or touch the source balances.
 
 ## Verify
 
-- [ ] "Update bank balance" on the Dashboard opens the dialog with the values above.
-- [ ] Typing `132000` changes the pill to a warning `Off by ₹400`; clearing the field disables Save.
-- [ ] Saving `132000` closes the dialog and the strip now shows `₹1,32,000`, the entry date, and the warning pill `Off by ₹400`; reloading the page resets it.
-- [ ] Cancel and Esc change nothing. `flutter analyze` is clean.
+- [x] "Update bank balance" on the Dashboard opens the dialog with the values above.
+- [x] Typing `132000` changes the pill to a warning `Off by ₹400`; clearing the field disables Save.
+- [x] Saving `132000` closes the dialog and the strip now shows `₹1,32,000`, the entry date, and the warning pill `Off by ₹400`; reloading the page resets it.
+- [x] Cancel and Esc change nothing. `flutter analyze` is clean.
