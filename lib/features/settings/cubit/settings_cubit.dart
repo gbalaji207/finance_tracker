@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/utils/error_message.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/features/settings/cubit/settings_state.dart';
@@ -9,15 +10,25 @@ class SettingsCubit extends Cubit<SettingsState> {
   final FinanceRepository _repo;
 
   Future<void> load() async {
-    final sources = await _repo.allSources();
-    final usage = await _repo.categoryUsage();
-    emit(
-      state.copyWith(
-        status: LoadStatus.loaded,
-        sources: sources,
-        categoryUsage: usage,
-      ),
-    );
+    emit(state.copyWith(status: LoadStatus.loading, clearError: true));
+    try {
+      final sources = await _repo.allSources();
+      final usage = await _repo.categoryUsage();
+      emit(
+        state.copyWith(
+          status: LoadStatus.loaded,
+          sources: sources,
+          categoryUsage: usage,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: LoadStatus.error,
+          errorMessage: friendlyError(e),
+        ),
+      );
+    }
   }
 
   /// Archives an active source or restores an archived one. Lives in memory

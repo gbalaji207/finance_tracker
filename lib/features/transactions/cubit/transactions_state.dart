@@ -20,6 +20,7 @@ class TransactionsState extends Equatable {
     this.typeFilter,
     this.query = '',
     this.selectedId,
+    this.errorMessage,
   }) : month = month ?? appMonth();
 
   final LoadStatus status;
@@ -38,6 +39,7 @@ class TransactionsState extends Equatable {
 
   /// Id of the entry being edited; null when adding a new entry.
   final String? selectedId;
+  final String? errorMessage;
 
   /// The entry being edited, or null when adding a new entry.
   Transaction? get selected {
@@ -81,6 +83,8 @@ class TransactionsState extends Equatable {
     bool clearTypeFilter = false,
     String? query,
     String? selectedId,
+    String? errorMessage,
+    bool clearError = false,
     bool clearSelected = false,
   }) => TransactionsState(
     status: status ?? this.status,
@@ -95,6 +99,7 @@ class TransactionsState extends Equatable {
     typeFilter: clearTypeFilter ? null : (typeFilter ?? this.typeFilter),
     query: query ?? this.query,
     selectedId: clearSelected ? null : (selectedId ?? this.selectedId),
+    errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
   );
 
   @override
@@ -109,5 +114,6 @@ class TransactionsState extends Equatable {
     typeFilter,
     query,
     selectedId,
+    errorMessage,
   ];
 }

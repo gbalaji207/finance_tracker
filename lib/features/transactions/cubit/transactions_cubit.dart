@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/utils/error_message.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
@@ -10,19 +11,29 @@ class TransactionsCubit extends Cubit<TransactionsState> {
   final FinanceRepository _repo;
 
   Future<void> load() async {
-    final sources = await _repo.sources();
-    final categories = await _repo.categories();
-    final templates = await _repo.templates();
-    final page = await _repo.transactions();
-    emit(
-      state.copyWith(
-        status: LoadStatus.loaded,
-        sources: sources,
-        categories: categories,
-        templates: templates,
-        page: page,
-      ),
-    );
+    emit(state.copyWith(status: LoadStatus.loading, clearError: true));
+    try {
+      final sources = await _repo.sources();
+      final categories = await _repo.categories();
+      final templates = await _repo.templates();
+      final page = await _repo.transactions();
+      emit(
+        state.copyWith(
+          status: LoadStatus.loaded,
+          sources: sources,
+          categories: categories,
+          templates: templates,
+          page: page,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: LoadStatus.error,
+          errorMessage: friendlyError(e),
+        ),
+      );
+    }
   }
 
   // Filters are visual only in this phase: the list does not change.

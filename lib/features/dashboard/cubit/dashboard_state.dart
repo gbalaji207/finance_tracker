@@ -16,6 +16,7 @@ class DashboardState extends Equatable {
     this.summaries = const [],
     this.recent = const [],
     this.quickAdd = const [],
+    this.errorMessage,
   }) : month = month ?? appMonth();
 
   final LoadStatus status;
@@ -25,6 +26,7 @@ class DashboardState extends Equatable {
   final List<SourceSummary> summaries;
   final List<Transaction> recent;
   final List<EntryTemplate> quickAdd;
+  final String? errorMessage;
 
   /// The source name for [id], or [id] itself if the source is unknown.
   String sourceName(String id) {
@@ -42,25 +44,28 @@ class DashboardState extends Equatable {
     List<SourceSummary>? summaries,
     List<Transaction>? recent,
     List<EntryTemplate>? quickAdd,
-  }) =>
-      DashboardState(
-        status: status ?? this.status,
-        month: month ?? this.month,
-        sources: sources ?? this.sources,
-        reconciliation: reconciliation ?? this.reconciliation,
-        summaries: summaries ?? this.summaries,
-        recent: recent ?? this.recent,
-        quickAdd: quickAdd ?? this.quickAdd,
-      );
+    String? errorMessage,
+    bool clearError = false,
+  }) => DashboardState(
+    status: status ?? this.status,
+    month: month ?? this.month,
+    sources: sources ?? this.sources,
+    reconciliation: reconciliation ?? this.reconciliation,
+    summaries: summaries ?? this.summaries,
+    recent: recent ?? this.recent,
+    quickAdd: quickAdd ?? this.quickAdd,
+    errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+  );
 
   @override
   List<Object?> get props => [
-        status,
-        month,
-        sources,
-        reconciliation,
-        summaries,
-        recent,
-        quickAdd,
-      ];
+    status,
+    month,
+    sources,
+    reconciliation,
+    summaries,
+    recent,
+    quickAdd,
+    errorMessage,
+  ];
 }

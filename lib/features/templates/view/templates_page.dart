@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
@@ -45,6 +46,12 @@ class _TemplatesView extends StatelessWidget {
         if (state.status == LoadStatus.loading) {
           return const Center(child: CircularProgressIndicator());
         }
+        if (state.status == LoadStatus.error) {
+          return ErrorView(
+            message: state.errorMessage ?? '',
+            onRetry: context.read<TemplatesCubit>().load,
+          );
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: AppSpacing.s24,
@@ -53,9 +60,9 @@ class _TemplatesView extends StatelessWidget {
               title: 'Templates and copy last month',
               subtitle: AppConfig.useSupabase
                   ? 'Nothing is created automatically; '
-                      'these only pre-fill the entry form'
+                        'these only pre-fill the entry form'
                   : 'Sample data · nothing is created automatically; '
-                      'these only pre-fill the entry form',
+                        'these only pre-fill the entry form',
             ),
             TwoPane(
               primaryMin: 560,

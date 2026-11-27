@@ -8,6 +8,7 @@ class SettingsState extends Equatable {
     this.status = LoadStatus.loading,
     this.sources = const [],
     this.categoryUsage = const [],
+    this.errorMessage,
   });
 
   final LoadStatus status;
@@ -15,18 +16,21 @@ class SettingsState extends Equatable {
   /// Active and archived.
   final List<Source> sources;
   final List<CategoryUsage> categoryUsage;
+  final String? errorMessage;
 
   SettingsState copyWith({
     LoadStatus? status,
     List<Source>? sources,
     List<CategoryUsage>? categoryUsage,
-  }) =>
-      SettingsState(
-        status: status ?? this.status,
-        sources: sources ?? this.sources,
-        categoryUsage: categoryUsage ?? this.categoryUsage,
-      );
+    String? errorMessage,
+    bool clearError = false,
+  }) => SettingsState(
+    status: status ?? this.status,
+    sources: sources ?? this.sources,
+    categoryUsage: categoryUsage ?? this.categoryUsage,
+    errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+  );
 
   @override
-  List<Object?> get props => [status, sources, categoryUsage];
+  List<Object?> get props => [status, sources, categoryUsage, errorMessage];
 }

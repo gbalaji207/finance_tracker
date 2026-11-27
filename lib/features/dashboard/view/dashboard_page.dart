@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/app_clock.dart';
@@ -56,6 +57,12 @@ class _DashboardView extends StatelessWidget {
         if (state.status == LoadStatus.loading) {
           return const Center(child: CircularProgressIndicator());
         }
+        if (state.status == LoadStatus.error) {
+          return ErrorView(
+            message: state.errorMessage ?? '',
+            onRetry: context.read<DashboardCubit>().load,
+          );
+        }
         final cubit = context.read<DashboardCubit>();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +73,7 @@ class _DashboardView extends StatelessWidget {
               subtitle: AppConfig.useSupabase
                   ? 'Balances as on ${AppDates.dayMonthYear(appToday())}'
                   : 'Sample data · balances as on '
-                      '${AppDates.dayMonthYear(appToday())}',
+                        '${AppDates.dayMonthYear(appToday())}',
               actions: [
                 MonthSelector(month: state.month, onChanged: cubit.changeMonth),
                 AppButton(

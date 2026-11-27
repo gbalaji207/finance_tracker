@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
@@ -46,6 +47,12 @@ class _SettingsView extends StatelessWidget {
       builder: (context, state) {
         if (state.status == LoadStatus.loading) {
           return const Center(child: CircularProgressIndicator());
+        }
+        if (state.status == LoadStatus.error) {
+          return ErrorView(
+            message: state.errorMessage ?? '',
+            onRetry: context.read<SettingsCubit>().load,
+          );
         }
         final cubit = context.read<SettingsCubit>();
         return Column(

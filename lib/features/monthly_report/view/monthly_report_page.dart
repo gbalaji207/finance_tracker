@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/core/config/app_config.dart';
@@ -42,6 +43,12 @@ class _MonthlyReportView extends StatelessWidget {
       builder: (context, state) {
         if (state.status == LoadStatus.loading) {
           return const Center(child: CircularProgressIndicator());
+        }
+        if (state.status == LoadStatus.error) {
+          return ErrorView(
+            message: state.errorMessage ?? '',
+            onRetry: context.read<MonthlyReportCubit>().load,
+          );
         }
         final cubit = context.read<MonthlyReportCubit>();
         return Column(

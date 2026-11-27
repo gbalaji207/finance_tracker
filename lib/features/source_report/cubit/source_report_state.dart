@@ -7,23 +7,27 @@ class SourceReportState extends Equatable {
     this.status = LoadStatus.loading,
     this.selectedSourceId = 'aqua-105',
     this.report,
+    this.errorMessage,
   });
 
   final LoadStatus status;
   final String selectedSourceId;
   final SourceReport? report;
+  final String? errorMessage;
 
   SourceReportState copyWith({
     LoadStatus? status,
     String? selectedSourceId,
     SourceReport? report,
-  }) =>
-      SourceReportState(
-        status: status ?? this.status,
-        selectedSourceId: selectedSourceId ?? this.selectedSourceId,
-        report: report ?? this.report,
-      );
+    String? errorMessage,
+    bool clearError = false,
+  }) => SourceReportState(
+    status: status ?? this.status,
+    selectedSourceId: selectedSourceId ?? this.selectedSourceId,
+    report: report ?? this.report,
+    errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+  );
 
   @override
-  List<Object?> get props => [status, selectedSourceId, report];
+  List<Object?> get props => [status, selectedSourceId, report, errorMessage];
 }

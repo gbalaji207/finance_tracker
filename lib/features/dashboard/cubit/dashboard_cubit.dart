@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/utils/error_message.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
@@ -10,21 +11,31 @@ class DashboardCubit extends Cubit<DashboardState> {
   final FinanceRepository _repo;
 
   Future<void> load() async {
-    final sources = await _repo.sources();
-    final reconciliation = await _repo.reconciliation();
-    final summaries = await _repo.sourceSummaries(state.month);
-    final recent = await _repo.recentTransactions();
-    final quickAdd = await _repo.quickAddTemplates();
-    emit(
-      state.copyWith(
-        status: LoadStatus.loaded,
-        sources: sources,
-        reconciliation: reconciliation,
-        summaries: summaries,
-        recent: recent,
-        quickAdd: quickAdd,
-      ),
-    );
+    emit(state.copyWith(status: LoadStatus.loading, clearError: true));
+    try {
+      final sources = await _repo.sources();
+      final reconciliation = await _repo.reconciliation();
+      final summaries = await _repo.sourceSummaries(state.month);
+      final recent = await _repo.recentTransactions();
+      final quickAdd = await _repo.quickAddTemplates();
+      emit(
+        state.copyWith(
+          status: LoadStatus.loaded,
+          sources: sources,
+          reconciliation: reconciliation,
+          summaries: summaries,
+          recent: recent,
+          quickAdd: quickAdd,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: LoadStatus.error,
+          errorMessage: friendlyError(e),
+        ),
+      );
+    }
   }
 
   /// Replaces the bank balance and its date. In memory only: reloading the

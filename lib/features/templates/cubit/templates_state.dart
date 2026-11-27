@@ -13,6 +13,7 @@ class TemplatesState extends Equatable {
     this.templates = const [],
     this.previousEntries = const [],
     this.selectedIds = const {},
+    this.errorMessage,
   });
 
   final LoadStatus status;
@@ -21,6 +22,7 @@ class TemplatesState extends Equatable {
   final List<EntryTemplate> templates;
   final List<Transaction> previousEntries;
   final Set<String> selectedIds;
+  final String? errorMessage;
 
   int get selectedCount => selectedIds.length;
 
@@ -48,23 +50,26 @@ class TemplatesState extends Equatable {
     List<EntryTemplate>? templates,
     List<Transaction>? previousEntries,
     Set<String>? selectedIds,
-  }) =>
-      TemplatesState(
-        status: status ?? this.status,
-        sources: sources ?? this.sources,
-        categories: categories ?? this.categories,
-        templates: templates ?? this.templates,
-        previousEntries: previousEntries ?? this.previousEntries,
-        selectedIds: selectedIds ?? this.selectedIds,
-      );
+    String? errorMessage,
+    bool clearError = false,
+  }) => TemplatesState(
+    status: status ?? this.status,
+    sources: sources ?? this.sources,
+    categories: categories ?? this.categories,
+    templates: templates ?? this.templates,
+    previousEntries: previousEntries ?? this.previousEntries,
+    selectedIds: selectedIds ?? this.selectedIds,
+    errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+  );
 
   @override
   List<Object?> get props => [
-        status,
-        sources,
-        categories,
-        templates,
-        previousEntries,
-        selectedIds,
-      ];
+    status,
+    sources,
+    categories,
+    templates,
+    previousEntries,
+    selectedIds,
+    errorMessage,
+  ];
 }

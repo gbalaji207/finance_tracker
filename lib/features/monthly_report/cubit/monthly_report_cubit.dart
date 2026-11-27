@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/utils/error_message.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/features/monthly_report/cubit/monthly_report_state.dart';
@@ -9,8 +10,18 @@ class MonthlyReportCubit extends Cubit<MonthlyReportState> {
   final FinanceRepository _repo;
 
   Future<void> load() async {
-    final report = await _repo.monthlyReport(state.month);
-    emit(state.copyWith(status: LoadStatus.loaded, report: report));
+    emit(state.copyWith(status: LoadStatus.loading, clearError: true));
+    try {
+      final report = await _repo.monthlyReport(state.month);
+      emit(state.copyWith(status: LoadStatus.loaded, report: report));
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: LoadStatus.error,
+          errorMessage: friendlyError(e),
+        ),
+      );
+    }
   }
 
   /// Only the month changes in this phase; the data stays the same.
