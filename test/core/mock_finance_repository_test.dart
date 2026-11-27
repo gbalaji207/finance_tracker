@@ -58,4 +58,25 @@ void main() {
     expect(report.months, hasLength(6));
     expect(report.months.first.month, DateTime(2026, 11));
   });
+
+  test('sources() is active only; allSources() includes archived', () async {
+    final active = await repo.sources();
+    expect(active, hasLength(4));
+    expect(active.every((s) => s.isActive), isTrue);
+    final all = await repo.allSources();
+    expect(all, hasLength(5));
+    expect(all.last.id, 'old-freelance');
+    expect(all.last.isActive, isFalse);
+  });
+
+  test('category usage counts', () async {
+    final usage = await repo.categoryUsage();
+    expect(usage, hasLength(7));
+    expect(usage.fold<int>(0, (sum, u) => sum + u.entryCount), 85);
+  });
+
+  test('sourceBalance', () async {
+    expect(await repo.sourceBalance('salary'), 53200);
+    expect(await repo.sourceBalance('old-freelance'), 0);
+  });
 }

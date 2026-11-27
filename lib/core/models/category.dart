@@ -2,14 +2,20 @@ import 'package:equatable/equatable.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
 
 class Category extends Equatable {
-  const Category({required this.id, required this.name, required this.kind});
+  const Category({
+    required this.id,
+    required this.name,
+    required this.kind,
+    this.isActive = true,
+  });
 
   final String id;
   final String name;
 
   /// expense, investment or savings.
   final TxType kind;
+  final bool isActive;
 
   @override
-  List<Object?> get props => [id, name, kind];
+  List<Object?> get props => [id, name, kind, isActive];
 }

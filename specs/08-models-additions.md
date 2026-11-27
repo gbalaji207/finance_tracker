@@ -78,5 +78,5 @@ Change any UI. Do not add repository methods other than those listed.
 
 ## Verify
 
-- [ ] `flutter analyze` is clean and `flutter test` passes.
-- [ ] The five existing pages still look and behave exactly as before.
+- [x] `flutter analyze` is clean and `flutter test` passes.
+- [x] The five existing pages still look and behave exactly as before.

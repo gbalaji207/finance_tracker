@@ -2,6 +2,7 @@ import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/mock_clock.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
+import 'package:finance_tracker/core/models/category_usage.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
@@ -44,7 +45,63 @@ class MockFinanceRepository implements FinanceRepository {
     openingBalance: 4000,
   );
 
+  static const _oldFreelance = Source(
+    id: 'old-freelance',
+    name: 'Old freelance',
+    kind: 'Freelance',
+    openingBalance: 0,
+    isActive: false,
+  );
+
+  /// Active sources only; these are the ones offered for new entries.
   static const _sources = [_salary, _sideHustle, _aqua105, _vr];
+
+  static const _allSources = [..._sources, _oldFreelance];
+
+  static const _categoryUsage = [
+    CategoryUsage(
+      category: Category(id: 'housing', name: 'Housing', kind: TxType.expense),
+      entryCount: 12,
+    ),
+    CategoryUsage(
+      category:
+          Category(id: 'groceries', name: 'Groceries', kind: TxType.expense),
+      entryCount: 28,
+    ),
+    CategoryUsage(
+      category:
+          Category(id: 'utilities', name: 'Utilities', kind: TxType.expense),
+      entryCount: 14,
+    ),
+    CategoryUsage(
+      category: Category(
+        id: 'property-upkeep',
+        name: 'Property upkeep',
+        kind: TxType.expense,
+      ),
+      entryCount: 6,
+    ),
+    CategoryUsage(
+      category: Category(id: 'other', name: 'Other', kind: TxType.expense),
+      entryCount: 9,
+    ),
+    CategoryUsage(
+      category: Category(
+        id: 'mutual-funds',
+        name: 'Mutual funds',
+        kind: TxType.investment,
+      ),
+      entryCount: 11,
+    ),
+    CategoryUsage(
+      category: Category(
+        id: 'fixed-deposit',
+        name: 'Fixed deposit',
+        kind: TxType.savings,
+      ),
+      entryCount: 5,
+    ),
+  ];
 
   static const _categories = [
     Category(id: 'housing', name: 'Housing', kind: TxType.expense),
@@ -352,6 +409,22 @@ class MockFinanceRepository implements FinanceRepository {
 
   @override
   Future<List<Source>> sources() async => _sources;
+
+  @override
+  Future<List<Source>> allSources() async => _allSources;
+
+  @override
+  Future<List<CategoryUsage>> categoryUsage() async => _categoryUsage;
+
+  /// The `closing` value from the source summaries; 0 for any other id
+  /// (including the archived `old-freelance`).
+  @override
+  Future<double> sourceBalance(String sourceId) async {
+    for (final s in _summaries) {
+      if (s.source.id == sourceId) return s.closing;
+    }
+    return 0;
+  }
 
   @override
   Future<List<Category>> categories() async => _categories;
