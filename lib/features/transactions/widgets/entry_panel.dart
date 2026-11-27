@@ -35,6 +35,7 @@ class EntryPanel extends StatefulWidget {
     required this.categories,
     required this.onDelete,
     this.editing,
+    this.initialTemplate,
   });
 
   final List<EntryTemplate> templates;
@@ -48,6 +49,9 @@ class EntryPanel extends StatefulWidget {
 
   /// The entry being edited; null for add mode.
   final Transaction? editing;
+
+  /// A template to apply once when the panel first appears.
+  final EntryTemplate? initialTemplate;
 
   /// Asks for confirmation and resolves to true when the entry should be
   /// deleted. The page implements it (it needs the repository), so the panel
@@ -79,6 +83,12 @@ class _EntryPanelState extends State<EntryPanel> {
       text: editing == null ? '' : editing.amount.toStringAsFixed(0),
     );
     _description = TextEditingController(text: editing?.description ?? '');
+    final template = widget.initialTemplate;
+    if (template != null && editing == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _applyTemplate(template.id);
+      });
+    }
   }
 
   @override

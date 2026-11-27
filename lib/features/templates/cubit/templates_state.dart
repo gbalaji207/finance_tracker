@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:equatable/equatable.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
@@ -14,6 +16,7 @@ class TemplatesState extends Equatable {
     this.previousEntries = const [],
     this.selectedIds = const {},
     this.errorMessage,
+    this.saving = false,
   });
 
   final LoadStatus status;
@@ -24,7 +27,14 @@ class TemplatesState extends Equatable {
   final Set<String> selectedIds;
   final String? errorMessage;
 
+  /// True while a template is being saved or entries are being copied.
+  final bool saving;
+
   int get selectedCount => selectedIds.length;
+
+  /// The largest sort order plus one (1 when there are no templates).
+  int get nextSortOrder =>
+      templates.fold<int>(0, (m, t) => math.max(m, t.sortOrder)) + 1;
 
   List<Source> get activeSources => sources.where((s) => s.isActive).toList();
 
@@ -57,6 +67,7 @@ class TemplatesState extends Equatable {
     Set<String>? selectedIds,
     String? errorMessage,
     bool clearError = false,
+    bool? saving,
   }) => TemplatesState(
     status: status ?? this.status,
     sources: sources ?? this.sources,
@@ -65,6 +76,7 @@ class TemplatesState extends Equatable {
     previousEntries: previousEntries ?? this.previousEntries,
     selectedIds: selectedIds ?? this.selectedIds,
     errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    saving: saving ?? this.saving,
   );
 
   @override
@@ -76,5 +88,6 @@ class TemplatesState extends Equatable {
     previousEntries,
     selectedIds,
     errorMessage,
+    saving,
   ];
 }

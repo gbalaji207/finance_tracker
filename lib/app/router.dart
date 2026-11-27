@@ -37,13 +37,14 @@ class _AuthRefresh extends ChangeNotifier {
 }
 
 GoRouter createRouter(AuthCubit auth) {
-  GoRoute page(String path, Widget Function() build) => GoRoute(
-    path: path,
-    pageBuilder: (context, state) => NoTransitionPage(
-      key: state.pageKey,
-      child: PageBody(child: build()),
-    ),
-  );
+  GoRoute page(String path, Widget Function(GoRouterState state) build) =>
+      GoRoute(
+        path: path,
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: PageBody(child: build(state)),
+        ),
+      );
 
   return GoRouter(
     initialLocation: AppRoutes.dashboard,
@@ -70,12 +71,17 @@ GoRouter createRouter(AuthCubit auth) {
           child: child,
         ),
         routes: [
-          page(AppRoutes.dashboard, DashboardPage.new),
-          page(AppRoutes.transactions, TransactionsPage.new),
-          page(AppRoutes.monthlyReport, MonthlyReportPage.new),
-          page(AppRoutes.sourceReport, SourceReportPage.new),
-          page(AppRoutes.templates, TemplatesPage.new),
-          page(AppRoutes.settings, SettingsPage.new),
+          page(AppRoutes.dashboard, (_) => const DashboardPage()),
+          page(
+            AppRoutes.transactions,
+            (state) => TransactionsPage(
+              templateId: state.uri.queryParameters['template'],
+            ),
+          ),
+          page(AppRoutes.monthlyReport, (_) => const MonthlyReportPage()),
+          page(AppRoutes.sourceReport, (_) => const SourceReportPage()),
+          page(AppRoutes.templates, (_) => const TemplatesPage()),
+          page(AppRoutes.settings, (_) => const SettingsPage()),
         ],
       ),
       if (kDebugMode) ...[

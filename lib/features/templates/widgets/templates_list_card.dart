@@ -53,9 +53,7 @@ class TemplatesListCard extends StatelessWidget {
                   TypeBadge(t.type),
                   AppTableText(sourceName(t.sourceId)),
                   AppTableText(categoryName(t.categoryId), secondary: true),
-                  AppTableText(
-                    t.amount == null ? '—' : Money.plain(t.amount!),
-                  ),
+                  AppTableText(t.amount == null ? '—' : Money.plain(t.amount!)),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     spacing: AppSpacing.s16,

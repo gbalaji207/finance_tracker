@@ -60,9 +60,9 @@ Add editing or deleting of templates. Copy entries into a month other than the c
 
 ## Verify (Supabase mode, sample data)
 
-- [ ] Templates page, copy card: "Copy from October 2026", subtitle mentions November, 17 entries listed, and only the recurring ones ticked: Home EMI, SIP: index fund, Rent received (Aqua 105), Rent received (VR), Recurring deposit (Aqua 105): button `Copy 5 selected to November`.
-- [ ] Create a template: name "Gym", Expense, Source Salary, Category Other, amount 1500, tick quick add, Save: the list shows it as the seventh row; the Dashboard's Quick add now includes "Gym".
-- [ ] Click "Use" on "Gym" (Dashboard or Templates): Transactions opens with Type Expense, Source Salary, Category Other, Amount 1500 filled. Using "Internet bill" (no default amount) leaves Amount empty.
-- [ ] **This writes data:** untick everything except Home EMI and copy. You land on Transactions with a new Home EMI of ₹32,000 dated 5 Nov 2026 (the October one was 5 Oct), and the footer total is 28. Delete that test entry again (Edit, Delete entry) to restore the sample numbers.
-- [ ] Template name empty: "Enter a template name." and nothing is saved.
-- [ ] Sample mode: "Use" now fills the form too; copy shows the "(sample data...)" message. `flutter analyze` and `flutter test` pass.
+- [x] Templates page, copy card: "Copy from October 2026", subtitle mentions November, 17 entries listed, and only the recurring ones ticked: Home EMI, SIP: index fund, Rent received (Aqua 105), Rent received (VR), Recurring deposit (Aqua 105): button `Copy 5 selected to November`.
+- [x] Create a template: name "Gym", Expense, Source Salary, Category Other, amount 1500, tick quick add, Save: the list shows it as the seventh row; the Dashboard's Quick add now includes "Gym".
+- [x] Click "Use" on "Gym" (Dashboard or Templates): Transactions opens with Type Expense, Source Salary, Category Other, Amount 1500 filled. Using "Internet bill" (no default amount) leaves Amount empty.
+- [x] **This writes data:** untick everything except Home EMI and copy. You land on Transactions with a new Home EMI of ₹32,000 dated 5 Nov 2026 (the October one was 5 Oct), and the footer total is 28. Delete that test entry again (Edit, Delete entry) to restore the sample numbers.
+- [x] Template name empty: "Enter a template name." and nothing is saved.
+- [x] Sample mode: "Use" now fills the form too; copy shows the "(sample data...)" message. `flutter analyze` and `flutter test` pass.

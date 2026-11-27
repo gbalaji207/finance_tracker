@@ -7,6 +7,7 @@ import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
 import 'package:finance_tracker/core/models/source_report.dart';
 import 'package:finance_tracker/core/models/source_summary.dart';
+import 'package:finance_tracker/core/models/template_input.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/models/transaction_page.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
@@ -46,4 +47,9 @@ abstract interface class FinanceRepository {
   Future<void> addEntry(EntryInput input);
   Future<void> updateEntry(String id, EntryInput input);
   Future<void> deleteEntry(String id);
+
+  Future<void> addTemplate(TemplateInput input);
+
+  /// Creates all entries in one request; nothing is created if it fails.
+  Future<void> addEntries(List<EntryInput> inputs);
 }

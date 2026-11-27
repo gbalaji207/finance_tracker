@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/utils/error_message.dart';
 import 'package:finance_tracker/core/widgets/app_snack.dart';
 import 'package:finance_tracker/core/widgets/info_box.dart';
@@ -22,19 +23,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class TransactionsPage extends StatelessWidget {
-  const TransactionsPage({super.key});
+  const TransactionsPage({super.key, this.templateId});
+
+  /// A template to pre-fill the entry form with (from `?template=<id>`).
+  final String? templateId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (c) => TransactionsCubit(c.read<FinanceRepository>())..load(),
-      child: const _TransactionsView(),
+      child: _TransactionsView(templateId: templateId),
     );
   }
 }
 
-class _TransactionsView extends StatelessWidget {
-  const _TransactionsView();
+class _TransactionsView extends StatefulWidget {
+  const _TransactionsView({this.templateId});
+
+  final String? templateId;
+
+  @override
+  State<_TransactionsView> createState() => _TransactionsViewState();
+}
+
+class _TransactionsViewState extends State<_TransactionsView> {
+  /// The template is applied once per page instance.
+  bool _templateApplied = false;
 
   /// Reads the source balance, then asks for confirmation.
   Future<bool> _confirmDelete(
@@ -81,6 +95,15 @@ class _TransactionsView extends StatelessWidget {
           );
         }
         final cubit = context.read<TransactionsCubit>();
+        EntryTemplate? initialTemplate;
+        if (!_templateApplied && widget.templateId != null) {
+          initialTemplate = state.templates
+              .where((t) => t.id == widget.templateId)
+              .firstOrNull;
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _templateApplied = true,
+          );
+        }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: AppSpacing.s20,
@@ -137,6 +160,7 @@ class _TransactionsView extends StatelessWidget {
                           key: ValueKey(state.selected?.id ?? 'new'),
                           editing: state.selected,
                           templates: state.templates,
+                          initialTemplate: initialTemplate,
                           sourceName: state.sourceName,
                           sources: [
                             for (final s in state.sources)

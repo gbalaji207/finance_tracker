@@ -6,6 +6,7 @@ import 'package:finance_tracker/core/utils/app_dates.dart';
 import 'package:finance_tracker/core/widgets/amount_text.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/app_card.dart';
+import 'package:finance_tracker/core/widgets/empty_note.dart';
 import 'package:finance_tracker/core/widgets/labeled_checkbox.dart';
 import 'package:flutter/material.dart';
 
@@ -15,24 +16,30 @@ class CopyLastMonthCard extends StatelessWidget {
     required this.entries,
     required this.selectedIds,
     required this.sourceName,
+    required this.previousMonth,
+    required this.thisMonth,
     required this.onToggle,
     required this.onCopy,
+    this.saving = false,
   });
 
   final List<Transaction> entries;
   final Set<String> selectedIds;
   final String Function(String sourceId) sourceName;
+
+  /// First day of the month the entries come from, and of the current month.
+  final DateTime previousMonth;
+  final DateTime thisMonth;
   final ValueChanged<String> onToggle;
   final VoidCallback onCopy;
 
+  /// True while the copy is running; the button is disabled meanwhile.
+  final bool saving;
+
   @override
   Widget build(BuildContext context) {
-    // The entries are last month's, so the target month is the one after.
-    final from = entries.isEmpty ? null : entries.first.date;
-    final fromLabel = from == null ? 'last month' : AppDates.monthYear(from);
-    final toLabel = from == null
-        ? 'this month'
-        : AppDates.monthName(DateTime(from.year, from.month + 1));
+    final fromLabel = AppDates.monthYear(previousMonth);
+    final toLabel = AppDates.monthName(thisMonth);
 
     return AppCard(
       child: Column(
@@ -54,7 +61,7 @@ class CopyLastMonthCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.s4),
                   Text(
                     'Tick the entries to re-create in $toLabel. '
-                    'You can change amounts before saving.',
+                    'You can edit amounts after copying.',
                     style: AppTextStyles.subtitle,
                   ),
                 ],
@@ -62,15 +69,17 @@ class CopyLastMonthCard extends StatelessWidget {
               AppButton(
                 label: 'Copy ${selectedIds.length} selected to $toLabel',
                 size: AppButtonSize.large,
-                onPressed: selectedIds.isEmpty ? null : onCopy,
+                onPressed: selectedIds.isEmpty || saving ? null : onCopy,
               ),
             ],
           ),
           const SizedBox(height: AppSpacing.s8),
+          if (entries.isEmpty) const EmptyNote('No entries last month.'),
           for (final e in entries)
             Container(
-              constraints:
-                  const BoxConstraints(minHeight: AppSpacing.controlHeight),
+              constraints: const BoxConstraints(
+                minHeight: AppSpacing.controlHeight,
+              ),
               padding: const EdgeInsets.symmetric(vertical: 6),
               decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(color: AppColors.divider)),

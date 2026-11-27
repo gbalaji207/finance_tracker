@@ -9,6 +9,7 @@ import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
 import 'package:finance_tracker/core/models/source_report.dart';
 import 'package:finance_tracker/core/models/source_summary.dart';
+import 'package:finance_tracker/core/models/template_input.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/models/transaction_page.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
@@ -509,4 +510,10 @@ class MockFinanceRepository implements FinanceRepository {
 
   @override
   Future<void> deleteEntry(String id) async {}
+
+  @override
+  Future<void> addTemplate(TemplateInput input) async {}
+
+  @override
+  Future<void> addEntries(List<EntryInput> inputs) async {}
 }

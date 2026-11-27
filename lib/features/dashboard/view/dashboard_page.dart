@@ -117,7 +117,8 @@ class _DashboardView extends StatelessWidget {
               secondary: QuickAddCard(
                 templates: state.quickAdd,
                 sourceName: state.sourceName,
-                onUse: (_) => context.go(AppRoutes.transactions),
+                onUse: (t) =>
+                    context.go('${AppRoutes.transactions}?template=${t.id}'),
                 onManage: () => context.go(AppRoutes.templates),
                 onCopyLastMonth: () => context.go(AppRoutes.templates),
               ),

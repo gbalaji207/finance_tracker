@@ -49,6 +49,7 @@ EntryTemplate templateFromRow(Map<String, dynamic> r) => EntryTemplate(
   categoryId: r['category_id'] as String?,
   amount: r['amount'] == null ? null : toDouble(r['amount']),
   description: (r['description'] as String?) ?? '',
+  sortOrder: (r['sort_order'] as num?)?.toInt() ?? 0,
 );
 
 Transaction transactionFromRow(Map<String, dynamic> r) => Transaction(

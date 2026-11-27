@@ -10,6 +10,7 @@ import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
 import 'package:finance_tracker/core/models/source_report.dart';
 import 'package:finance_tracker/core/models/source_summary.dart';
+import 'package:finance_tracker/core/models/template_input.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/models/transaction_page.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
@@ -260,5 +261,25 @@ class SupabaseFinanceRepository implements FinanceRepository {
         .eq('id', id)
         .select('id');
     if (rows.isEmpty) throw StateError('Entry not found');
+  }
+
+  @override
+  Future<void> addTemplate(TemplateInput input) async {
+    await _client.from('entry_templates').insert({
+      'name': input.name.trim(),
+      'type': input.type.name,
+      'source_id': input.sourceId,
+      'category_id': input.categoryId,
+      'amount': input.amount,
+      'description': input.description.trim(),
+      'quick_add': input.quickAdd,
+      'sort_order': input.sortOrder,
+    });
+  }
+
+  @override
+  Future<void> addEntries(List<EntryInput> inputs) async {
+    if (inputs.isEmpty) return;
+    await _client.from('transactions').insert(inputs.map(_entryRow).toList());
   }
 }

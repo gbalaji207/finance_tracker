@@ -10,6 +10,7 @@ class EntryTemplate extends Equatable {
     this.categoryId,
     this.amount,
     required this.description,
+    this.sortOrder = 0,
   });
 
   final String id;
@@ -20,7 +21,18 @@ class EntryTemplate extends Equatable {
   final double? amount;
   final String description;
 
+  /// Position in the list; new templates go after the largest one.
+  final int sortOrder;
+
   @override
-  List<Object?> get props =>
-      [id, name, type, sourceId, categoryId, amount, description];
+  List<Object?> get props => [
+    id,
+    name,
+    type,
+    sourceId,
+    categoryId,
+    amount,
+    description,
+    sortOrder,
+  ];
 }
