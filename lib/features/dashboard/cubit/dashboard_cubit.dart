@@ -1,6 +1,5 @@
 import 'package:finance_tracker/core/utils/error_message.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
-import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/features/dashboard/cubit/dashboard_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,20 +38,17 @@ class DashboardCubit extends Cubit<DashboardState> {
     }
   }
 
-  /// Replaces the bank balance and its date. In memory only: reloading the
-  /// page resets it. The sum of source balances is unchanged.
-  void updateBankBalance(double balance, DateTime asOf) {
-    final current = state.reconciliation;
-    if (current == null) return;
-    emit(
-      state.copyWith(
-        reconciliation: BankReconciliation(
-          sourcesTotal: current.sourcesTotal,
-          bankBalance: balance,
-          asOf: asOf,
-        ),
-      ),
-    );
+  /// Saves the bank balance for [asOf], then reloads the reconciliation.
+  /// Returns an error message, or null on success.
+  Future<String?> updateBankBalance(double balance, DateTime asOf) async {
+    try {
+      await _repo.setBankBalance(balance, asOf);
+      final reconciliation = await _repo.reconciliation();
+      if (!isClosed) emit(state.copyWith(reconciliation: reconciliation));
+      return null;
+    } catch (e) {
+      return friendlyError(e);
+    }
   }
 
   /// Reloads only the source cards for [month]; the rest of the page stays.

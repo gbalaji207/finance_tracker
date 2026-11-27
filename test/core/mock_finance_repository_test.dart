@@ -2,7 +2,7 @@ import 'package:finance_tracker/core/data/mock_finance_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const repo = MockFinanceRepository();
+  final repo = MockFinanceRepository();
 
   test('every source summary balances', () async {
     for (final s in await repo.sourceSummaries(DateTime(2026, 11))) {
@@ -32,8 +32,10 @@ void main() {
     expect(report.opening, 33000);
     expect(report.closing, 132400);
     expect(report.savingsRate, closeTo(0.20, 0.005));
-    final categoryTotal =
-        report.expenseByCategory.fold<double>(0, (sum, c) => sum + c.amount);
+    final categoryTotal = report.expenseByCategory.fold<double>(
+      0,
+      (sum, c) => sum + c.amount,
+    );
     expect(categoryTotal, 82600);
   });
 
@@ -42,10 +44,14 @@ void main() {
     expect(page.items, hasLength(10));
     expect(page.total, 38);
     final recent = await repo.recentTransactions();
-    expect(
-      recent.map((t) => t.id).toList(),
-      ['t1', 't3', 't4', 't6', 't7', 't8'],
-    );
+    expect(recent.map((t) => t.id).toList(), [
+      't1',
+      't3',
+      't4',
+      't6',
+      't7',
+      't8',
+    ]);
   });
 
   test('quick add templates', () async {

@@ -54,13 +54,13 @@ Allow deleting a source or category, or editing their names. Let the category ki
 
 ## Verify (Supabase mode)
 
-- [ ] Dashboard, Update bank balance: enter 132000 as on today, Save. The strip shows `₹1,32,000` and "Off by ₹400". Reload: it persists. Enter 132400 again to restore "Matches". (A second save on the same date replaces the first; check **Table Editor, bank_balances** has one row per date.)
-- [ ] Settings, add source: "Test source", Rental, opening balance 1000, opening date today. It appears in the table as Active, shows on the Dashboard as a card with ₹1,000, and appears in the entry form's Source list.
-- [ ] Archive "Test source": its badge turns grey, the link becomes "Restore", and it no longer appears in the entry form's Source list. Its Dashboard card stays while it still has a balance (₹1,000) and disappears once the balance is ₹0 and the month has no activity. Restore brings it back to the form.
-- [ ] Add category "Insurance" as Expense: it appears with 0 entries, then in the entry form's category list for Expense. Adding "Housing" again fails with "That name is already used."
-- [ ] Archive "Insurance": status Archived and it disappears from the entry form.
-- [ ] Clean up: archive the test source and category (names cannot be deleted from the app; delete the rows in **Table Editor** if you want them gone).
-- [ ] Sample mode: the same flows work in memory and reset on reload. `flutter analyze` and `flutter test` pass.
+- [x] Dashboard, Update bank balance: enter 132000 as on today, Save. The strip shows `₹1,32,000` and "Off by ₹400". Reload: it persists. Enter 132400 again to restore "Matches". (A second save on the same date replaces the first; check **Table Editor, bank_balances** has one row per date.)
+- [x] Settings, add source: "Test source", Rental, opening balance 1000, opening date today. It appears in the table as Active, shows on the Dashboard as a card with ₹1,000, and appears in the entry form's Source list.
+- [x] Archive "Test source": its badge turns grey, the link becomes "Restore", and it no longer appears in the entry form's Source list. Its Dashboard card stays while it still has a balance (₹1,000) and disappears once the balance is ₹0 and the month has no activity. Restore brings it back to the form.
+- [x] Add category "Insurance" as Expense: it appears with 0 entries, then in the entry form's category list for Expense. Adding "Housing" again fails with "That name is already used."
+- [x] Archive "Insurance": status Archived and it disappears from the entry form.
+- [x] Clean up: archive the test source and category (names cannot be deleted from the app; delete the rows in **Table Editor** if you want them gone).
+- [x] Sample mode: the same flows work in memory and reset on reload. `flutter analyze` and `flutter test` pass.
 
 ## After B10
 

@@ -3,11 +3,13 @@ import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/supabase/row_mappers.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
+import 'package:finance_tracker/core/models/category_input.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
 import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
+import 'package:finance_tracker/core/models/source_input.dart';
 import 'package:finance_tracker/core/models/source_report.dart';
 import 'package:finance_tracker/core/models/source_summary.dart';
 import 'package:finance_tracker/core/models/template_input.dart';
@@ -281,5 +283,52 @@ class SupabaseFinanceRepository implements FinanceRepository {
   Future<void> addEntries(List<EntryInput> inputs) async {
     if (inputs.isEmpty) return;
     await _client.from('transactions').insert(inputs.map(_entryRow).toList());
+  }
+
+  @override
+  Future<void> setBankBalance(double balance, DateTime asOf) async {
+    await _client.from('bank_balances').upsert({
+      'user_id': _client.auth.currentUser!.id,
+      'as_of': sqlDate(asOf),
+      'balance': balance,
+    }, onConflict: 'user_id,as_of');
+  }
+
+  @override
+  Future<void> addSource(SourceInput input) async {
+    await _client.from('sources').insert({
+      'name': input.name.trim(),
+      'kind': input.kind,
+      'opening_balance': input.openingBalance,
+      'opening_date': sqlDate(input.openingDate),
+    });
+  }
+
+  @override
+  Future<void> setSourceActive(String id, bool active) async {
+    final rows = await _client
+        .from('sources')
+        .update({'is_active': active})
+        .eq('id', id)
+        .select('id');
+    if (rows.isEmpty) throw StateError('Not found');
+  }
+
+  @override
+  Future<void> addCategory(CategoryInput input) async {
+    await _client.from('categories').insert({
+      'name': input.name.trim(),
+      'kind': input.kind.name,
+    });
+  }
+
+  @override
+  Future<void> setCategoryActive(String id, bool active) async {
+    final rows = await _client
+        .from('categories')
+        .update({'is_active': active})
+        .eq('id', id)
+        .select('id');
+    if (rows.isEmpty) throw StateError('Not found');
   }
 }

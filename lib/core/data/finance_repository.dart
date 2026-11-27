@@ -1,10 +1,12 @@
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
+import 'package:finance_tracker/core/models/category_input.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
 import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
+import 'package:finance_tracker/core/models/source_input.dart';
 import 'package:finance_tracker/core/models/source_report.dart';
 import 'package:finance_tracker/core/models/source_summary.dart';
 import 'package:finance_tracker/core/models/template_input.dart';
@@ -52,4 +54,11 @@ abstract interface class FinanceRepository {
 
   /// Creates all entries in one request; nothing is created if it fails.
   Future<void> addEntries(List<EntryInput> inputs);
+
+  /// One balance per date; saving again for the same date replaces it.
+  Future<void> setBankBalance(double balance, DateTime asOf);
+  Future<void> addSource(SourceInput input);
+  Future<void> setSourceActive(String id, bool active);
+  Future<void> addCategory(CategoryInput input);
+  Future<void> setCategoryActive(String id, bool active);
 }

@@ -1,7 +1,9 @@
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
+import 'package:finance_tracker/core/theme/app_colors.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
+import 'package:finance_tracker/core/widgets/app_badge.dart';
 import 'package:finance_tracker/core/widgets/app_card.dart';
 import 'package:finance_tracker/core/widgets/app_table.dart';
 import 'package:finance_tracker/core/widgets/app_text_link.dart';
@@ -13,12 +15,14 @@ class CategoriesCard extends StatelessWidget {
     super.key,
     required this.categories,
     required this.onEdit,
-    required this.onArchive,
+    required this.onToggleActive,
   });
 
   final List<CategoryUsage> categories;
   final ValueChanged<Category> onEdit;
-  final ValueChanged<Category> onArchive;
+
+  /// Archives an active category or restores an archived one.
+  final ValueChanged<Category> onToggleActive;
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +39,12 @@ class CategoriesCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.s8),
           AppTable(
-            minWidth: 480,
+            minWidth: 576,
             columns: const [
               AppTableColumn('Name', flex: 1.2),
               AppTableColumn('Kind', width: 104),
               AppTableColumn('Entries', width: 80, align: TextAlign.right),
+              AppTableColumn('Status', width: 96),
               AppTableColumn('Actions', width: 130, align: TextAlign.right),
             ],
             rows: [
@@ -48,6 +53,17 @@ class CategoriesCard extends StatelessWidget {
                   AppTableText(u.category.name, bold: true),
                   TypeBadge(u.category.kind),
                   AppTableText('${u.entryCount}'),
+                  u.category.isActive
+                      ? const AppBadge(
+                          text: 'Active',
+                          background: AppColors.incomeBg,
+                          foreground: AppColors.income,
+                        )
+                      : const AppBadge(
+                          text: 'Archived',
+                          background: AppColors.neutralBg,
+                          foreground: AppColors.neutralFg,
+                        ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     spacing: AppSpacing.s16,
@@ -57,8 +73,8 @@ class CategoriesCard extends StatelessWidget {
                         onPressed: () => onEdit(u.category),
                       ),
                       AppTextLink(
-                        label: 'Archive',
-                        onPressed: () => onArchive(u.category),
+                        label: u.category.isActive ? 'Archive' : 'Restore',
+                        onPressed: () => onToggleActive(u.category),
                       ),
                     ],
                   ),

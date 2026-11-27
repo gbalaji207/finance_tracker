@@ -4,7 +4,7 @@ import 'package:finance_tracker/features/templates/cubit/preselect.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const repo = MockFinanceRepository();
+  final repo = MockFinanceRepository();
 
   test(
     'the recurring October entries are preselected, not the electricity bill',

@@ -49,7 +49,14 @@ class _DashboardView extends StatelessWidget {
       currentBankBalance: current.bankBalance ?? current.sourcesTotal,
       asOf: current.asOf ?? appToday(),
     );
-    if (result != null) cubit.updateBankBalance(result.balance, result.asOf);
+    if (result == null) return;
+    final error = await cubit.updateBankBalance(result.balance, result.asOf);
+    if (!context.mounted) return;
+    if (error != null) {
+      AppSnack.error(context, error);
+    } else {
+      AppSnack.info(context, AppConfig.note('Bank balance saved'));
+    }
   }
 
   @override

@@ -2,11 +2,13 @@ import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/mock_clock.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
+import 'package:finance_tracker/core/models/category_input.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
 import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
+import 'package:finance_tracker/core/models/source_input.dart';
 import 'package:finance_tracker/core/models/source_report.dart';
 import 'package:finance_tracker/core/models/source_summary.dart';
 import 'package:finance_tracker/core/models/template_input.dart';
@@ -20,7 +22,34 @@ import 'package:finance_tracker/core/models/tx_type.dart';
 /// returns the same fixed data. The summaries and reports are hardcoded on
 /// purpose and are NOT computed from the (sample) transaction lists.
 class MockFinanceRepository implements FinanceRepository {
-  const MockFinanceRepository();
+  MockFinanceRepository();
+
+  // In-memory changes made in sample mode; they reset on reload.
+  double _bankBalance = 132400;
+  DateTime _bankAsOf = mockToday;
+  final Map<String, bool> _sourceActive = {};
+  final Map<String, bool> _categoryActive = {};
+  final List<Source> _addedSources = [];
+  final List<Category> _addedCategories = [];
+  int _nextNewId = 1;
+
+  Source _sourceNow(Source s) =>
+      s.copyWith(isActive: _sourceActive[s.id] ?? s.isActive);
+
+  Category _categoryNow(Category c) => Category(
+    id: c.id,
+    name: c.name,
+    kind: c.kind,
+    isActive: _categoryActive[c.id] ?? c.isActive,
+  );
+
+  List<Source> get _currentSources => [
+    for (final s in [..._allSources, ..._addedSources]) _sourceNow(s),
+  ];
+
+  List<Category> get _currentCategories => [
+    for (final c in [..._categories, ..._addedCategories]) _categoryNow(c),
+  ];
 
   static const _salary = Source(
     id: 'salary',
@@ -420,13 +449,22 @@ class MockFinanceRepository implements FinanceRepository {
   ];
 
   @override
-  Future<List<Source>> sources() async => _sources;
+  Future<List<Source>> sources() async =>
+      _currentSources.where((s) => s.isActive).toList();
 
   @override
-  Future<List<Source>> allSources() async => _allSources;
+  Future<List<Source>> allSources() async => _currentSources;
 
   @override
-  Future<List<CategoryUsage>> categoryUsage() async => _categoryUsage;
+  Future<List<CategoryUsage>> categoryUsage() async => [
+    for (final u in _categoryUsage)
+      CategoryUsage(
+        category: _categoryNow(u.category),
+        entryCount: u.entryCount,
+      ),
+    for (final c in _addedCategories)
+      CategoryUsage(category: _categoryNow(c), entryCount: 0),
+  ];
 
   /// The `closing` value from the source summaries; 0 for any other id
   /// (including the archived `old-freelance`).
@@ -439,16 +477,17 @@ class MockFinanceRepository implements FinanceRepository {
   }
 
   @override
-  Future<List<Category>> categories() async => _categories;
+  Future<List<Category>> categories() async =>
+      _currentCategories.where((c) => c.isActive).toList();
 
   @override
-  Future<List<Category>> allCategories() async => _categories;
+  Future<List<Category>> allCategories() async => _currentCategories;
 
   @override
   Future<BankReconciliation> reconciliation() async => BankReconciliation(
     sourcesTotal: 132400,
-    bankBalance: 132400,
-    asOf: mockToday,
+    bankBalance: _bankBalance,
+    asOf: _bankAsOf,
   );
 
   @override
@@ -516,4 +555,44 @@ class MockFinanceRepository implements FinanceRepository {
 
   @override
   Future<void> addEntries(List<EntryInput> inputs) async {}
+
+  @override
+  Future<void> setBankBalance(double balance, DateTime asOf) async {
+    _bankBalance = balance;
+    _bankAsOf = asOf;
+  }
+
+  @override
+  Future<void> addSource(SourceInput input) async {
+    _addedSources.add(
+      Source(
+        id: 'new-${_nextNewId++}',
+        name: input.name.trim(),
+        kind: input.kind,
+        openingBalance: input.openingBalance,
+        openingDate: input.openingDate,
+      ),
+    );
+  }
+
+  @override
+  Future<void> setSourceActive(String id, bool active) async {
+    _sourceActive[id] = active;
+  }
+
+  @override
+  Future<void> addCategory(CategoryInput input) async {
+    _addedCategories.add(
+      Category(
+        id: 'new-${_nextNewId++}',
+        name: input.name.trim(),
+        kind: input.kind,
+      ),
+    );
+  }
+
+  @override
+  Future<void> setCategoryActive(String id, bool active) async {
+    _categoryActive[id] = active;
+  }
 }

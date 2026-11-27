@@ -9,11 +9,13 @@ class AppDateField extends StatelessWidget {
   const AppDateField({
     super.key,
     this.label,
+    this.helperText,
     required this.value,
     required this.onChanged,
   });
 
   final String? label;
+  final String? helperText;
   final DateTime value;
   final ValueChanged<DateTime> onChanged;
 
@@ -32,6 +34,7 @@ class AppDateField extends StatelessWidget {
     final radius = BorderRadius.circular(AppSpacing.radiusControl);
     return FieldFrame(
       label: label,
+      helperText: helperText,
       child: InkWell(
         onTap: () => _pick(context),
         borderRadius: radius,

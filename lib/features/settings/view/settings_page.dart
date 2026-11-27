@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/widgets/app_snack.dart';
 import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
@@ -33,12 +34,13 @@ class SettingsPage extends StatelessWidget {
 class _SettingsView extends StatelessWidget {
   const _SettingsView();
 
-  void _notWired(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(content: Text('Not wired yet (sample data)')),
-      );
+  void _notWired(BuildContext context) =>
+      AppSnack.info(context, 'Not wired yet (sample data)');
+
+  /// Shows a SnackBar when [action] resolves to an error message.
+  Future<void> _report(BuildContext context, Future<String?> action) async {
+    final error = await action;
+    if (error != null && context.mounted) AppSnack.error(context, error);
   }
 
   @override
@@ -71,9 +73,10 @@ class _SettingsView extends StatelessWidget {
               primary: SourcesCard(
                 sources: state.sources,
                 onEdit: (_) => _notWired(context),
-                onToggleActive: (s) => cubit.toggleSourceActive(s.id),
+                onToggleActive: (s) =>
+                    _report(context, cubit.toggleSourceActive(s.id)),
               ),
-              secondary: NewSourceCard(onSave: () => _notWired(context)),
+              secondary: NewSourceCard(onSave: cubit.addSource),
             ),
             TwoPane(
               primaryMin: 560,
@@ -81,9 +84,10 @@ class _SettingsView extends StatelessWidget {
               primary: CategoriesCard(
                 categories: state.categoryUsage,
                 onEdit: (_) => _notWired(context),
-                onArchive: (_) => _notWired(context),
+                onToggleActive: (c) =>
+                    _report(context, cubit.toggleCategoryActive(c.id)),
               ),
-              secondary: NewCategoryCard(onSave: () => _notWired(context)),
+              secondary: NewCategoryCard(onSave: cubit.addCategory),
             ),
             AccountCard(
               email: context.watch<AuthCubit>().state.email,

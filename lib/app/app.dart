@@ -53,7 +53,7 @@ class _AppState extends State<App> {
         child: RepositoryProvider<FinanceRepository>(
           create: (_) => AppConfig.useSupabase
               ? SupabaseFinanceRepository(Supabase.instance.client)
-              : const MockFinanceRepository(),
+              : MockFinanceRepository(),
           child: MaterialApp.router(
             title: 'Money Tracker',
             theme: AppTheme.light(),
