@@ -65,8 +65,8 @@ Call any backend, store credentials, or build a sign-up flow.
 
 ## Verify
 
-- [ ] Opening `/login` shows the centered card without the sidebar, matching the wireframe.
-- [ ] Empty fields then Sign in shows "Enter your email and password."; password `wrong` shows "Wrong email or password. Try again."; anything else goes to `/dashboard`. Pressing Enter in the password field also signs in.
-- [ ] With `kRequireLogin = false` the app still opens straight on the Dashboard.
-- [ ] Temporarily set `kRequireLogin = true`: every URL redirects to `/login` until you sign in, then lands on `/dashboard`, and `/login` redirects to `/dashboard` while signed in. Set it back to `false`.
-- [ ] `flutter analyze` is clean.
+- [x] Opening `/login` shows the centered card without the sidebar, matching the wireframe.
+- [x] Empty fields then Sign in shows "Enter your email and password."; password `wrong` shows "Wrong email or password. Try again."; anything else goes to `/dashboard`. Pressing Enter in the password field also signs in.
+- [x] With `kRequireLogin = false` the app still opens straight on the Dashboard.
+- [x] Temporarily set `kRequireLogin = true`: every URL redirects to `/login` until you sign in, then lands on `/dashboard`, and `/login` redirects to `/dashboard` while signed in. Set it back to `false`.
+- [x] `flutter analyze` is clean.
