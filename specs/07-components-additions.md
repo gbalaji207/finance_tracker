@@ -91,7 +91,7 @@ Change the look of existing components beyond what is listed. Do not add dialogs
 
 ## Verify
 
-- [ ] `flutter analyze` is clean; existing pages look unchanged (badges still render the same).
-- [ ] The gallery shows the danger solid (dark red, white text) and outline buttons; the password field hides its text.
-- [ ] Both sample dialogs open centered, 440 wide at most, on a dimmed background; Esc and a click outside close them; actions wrap under the content on a narrow window.
-- [ ] The selected table row has a pale teal background.
+- [x] `flutter analyze` is clean; existing pages look unchanged (badges still render the same).
+- [x] The gallery shows the danger solid (dark red, white text) and outline buttons; the password field hides its text.
+- [x] Both sample dialogs open centered, 440 wide at most, on a dimmed background; Esc and a click outside close them; actions wrap under the content on a narrow window.
+- [x] The selected table row has a pale teal background.

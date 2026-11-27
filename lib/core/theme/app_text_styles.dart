@@ -64,4 +64,9 @@ abstract final class AppTextStyles {
       _inter(14, FontWeight.w400, color: AppColors.textPrimary);
   static final TextStyle navItemActive =
       _inter(14, FontWeight.w600, color: AppColors.primaryDark);
+  // Part 2 additions
+  static final TextStyle dialogTitle =
+      _inter(20, FontWeight.w700, color: AppColors.textPrimary);
+  static final TextStyle brandLarge =
+      _inter(22, FontWeight.w700, color: AppColors.textPrimary);
 }

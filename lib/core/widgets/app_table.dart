@@ -21,10 +21,13 @@ class AppTableColumn {
 }
 
 class AppTableRow {
-  const AppTableRow(this.cells, {this.highlight = false});
+  const AppTableRow(this.cells, {this.highlight = false, this.background});
 
   final List<Widget> cells;
   final bool highlight;
+
+  /// Paints the whole row with this color. [highlight] wins when both are set.
+  final Color? background;
 }
 
 class AppTableText extends StatelessWidget {
@@ -111,7 +114,10 @@ class AppTable extends StatelessWidget {
                 color: AppColors.pageBg,
                 borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
               )
-            : const BoxDecoration(border: Border(bottom: _border)),
+            : BoxDecoration(
+                color: row.background,
+                border: const Border(bottom: _border),
+              ),
         child: _cellRow(row.cells),
       );
 

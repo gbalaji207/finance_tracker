@@ -29,4 +29,10 @@ abstract final class AppColors {
   // Chart
   static const chartIncome = primary;
   static const chartExpense = Color(0xFFE8B04A);
+  // Part 2 additions
+  static const danger = Color(0xFF7A271A); // delete buttons and text
+  static const neutralBg = Color(0xFFE9E9E3); // "Archived" badge
+  static const neutralFg = Color(0xFF4A5057);
+  static const rowSelected = Color(0xFFEAF4F1); // selected table row
+  static const scrim = Color(0xFF1F2328); // dialog barrier, used at 35% opacity
 }

@@ -3,7 +3,10 @@ import 'package:finance_tracker/core/theme/app_colors.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
 import 'package:finance_tracker/core/widgets/amount_text.dart';
+import 'package:finance_tracker/core/widgets/app_badge.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
+import 'package:finance_tracker/core/widgets/app_dialog.dart';
+import 'package:finance_tracker/core/widgets/info_box.dart';
 import 'package:finance_tracker/core/widgets/app_card.dart';
 import 'package:finance_tracker/core/widgets/app_table.dart';
 import 'package:finance_tracker/core/widgets/category_bar_row.dart';
@@ -264,6 +267,155 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                         ),
                       ],
                     ),
+                  ),
+                ]),
+                Text('Part 2 additions', style: AppTextStyles.pageTitle),
+                _section('Buttons (all variants)', [
+                  Wrap(
+                    spacing: AppSpacing.s12,
+                    runSpacing: AppSpacing.s12,
+                    children: [
+                      AppButton(label: 'Primary', onPressed: _notWired),
+                      AppButton(
+                        label: 'Secondary',
+                        variant: AppButtonVariant.secondary,
+                        onPressed: _notWired,
+                      ),
+                      AppButton(
+                        label: 'Danger',
+                        variant: AppButtonVariant.danger,
+                        onPressed: _notWired,
+                      ),
+                      AppButton(
+                        label: 'Danger outline',
+                        variant: AppButtonVariant.dangerOutline,
+                        onPressed: _notWired,
+                      ),
+                    ],
+                  ),
+                ]),
+                _section('Password field', [
+                  const AppTextField(
+                    label: 'Password',
+                    hintText: 'Your password',
+                    obscureText: true,
+                  ),
+                ]),
+                _section('Badges', [
+                  const Wrap(
+                    spacing: AppSpacing.s8,
+                    children: [
+                      AppBadge(
+                        text: 'Active',
+                        background: AppColors.incomeBg,
+                        foreground: AppColors.income,
+                      ),
+                      AppBadge(
+                        text: 'Archived',
+                        background: AppColors.neutralBg,
+                        foreground: AppColors.neutralFg,
+                      ),
+                    ],
+                  ),
+                ]),
+                _section('Info boxes', [
+                  for (final bordered in [false, true])
+                    InfoBox(
+                      bordered: bordered,
+                      child: const Column(
+                        spacing: AppSpacing.s8,
+                        children: [
+                          KeyValueRow(label: 'Opening balance', value: '₹50,000'),
+                          KeyValueRow(label: 'Closing balance', value: '₹1,32,400'),
+                        ],
+                      ),
+                    ),
+                ]),
+                _section('Selected table row', [
+                  AppCard(
+                    child: AppTable(
+                      minWidth: 360,
+                      columns: const [
+                        AppTableColumn('Name'),
+                        AppTableColumn('Status', width: 100),
+                      ],
+                      rows: const [
+                        AppTableRow([
+                          AppTableText('Salary'),
+                          AppTableText('Active', secondary: true),
+                        ]),
+                        AppTableRow(
+                          [
+                            AppTableText('Side hustle', bold: true),
+                            AppTableText('Selected', secondary: true),
+                          ],
+                          background: AppColors.rowSelected,
+                        ),
+                        AppTableRow([
+                          AppTableText('VR'),
+                          AppTableText('Active', secondary: true),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ]),
+                _section('Dialogs', [
+                  Wrap(
+                    spacing: AppSpacing.s12,
+                    runSpacing: AppSpacing.s12,
+                    children: [
+                      AppButton(
+                        label: 'Open sample dialog',
+                        variant: AppButtonVariant.secondary,
+                        onPressed: () => showAppDialog<void>(
+                          context,
+                          (dialogContext) => AppDialog(
+                            title: 'Sample dialog',
+                            content: Text(
+                              'This is the standard dialog shell.',
+                              style: AppTextStyles.body,
+                            ),
+                            actions: [
+                              AppButton(
+                                label: 'Cancel',
+                                variant: AppButtonVariant.secondary,
+                                onPressed: () => Navigator.of(dialogContext).pop(),
+                              ),
+                              AppButton(
+                                label: 'Save',
+                                onPressed: () => Navigator.of(dialogContext).pop(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      AppButton(
+                        label: 'Open destructive dialog',
+                        variant: AppButtonVariant.dangerOutline,
+                        onPressed: () => showAppDialog<void>(
+                          context,
+                          (dialogContext) => AppDialog(
+                            title: 'Delete this entry?',
+                            content: Text(
+                              'This cannot be undone.',
+                              style: AppTextStyles.body,
+                            ),
+                            actions: [
+                              AppButton(
+                                label: 'Cancel',
+                                variant: AppButtonVariant.secondary,
+                                onPressed: () => Navigator.of(dialogContext).pop(),
+                              ),
+                              AppButton(
+                                label: 'Delete',
+                                variant: AppButtonVariant.danger,
+                                onPressed: () => Navigator.of(dialogContext).pop(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ]),
               ],

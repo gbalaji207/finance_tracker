@@ -11,6 +11,10 @@ class AppTextField extends StatelessWidget {
     this.controller,
     this.keyboardType,
     this.onChanged,
+    this.obscureText = false,
+    this.textInputAction,
+    this.onSubmitted,
+    this.autofillHints,
   });
 
   final String? label;
@@ -19,6 +23,10 @@ class AppTextField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onChanged;
+  final bool obscureText;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onSubmitted;
+  final Iterable<String>? autofillHints;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +37,10 @@ class AppTextField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboardType,
         onChanged: onChanged,
+        obscureText: obscureText,
+        textInputAction: textInputAction,
+        onSubmitted: onSubmitted,
+        autofillHints: autofillHints,
         style: AppTextStyles.body,
         textAlignVertical: TextAlignVertical.center,
         decoration: FieldFrame.decoration(hintText: hintText),
