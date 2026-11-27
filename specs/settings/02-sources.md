@@ -60,7 +60,7 @@ Persist anything or validate the form.
 
 ## Verify
 
-- [ ] The table shows the five rows above; the archived row has a grey badge and a "Restore" link.
-- [ ] Clicking Archive on "VR" turns its badge grey and the link to "Restore" (and back); reloading the page resets it.
-- [ ] "Edit" and "Save source" show the SnackBar. The form's Kind defaults to Rental.
-- [ ] The categories and account placeholders are still there. `flutter analyze` is clean.
+- [x] The table shows the five rows above; the archived row has a grey badge and a "Restore" link.
+- [x] Clicking Archive on "VR" turns its badge grey and the link to "Restore" (and back); reloading the page resets it.
+- [x] "Edit" and "Save source" show the SnackBar. The form's Kind defaults to Rental.
+- [x] The categories and account placeholders are still there. `flutter analyze` is clean.

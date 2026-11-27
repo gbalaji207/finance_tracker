@@ -41,5 +41,5 @@ Build any of the sections.
 
 ## Verify
 
-- [ ] `/settings` shows the header "Settings" with the subtitle above and four placeholder areas (two side-by-side pairs, then one full-width), stacking when narrow.
-- [ ] The sidebar highlights Settings. `flutter analyze` is clean.
+- [x] `/settings` shows the header "Settings" with the subtitle above and four placeholder areas (two side-by-side pairs, then one full-width), stacking when narrow.
+- [x] The sidebar highlights Settings. `flutter analyze` is clean.

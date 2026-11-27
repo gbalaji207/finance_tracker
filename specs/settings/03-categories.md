@@ -60,6 +60,6 @@ Persist anything or let the kind dropdown offer Income.
 
 ## Verify
 
-- [ ] Seven rows as above with colored kind badges; Edit and Archive show the SnackBar.
-- [ ] The form has Name and Kind (three options) and a Save category button.
-- [ ] Only the Account placeholder remains on the page. `flutter analyze` is clean.
+- [x] Seven rows as above with colored kind badges; Edit and Archive show the SnackBar.
+- [x] The form has Name and Kind (three options) and a Save category button.
+- [x] Only the Account placeholder remains on the page. `flutter analyze` is clean.

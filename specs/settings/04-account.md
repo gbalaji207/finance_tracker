@@ -30,6 +30,6 @@ In the page:
 
 ## Verify
 
-- [ ] The card shows the title, the email line and two outlined buttons; the buttons wrap under the text on a narrow window.
-- [ ] "Change password" shows the SnackBar; "Sign out" goes to `/login`; signing in again goes back to the Dashboard.
-- [ ] No placeholder boxes remain on Settings; the page matches the wireframe. `flutter analyze` is clean.
+- [x] The card shows the title, the email line and two outlined buttons; the buttons wrap under the text on a narrow window.
+- [x] "Change password" shows the SnackBar; "Sign out" goes to `/login`; signing in again goes back to the Dashboard.
+- [x] No placeholder boxes remain on Settings; the page matches the wireframe. `flutter analyze` is clean.
