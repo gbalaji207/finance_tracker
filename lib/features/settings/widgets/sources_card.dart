@@ -36,13 +36,14 @@ class SourcesCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.s8),
           AppTable(
-            minWidth: 560,
+            minWidth: 700,
             columns: const [
-              AppTableColumn('Name', flex: 1.2),
-              AppTableColumn('Kind', width: 100),
+              AppTableColumn('Name', flex: 1.1),
+              AppTableColumn('Kind', width: 96),
+              AppTableColumn('Bank account', width: 120),
               AppTableColumn(
                 'Opening balance',
-                width: 130,
+                width: 120,
                 align: TextAlign.right,
               ),
               AppTableColumn('Status', width: 96),
@@ -53,6 +54,7 @@ class SourcesCard extends StatelessWidget {
                 AppTableRow([
                   AppTableText(s.name, bold: true),
                   AppTableText(s.kind, secondary: true),
+                  AppTableText(s.bankAccountName ?? '—'),
                   AppTableText(Money.plain(s.openingBalance)),
                   s.isActive
                       ? const AppBadge(

@@ -44,7 +44,7 @@ Let the dialog create accounts (that is Settings).
 
 ## Verify (sample mode)
 
-- [ ] "Update" on the HDFC Salary row opens the dialog with the account preselected, `75600`, `26 Nov 2026`, `Sum of this account's sources ₹75,600` and `₹0 · Matches`.
-- [ ] Switching the dropdown to SBI Rentals changes the amount to `56800` and the sum to `₹56,800`; typing `56000` shows `Off by ₹800`; clearing the field disables Save.
-- [ ] Saving `56000` for SBI Rentals closes the dialog; the SBI row reads `Off by ₹800`, HDFC still matches, the top pill reads `Off by ₹800 in 1 account`. Reload resets it.
-- [ ] Cancel and Esc change nothing. `flutter analyze` and `flutter test` pass.
+- [x] "Update" on the HDFC Salary row opens the dialog with the account preselected, `75600`, `26 Nov 2026`, `Sum of this account's sources ₹75,600` and `₹0 · Matches`.
+- [x] Switching the dropdown to SBI Rentals changes the amount to `56800` and the sum to `₹56,800`; typing `56000` shows `Off by ₹800`; clearing the field disables Save.
+- [x] Saving `56000` for SBI Rentals closes the dialog; the SBI row reads `Off by ₹800`, HDFC still matches, the top pill reads `Off by ₹800 in 1 account`. Reload resets it.
+- [x] Cancel and Esc change nothing. `flutter analyze` and `flutter test` pass.

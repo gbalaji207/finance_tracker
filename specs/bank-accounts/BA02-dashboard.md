@@ -60,8 +60,8 @@ Change the dialog (BA03) or the Settings page.
 
 ## Verify (sample mode)
 
-- [ ] The strip shows `Sum of source balances ₹1,32,400`, `Bank balances, all accounts ₹1,32,400` and the green pill `Matches · difference ₹0`. Below it `Bank accounts (2)` is expanded with two rows: HDFC Salary ₹75,600 / ₹75,600 · 26 Nov / `Matches · ₹0` / Update, and SBI Rentals ₹56,800 / ₹56,800 · 26 Nov / `Matches · ₹0` / Update.
-- [ ] Clicking `Bank accounts (2)` collapses and expands the list; the totals row stays.
-- [ ] Salary and Side hustle cards show "HDFC Salary" under their names; Aqua 105 and VR show "SBI Rentals".
-- [ ] "Update" on the SBI Rentals row opens the dialog (still the old design, showing ₹56,800 and `₹56,800`); saving `56400` changes only that row to `Off by ₹400`, the top pill to `Off by ₹400 in 1 account` and the bank total to ₹1,32,000. Reload resets it.
-- [ ] The strip looks right at about 900px wide (the list scrolls sideways rather than overflowing). `flutter analyze` and `flutter test` pass.
+- [x] The strip shows `Sum of source balances ₹1,32,400`, `Bank balances, all accounts ₹1,32,400` and the green pill `Matches · difference ₹0`. Below it `Bank accounts (2)` is expanded with two rows: HDFC Salary ₹75,600 / ₹75,600 · 26 Nov / `Matches · ₹0` / Update, and SBI Rentals ₹56,800 / ₹56,800 · 26 Nov / `Matches · ₹0` / Update.
+- [x] Clicking `Bank accounts (2)` collapses and expands the list; the totals row stays.
+- [x] Salary and Side hustle cards show "HDFC Salary" under their names; Aqua 105 and VR show "SBI Rentals".
+- [x] "Update" on the SBI Rentals row opens the dialog (still the old design, showing ₹56,800 and `₹56,800`); saving `56400` changes only that row to `Off by ₹400`, the top pill to `Off by ₹400 in 1 account` and the bank total to ₹1,32,000. Reload resets it.
+- [x] The strip looks right at about 900px wide (the list scrolls sideways rather than overflowing). `flutter analyze` and `flutter test` pass.

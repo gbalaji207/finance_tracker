@@ -97,6 +97,6 @@ Change layouts beyond the minimal Dashboard adaptation.
 
 ## Verify
 
-- [ ] `flutter analyze` is clean and `flutter test` passes.
-- [ ] Sample mode: the Dashboard still loads; the strip shows ₹1,32,400 and ₹1,32,400 with the green "Matches" pill; "Update bank balance" still opens the dialog (for HDFC Salary, so it shows 75600).
-- [ ] Every other page behaves as before.
+- [x] `flutter analyze` is clean and `flutter test` passes.
+- [x] Sample mode: the Dashboard still loads; the strip shows ₹1,32,400 and ₹1,32,400 with the green "Matches" pill; "Update bank balance" still opens the dialog (for HDFC Salary, so it shows 75600).
+- [x] Every other page behaves as before.

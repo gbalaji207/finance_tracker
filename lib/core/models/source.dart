@@ -8,6 +8,8 @@ class Source extends Equatable {
     required this.openingBalance,
     this.isActive = true,
     this.openingDate,
+    this.bankAccountId,
+    this.bankAccountName,
   });
 
   final String id;
@@ -21,13 +23,23 @@ class Source extends Equatable {
   /// Entries before this date are not counted. Null in sample data.
   final DateTime? openingDate;
 
-  Source copyWith({bool? isActive}) => Source(
+  /// The bank account this source's money is kept in.
+  final String? bankAccountId;
+  final String? bankAccountName;
+
+  Source copyWith({
+    bool? isActive,
+    String? bankAccountId,
+    String? bankAccountName,
+  }) => Source(
     id: id,
     name: name,
     kind: kind,
     openingBalance: openingBalance,
     isActive: isActive ?? this.isActive,
     openingDate: openingDate,
+    bankAccountId: bankAccountId ?? this.bankAccountId,
+    bankAccountName: bankAccountName ?? this.bankAccountName,
   );
 
   @override
@@ -38,5 +50,7 @@ class Source extends Equatable {
     openingBalance,
     isActive,
     openingDate,
+    bankAccountId,
+    bankAccountName,
   ];
 }

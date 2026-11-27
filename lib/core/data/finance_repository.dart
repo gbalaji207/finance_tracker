@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/models/bank_account.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_input.dart';
@@ -30,6 +31,17 @@ abstract interface class FinanceRepository {
 
   /// Current closing balance of a source.
   Future<double> sourceBalance(String sourceId);
+
+  /// Active bank accounts only: for forms.
+  Future<List<BankAccount>> bankAccounts();
+
+  /// Active and archived bank accounts.
+  Future<List<BankAccount>> allBankAccounts();
+
+  /// Every bank account with its number of active sources (Settings).
+  Future<List<BankAccountUsage>> bankAccountUsage();
+
+  /// One entry per bank account.
   Future<BankReconciliation> reconciliation();
   Future<List<SourceSummary>> sourceSummaries(DateTime month);
   Future<List<Transaction>> recentTransactions();
@@ -55,8 +67,15 @@ abstract interface class FinanceRepository {
   /// Creates all entries in one request; nothing is created if it fails.
   Future<void> addEntries(List<EntryInput> inputs);
 
-  /// One balance per date; saving again for the same date replaces it.
-  Future<void> setBankBalance(double balance, DateTime asOf);
+  /// One balance per account and date; saving again for the same account
+  /// and date replaces it.
+  Future<void> setBankBalance(
+    String bankAccountId,
+    double balance,
+    DateTime asOf,
+  );
+  Future<void> addBankAccount(String name);
+  Future<void> setBankAccountActive(String id, bool active);
   Future<void> addSource(SourceInput input);
   Future<void> setSourceActive(String id, bool active);
   Future<void> addCategory(CategoryInput input);

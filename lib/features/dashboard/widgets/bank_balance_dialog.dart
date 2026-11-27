@@ -1,30 +1,32 @@
+import 'package:finance_tracker/core/data/app_clock.dart';
+import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
+import 'package:finance_tracker/core/utils/entry_validation.dart';
 import 'package:finance_tracker/core/utils/money.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/app_date_field.dart';
 import 'package:finance_tracker/core/widgets/app_dialog.dart';
+import 'package:finance_tracker/core/widgets/app_dropdown.dart';
 import 'package:finance_tracker/core/widgets/app_text_field.dart';
 import 'package:finance_tracker/core/widgets/info_box.dart';
 import 'package:finance_tracker/core/widgets/status_pill.dart';
 import 'package:flutter/material.dart';
 
-typedef BankBalanceResult = ({double balance, DateTime asOf});
+typedef BankBalanceResult = ({String accountId, double balance, DateTime asOf});
 
-/// Asks for a new bank balance. Completes with the entered values on Save and
-/// with null when cancelled or dismissed.
+/// Asks which bank account and what balance. Completes with the entered
+/// values on Save and with null when cancelled or dismissed.
 Future<BankBalanceResult?> showBankBalanceDialog(
   BuildContext context, {
-  required double sourcesTotal,
-  required double currentBankBalance,
-  required DateTime asOf,
+  required List<BankAccountReconciliation> accounts,
+  required String initialAccountId,
 }) {
   return showAppDialog<BankBalanceResult>(
     context,
     (_) => BankBalanceDialog(
-      sourcesTotal: sourcesTotal,
-      currentBankBalance: currentBankBalance,
-      asOf: asOf,
+      accounts: accounts,
+      initialAccountId: initialAccountId,
     ),
   );
 }
@@ -32,30 +34,31 @@ Future<BankBalanceResult?> showBankBalanceDialog(
 class BankBalanceDialog extends StatefulWidget {
   const BankBalanceDialog({
     super.key,
-    required this.sourcesTotal,
-    required this.currentBankBalance,
-    required this.asOf,
+    required this.accounts,
+    required this.initialAccountId,
   });
 
-  final double sourcesTotal;
-  final double currentBankBalance;
-  final DateTime asOf;
+  /// The accounts to choose from.
+  final List<BankAccountReconciliation> accounts;
+  final String initialAccountId;
 
   @override
   State<BankBalanceDialog> createState() => _BankBalanceDialogState();
 }
 
 class _BankBalanceDialogState extends State<BankBalanceDialog> {
-  late final TextEditingController _amount;
+  final _amount = TextEditingController();
+  late String _accountId;
   late DateTime _asOf;
+
+  BankAccountReconciliation get _selected =>
+      widget.accounts.firstWhere((a) => a.account.id == _accountId);
 
   @override
   void initState() {
     super.initState();
-    _amount = TextEditingController(
-      text: widget.currentBankBalance.toStringAsFixed(0),
-    );
-    _asOf = widget.asOf;
+    _accountId = widget.initialAccountId;
+    _fillFromAccount();
   }
 
   @override
@@ -64,13 +67,17 @@ class _BankBalanceDialogState extends State<BankBalanceDialog> {
     super.dispose();
   }
 
-  /// Removes commas and spaces, then parses; null when empty or invalid.
-  double? get _typed =>
-      double.tryParse(_amount.text.replaceAll(RegExp(r'[,\s]'), ''));
+  /// Sets the amount and the date to the selected account's current values.
+  void _fillFromAccount() {
+    final row = _selected;
+    _amount.text = row.bankBalance?.toStringAsFixed(0) ?? '';
+    _asOf = row.asOf ?? appToday();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final typed = _typed;
+    final selected = _selected;
+    final typed = parseAmount(_amount.text);
     return AppDialog(
       title: 'Update bank balance',
       content: Column(
@@ -78,9 +85,25 @@ class _BankBalanceDialogState extends State<BankBalanceDialog> {
         spacing: AppSpacing.s16,
         children: [
           Text(
-            'Enter the balance shown in your bank statement. The dashboard '
-            'compares it with the sum of your source balances.',
+            'Choose the bank account and enter the balance shown in its '
+            'statement. The dashboard compares it with the sum of that '
+            "account's source balances.",
             style: AppTextStyles.bodySecondary,
+          ),
+          AppDropdown<String>(
+            label: 'Bank account',
+            value: _accountId,
+            items: [
+              for (final a in widget.accounts)
+                AppDropdownItem(a.account.id, a.account.name),
+            ],
+            onChanged: (id) {
+              if (id == null || id == _accountId) return;
+              setState(() {
+                _accountId = id;
+                _fillFromAccount();
+              });
+            },
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,12 +139,12 @@ class _BankBalanceDialogState extends State<BankBalanceDialog> {
                   children: [
                     Flexible(
                       child: Text(
-                        'Sum of source balances',
+                        "Sum of this account's sources",
                         style: AppTextStyles.rowLabel,
                       ),
                     ),
                     Text(
-                      Money.plain(widget.sourcesTotal),
+                      Money.plain(selected.sourcesTotal),
                       style: AppTextStyles.rowValue,
                     ),
                   ],
@@ -133,12 +156,12 @@ class _BankBalanceDialogState extends State<BankBalanceDialog> {
                     Text('Difference', style: AppTextStyles.rowLabel),
                     if (typed == null)
                       Text('—', style: AppTextStyles.rowValue)
-                    else if (typed == widget.sourcesTotal)
+                    else if ((selected.sourcesTotal - typed).abs() < 0.005)
                       const StatusPill(text: '₹0 · Matches')
                     else
                       StatusPill(
                         text:
-                            'Off by ${Money.plain((widget.sourcesTotal - typed).abs())}',
+                            'Off by ${Money.plain((selected.sourcesTotal - typed).abs())}',
                         tone: StatusTone.warning,
                       ),
                   ],
@@ -160,9 +183,11 @@ class _BankBalanceDialogState extends State<BankBalanceDialog> {
           size: AppButtonSize.large,
           onPressed: typed == null
               ? null
-              : () => Navigator.of(
-                  context,
-                ).pop<BankBalanceResult>((balance: typed, asOf: _asOf)),
+              : () => Navigator.of(context).pop<BankBalanceResult>((
+                  accountId: _accountId,
+                  balance: typed,
+                  asOf: _asOf,
+                )),
         ),
       ],
     );

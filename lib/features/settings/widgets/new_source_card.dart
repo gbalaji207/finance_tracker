@@ -1,5 +1,6 @@
 import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/data/app_clock.dart';
+import 'package:finance_tracker/core/models/bank_account.dart';
 import 'package:finance_tracker/core/models/source_input.dart';
 import 'package:finance_tracker/core/theme/app_colors.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
@@ -13,7 +14,14 @@ import 'package:finance_tracker/core/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 
 class NewSourceCard extends StatefulWidget {
-  const NewSourceCard({super.key, required this.onSave});
+  const NewSourceCard({
+    super.key,
+    required this.bankAccounts,
+    required this.onSave,
+  });
+
+  /// Active bank accounts only.
+  final List<BankAccount> bankAccounts;
 
   /// Saves the source. Resolves to an error message, or null on success.
   final Future<String?> Function(SourceInput input) onSave;
@@ -28,9 +36,19 @@ class _NewSourceCardState extends State<NewSourceCard> {
   final _name = TextEditingController();
   final _opening = TextEditingController();
   String _kind = 'Rental';
+  String? _bankAccountId;
   DateTime _openingDate = appToday();
   bool _saving = false;
   String? _error;
+
+  /// The chosen account, or the first one while none is chosen (or the chosen
+  /// one is no longer offered).
+  String? get _accountId {
+    final accounts = widget.bankAccounts;
+    if (accounts.isEmpty) return null;
+    if (accounts.any((a) => a.id == _bankAccountId)) return _bankAccountId;
+    return accounts.first.id;
+  }
 
   @override
   void dispose() {
@@ -46,6 +64,11 @@ class _NewSourceCardState extends State<NewSourceCard> {
   Future<void> _save() async {
     if (_name.text.trim().isEmpty) {
       setState(() => _error = 'Enter a name.');
+      return;
+    }
+    final accountId = _accountId;
+    if (accountId == null) {
+      setState(() => _error = 'Add a bank account first.');
       return;
     }
     // An empty opening balance means 0.
@@ -64,6 +87,7 @@ class _NewSourceCardState extends State<NewSourceCard> {
         kind: _kind,
         openingBalance: opening,
         openingDate: _openingDate,
+        bankAccountId: accountId,
       ),
     );
     if (!mounted) return;
@@ -77,6 +101,7 @@ class _NewSourceCardState extends State<NewSourceCard> {
     _opening.clear();
     setState(() {
       _kind = 'Rental';
+      _bankAccountId = null;
       _openingDate = appToday();
       _error = null;
     });
@@ -84,6 +109,7 @@ class _NewSourceCardState extends State<NewSourceCard> {
 
   @override
   Widget build(BuildContext context) {
+    final accounts = widget.bankAccounts;
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -103,6 +129,22 @@ class _NewSourceCardState extends State<NewSourceCard> {
             onChanged: (v) {
               if (v != null) setState(() => _kind = v);
             },
+          ),
+          AppDropdown<String>(
+            label: 'Bank account',
+            helperText: "The account where this source's money is kept.",
+            value: _accountId,
+            items: [for (final a in accounts) AppDropdownItem(a.id, a.name)],
+            onChanged: accounts.isEmpty
+                ? null
+                : (v) {
+                    if (v != null) {
+                      setState(() {
+                        _bankAccountId = v;
+                        _error = null;
+                      });
+                    }
+                  },
           ),
           AppTextField(
             label: 'Opening balance (₹)',

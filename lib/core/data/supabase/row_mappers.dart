@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/models/bank_account.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
@@ -22,6 +23,9 @@ Source sourceFromRow(Map<String, dynamic> r) => Source(
   openingDate: r['opening_date'] == null
       ? null
       : DateTime.parse(r['opening_date'] as String),
+  bankAccountId: r['bank_account_id'] as String?,
+  // Present when the query embeds the account: select('*, bank_accounts(name)').
+  bankAccountName: (r['bank_accounts'] as Map?)?['name'] as String?,
 );
 
 Category categoryFromRow(Map<String, dynamic> r) => Category(
@@ -69,6 +73,8 @@ SourceSummary sourceSummaryFromRow(Map<String, dynamic> r) => SourceSummary(
     kind: r['kind'] as String,
     openingBalance: toDouble(r['opening_balance']),
     isActive: r['is_active'] as bool,
+    bankAccountId: r['bank_account_id'] as String?,
+    bankAccountName: r['bank_account_name'] as String?,
   ),
   monthOpening: toDouble(r['month_opening']),
   income: toDouble(r['income']),
@@ -79,19 +85,39 @@ SourceSummary sourceSummaryFromRow(Map<String, dynamic> r) => SourceSummary(
   investedSavedToDate: toDouble(r['invested_saved_to_date']),
 );
 
-BankReconciliation reconciliationFromRow(Map<String, dynamic> r) =>
-    BankReconciliation(
-      sourcesTotal: toDouble(r['sources_total']),
-      bankBalance: r['bank_balance'] == null
-          ? null
-          : toDouble(r['bank_balance']),
-      asOf: r['as_of'] == null ? null : DateTime.parse(r['as_of'] as String),
-    );
-
 SourceMonthRow sourceMonthRowFromRow(Map<String, dynamic> r) => SourceMonthRow(
   month: DateTime.parse(r['month'] as String),
   income: toDouble(r['income']),
   expense: toDouble(r['expense']),
   investedSaved: toDouble(r['invested_saved']),
   closing: toDouble(r['closing']),
+);
+
+BankAccount bankAccountFromRow(Map<String, dynamic> r) => BankAccount(
+  id: r['id'] as String,
+  name: r['name'] as String,
+  isActive: r['is_active'] as bool,
+);
+
+BankAccountUsage bankAccountUsageFromRow(Map<String, dynamic> r) =>
+    BankAccountUsage(
+      account: BankAccount(
+        id: r['bank_account_id'] as String,
+        name: r['name'] as String,
+        isActive: r['is_active'] as bool,
+      ),
+      activeSourceCount: _toInt(r['active_source_count']),
+    );
+
+BankAccountReconciliation bankAccountReconciliationFromRow(
+  Map<String, dynamic> r,
+) => BankAccountReconciliation(
+  account: BankAccount(
+    id: r['bank_account_id'] as String,
+    name: r['name'] as String,
+    isActive: r['is_active'] as bool,
+  ),
+  sourcesTotal: toDouble(r['sources_total']),
+  bankBalance: r['bank_balance'] == null ? null : toDouble(r['bank_balance']),
+  asOf: r['as_of'] == null ? null : DateTime.parse(r['as_of'] as String),
 );

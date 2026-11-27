@@ -20,7 +20,7 @@ void main() {
     final rec = await repo.reconciliation();
     expect(total, 132400);
     expect(total, rec.sourcesTotal);
-    expect(rec.difference, 0);
+    expect(rec.allMatch, isTrue);
   });
 
   test('monthly report totals', () async {
@@ -84,5 +84,60 @@ void main() {
   test('sourceBalance', () async {
     expect(await repo.sourceBalance('salary'), 53200);
     expect(await repo.sourceBalance('old-freelance'), 0);
+  });
+
+  group('bank accounts', () {
+    test('there are two active accounts', () async {
+      final fresh = MockFinanceRepository();
+      expect((await fresh.bankAccounts()).map((a) => a.name), [
+        'HDFC Salary',
+        'SBI Rentals',
+      ]);
+      final usage = await fresh.bankAccountUsage();
+      expect(usage.map((u) => u.activeSourceCount), [2, 2]);
+    });
+
+    test('the reconciliation lists each account', () async {
+      final rec = await MockFinanceRepository().reconciliation();
+      expect(rec.accounts, hasLength(2));
+      expect(rec.accounts[0].account.name, 'HDFC Salary');
+      expect(rec.accounts[0].sourcesTotal, 75600);
+      expect(rec.accounts[0].bankBalance, 75600);
+      expect(rec.accounts[1].account.name, 'SBI Rentals');
+      expect(rec.accounts[1].sourcesTotal, 56800);
+      expect(rec.accounts[1].bankBalance, 56800);
+      expect(rec.sourcesTotal, 132400);
+    });
+
+    test('setBankBalance changes one account only', () async {
+      final fresh = MockFinanceRepository();
+      await fresh.setBankBalance('hdfc-salary', 75200, DateTime(2026, 11, 27));
+      final rec = await fresh.reconciliation();
+      expect(rec.accounts[0].difference, 400);
+      expect(rec.accounts[1].matches, isTrue);
+    });
+
+    test(
+      'an archived account with money stays in the reconciliation',
+      () async {
+        final fresh = MockFinanceRepository();
+        await fresh.setBankAccountActive('sbi-rentals', false);
+        expect(await fresh.bankAccounts(), hasLength(1));
+        final rec = await fresh.reconciliation();
+        expect(
+          rec.accounts.map((a) => a.account.name),
+          contains('SBI Rentals'),
+        );
+      },
+    );
+
+    test('sources carry their account', () async {
+      final sources = await MockFinanceRepository().allSources();
+      final byName = {for (final s in sources) s.name: s.bankAccountName};
+      expect(byName['Salary'], 'HDFC Salary');
+      expect(byName['Old freelance'], 'HDFC Salary');
+      expect(byName['Aqua 105'], 'SBI Rentals');
+      expect(byName['VR'], 'SBI Rentals');
+    });
   });
 }

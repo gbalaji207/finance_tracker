@@ -65,8 +65,8 @@ Edit an account or a source's account; add an account filter anywhere else.
 
 ## Verify (sample mode)
 
-- [ ] Settings shows Bank accounts first (two rows as above), the sources table with the new column, and the new-source form with a Bank account dropdown (HDFC Salary selected).
-- [ ] Add bank account "Test account": it appears with 0 active sources, Active. On the Dashboard strip it appears as a third row (`Sources ₹0`, `Not set`) and the top pill adds `Balance not set for 1 account`.
-- [ ] Add a source "Test source" under "Test account" with opening balance 1000: the Dashboard row for Test account shows `₹1,000`. Setting its bank balance to 1000 (BA03 dialog) makes it match.
-- [ ] Archive "HDFC Salary": blocked with the message "This account still has active sources. Archive them first." Archive "Test account" after archiving its source is allowed; the badge turns grey and the link becomes "Restore".
-- [ ] Archived accounts no longer appear in the new-source dropdown. Reload resets everything. `flutter analyze` and `flutter test` pass.
+- [x] Settings shows Bank accounts first (two rows as above), the sources table with the new column, and the new-source form with a Bank account dropdown (HDFC Salary selected).
+- [x] Add bank account "Test account": it appears with 0 active sources, Active. On the Dashboard strip it appears as a third row (`Sources ₹0`, `Not set`) and the top pill adds `Balance not set for 1 account`.
+- [x] Add a source "Test source" under "Test account" with opening balance 1000: the Dashboard row for Test account shows `₹1,000`. Setting its bank balance to 1000 (BA03 dialog) makes it match.
+- [x] Archive "HDFC Salary": blocked with the message "This account still has active sources. Archive them first." Archive "Test account" after archiving its source is allowed; the badge turns grey and the link becomes "Restore".
+- [x] Archived accounts no longer appear in the new-source dropdown. Reload resets everything. `flutter analyze` and `flutter test` pass.

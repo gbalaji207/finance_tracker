@@ -14,11 +14,15 @@ class SourceBalanceCard extends StatelessWidget {
     required this.summary,
     this.balanceLabel = 'Balance as on today',
     this.monthLabel = 'This month',
+    this.bankAccountName,
   });
 
   final SourceSummary summary;
   final String balanceLabel;
   final String monthLabel;
+
+  /// The bank account the source belongs to, shown under its name.
+  final String? bankAccountName;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +36,13 @@ class SourceBalanceCard extends StatelessWidget {
             spacing: AppSpacing.s8,
             children: [
               Flexible(
-                child: Text(
-                  summary.source.name,
-                  style: AppTextStyles.cardTitle,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(summary.source.name, style: AppTextStyles.cardTitle),
+                    if (bankAccountName != null)
+                      Text(bankAccountName!, style: AppTextStyles.caption),
+                  ],
                 ),
               ),
               Text(summary.source.kind, style: AppTextStyles.caption),

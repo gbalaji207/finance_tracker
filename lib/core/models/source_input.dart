@@ -7,6 +7,7 @@ class SourceInput extends Equatable {
     required this.kind,
     required this.openingBalance,
     required this.openingDate,
+    required this.bankAccountId,
   });
 
   final String name;
@@ -18,6 +19,15 @@ class SourceInput extends Equatable {
   /// Entries before this date are not counted.
   final DateTime openingDate;
 
+  /// The bank account the source's money is kept in.
+  final String bankAccountId;
+
   @override
-  List<Object?> get props => [name, kind, openingBalance, openingDate];
+  List<Object?> get props => [
+    name,
+    kind,
+    openingBalance,
+    openingDate,
+    bankAccountId,
+  ];
 }

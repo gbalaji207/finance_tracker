@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/widgets/app_snack.dart';
 import 'package:finance_tracker/core/widgets/empty_note.dart';
 import 'package:finance_tracker/core/widgets/error_view.dart';
@@ -39,18 +40,30 @@ class _DashboardView extends StatelessWidget {
   const _DashboardView();
 
   /// Opens the dialog with the current values; a result updates the strip.
-  Future<void> _updateBankBalance(BuildContext context) async {
+  Future<void> _updateBankBalance(
+    BuildContext context,
+    BankAccountReconciliation row,
+  ) async {
     final cubit = context.read<DashboardCubit>();
-    final current = cubit.state.reconciliation;
-    if (current == null) return;
+    // The active accounts, plus the tapped row in case it is archived.
+    final all =
+        cubit.state.reconciliation?.accounts ??
+        const <BankAccountReconciliation>[];
+    final accounts = [
+      for (final a in all)
+        if (a.account.isActive || a.account.id == row.account.id) a,
+    ];
     final result = await showBankBalanceDialog(
       context,
-      sourcesTotal: current.sourcesTotal,
-      currentBankBalance: current.bankBalance ?? current.sourcesTotal,
-      asOf: current.asOf ?? appToday(),
+      accounts: accounts,
+      initialAccountId: row.account.id,
     );
     if (result == null) return;
-    final error = await cubit.updateBankBalance(result.balance, result.asOf);
+    final error = await cubit.updateBankBalance(
+      result.accountId,
+      result.balance,
+      result.asOf,
+    );
     if (!context.mounted) return;
     if (error != null) {
       AppSnack.error(context, error);
@@ -101,7 +114,7 @@ class _DashboardView extends StatelessWidget {
             ),
             ReconciliationStrip(
               data: state.reconciliation!,
-              onUpdateBankBalance: () => _updateBankBalance(context),
+              onUpdate: (row) => _updateBankBalance(context, row),
             ),
             if (state.summaries.isEmpty)
               const EmptyNote('No sources yet. Add one in Settings.')

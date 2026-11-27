@@ -27,6 +27,7 @@ class SourceCardsSection extends StatelessWidget {
             summary: s,
             balanceLabel: balanceLabel,
             monthLabel: monthLabel,
+            bankAccountName: s.source.bankAccountName,
           ),
       ],
     );

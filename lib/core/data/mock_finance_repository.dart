@@ -1,5 +1,6 @@
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/mock_clock.dart';
+import 'package:finance_tracker/core/models/bank_account.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_input.dart';
@@ -25,8 +26,12 @@ class MockFinanceRepository implements FinanceRepository {
   MockFinanceRepository();
 
   // In-memory changes made in sample mode; they reset on reload.
-  double _bankBalance = 132400;
-  DateTime _bankAsOf = mockToday;
+  final List<BankAccount> _addedAccounts = [];
+  final Map<String, bool> _accountActive = {};
+  final Map<String, ({double balance, DateTime asOf})> _bankBalances = {
+    'hdfc-salary': (balance: 75600, asOf: mockToday),
+    'sbi-rentals': (balance: 56800, asOf: mockToday),
+  };
   final Map<String, bool> _sourceActive = {};
   final Map<String, bool> _categoryActive = {};
   final List<Source> _addedSources = [];
@@ -43,6 +48,19 @@ class MockFinanceRepository implements FinanceRepository {
     isActive: _categoryActive[c.id] ?? c.isActive,
   );
 
+  static const _hdfc = BankAccount(id: 'hdfc-salary', name: 'HDFC Salary');
+  static const _sbi = BankAccount(id: 'sbi-rentals', name: 'SBI Rentals');
+
+  BankAccount _accountNow(BankAccount a) => BankAccount(
+    id: a.id,
+    name: a.name,
+    isActive: _accountActive[a.id] ?? a.isActive,
+  );
+
+  List<BankAccount> get _currentAccounts => [
+    for (final a in [_hdfc, _sbi, ..._addedAccounts]) _accountNow(a),
+  ];
+
   List<Source> get _currentSources => [
     for (final s in [..._allSources, ..._addedSources]) _sourceNow(s),
   ];
@@ -56,24 +74,32 @@ class MockFinanceRepository implements FinanceRepository {
     name: 'Salary',
     kind: 'Employment',
     openingBalance: 15000,
+    bankAccountId: 'hdfc-salary',
+    bankAccountName: 'HDFC Salary',
   );
   static const _sideHustle = Source(
     id: 'side-hustle',
     name: 'Side hustle',
     kind: 'Freelance',
     openingBalance: 6000,
+    bankAccountId: 'hdfc-salary',
+    bankAccountName: 'HDFC Salary',
   );
   static const _aqua105 = Source(
     id: 'aqua-105',
     name: 'Aqua 105',
     kind: 'Rental',
     openingBalance: 8000,
+    bankAccountId: 'sbi-rentals',
+    bankAccountName: 'SBI Rentals',
   );
   static const _vr = Source(
     id: 'vr',
     name: 'VR',
     kind: 'Rental',
     openingBalance: 4000,
+    bankAccountId: 'sbi-rentals',
+    bankAccountName: 'SBI Rentals',
   );
 
   static const _oldFreelance = Source(
@@ -82,6 +108,8 @@ class MockFinanceRepository implements FinanceRepository {
     kind: 'Freelance',
     openingBalance: 0,
     isActive: false,
+    bankAccountId: 'hdfc-salary',
+    bankAccountName: 'HDFC Salary',
   );
 
   /// Active sources only; these are the ones offered for new entries.
@@ -484,11 +512,47 @@ class MockFinanceRepository implements FinanceRepository {
   Future<List<Category>> allCategories() async => _currentCategories;
 
   @override
-  Future<BankReconciliation> reconciliation() async => BankReconciliation(
-    sourcesTotal: 132400,
-    bankBalance: _bankBalance,
-    asOf: _bankAsOf,
-  );
+  Future<List<BankAccount>> bankAccounts() async =>
+      _currentAccounts.where((a) => a.isActive).toList();
+
+  @override
+  Future<List<BankAccount>> allBankAccounts() async => _currentAccounts;
+
+  @override
+  Future<List<BankAccountUsage>> bankAccountUsage() async => [
+    for (final a in _currentAccounts)
+      BankAccountUsage(
+        account: a,
+        activeSourceCount: _currentSources
+            .where((s) => s.isActive && s.bankAccountId == a.id)
+            .length,
+      ),
+  ];
+
+  /// The sum of the closing balances of the account's sources in the mock
+  /// summaries, plus the opening balance of sources added in memory.
+  double _sourcesTotal(String accountId) {
+    var total = 0.0;
+    for (final s in _summaries) {
+      if (s.source.bankAccountId == accountId) total += s.closing;
+    }
+    for (final s in _addedSources) {
+      if (s.bankAccountId == accountId) total += s.openingBalance;
+    }
+    return total;
+  }
+
+  @override
+  Future<BankReconciliation> reconciliation() async => BankReconciliation([
+    for (final a in _currentAccounts)
+      if (a.isActive || _sourcesTotal(a.id) != 0)
+        BankAccountReconciliation(
+          account: a,
+          sourcesTotal: _sourcesTotal(a.id),
+          bankBalance: _bankBalances[a.id]?.balance,
+          asOf: _bankBalances[a.id]?.asOf,
+        ),
+  ]);
 
   @override
   Future<List<SourceSummary>> sourceSummaries(DateTime month) async =>
@@ -557,9 +621,24 @@ class MockFinanceRepository implements FinanceRepository {
   Future<void> addEntries(List<EntryInput> inputs) async {}
 
   @override
-  Future<void> setBankBalance(double balance, DateTime asOf) async {
-    _bankBalance = balance;
-    _bankAsOf = asOf;
+  Future<void> setBankBalance(
+    String bankAccountId,
+    double balance,
+    DateTime asOf,
+  ) async {
+    _bankBalances[bankAccountId] = (balance: balance, asOf: asOf);
+  }
+
+  @override
+  Future<void> addBankAccount(String name) async {
+    _addedAccounts.add(
+      BankAccount(id: 'new-${_nextNewId++}', name: name.trim()),
+    );
+  }
+
+  @override
+  Future<void> setBankAccountActive(String id, bool active) async {
+    _accountActive[id] = active;
   }
 
   @override
@@ -571,6 +650,11 @@ class MockFinanceRepository implements FinanceRepository {
         kind: input.kind,
         openingBalance: input.openingBalance,
         openingDate: input.openingDate,
+        bankAccountId: input.bankAccountId,
+        bankAccountName: _currentAccounts
+            .where((a) => a.id == input.bankAccountId)
+            .map((a) => a.name)
+            .firstOrNull,
       ),
     );
   }

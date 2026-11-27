@@ -119,18 +119,6 @@ void main() {
     expect(s.investedSavedToDate, 76000);
   });
 
-  test('reconciliationFromRow maps a missing bank balance to nulls', () {
-    final r = reconciliationFromRow({
-      'sources_total': '132400.00',
-      'bank_balance': null,
-      'as_of': null,
-    });
-    expect(r.sourcesTotal, 132400);
-    expect(r.bankBalance, isNull);
-    expect(r.asOf, isNull);
-    expect(r.difference, isNull);
-  });
-
   test('sourceMonthRowFromRow maps a source_month_rows row', () {
     final r = sourceMonthRowFromRow({
       'month': '2026-11-01',
@@ -149,5 +137,94 @@ void main() {
   test('MonthlyReport with income 0 has a savings rate of 0', () {
     const report = MonthlyReport(bySource: [], expenseByCategory: []);
     expect(report.savingsRate, 0);
+  });
+
+  test('bankAccountFromRow maps an account row', () {
+    final a = bankAccountFromRow({
+      'id': 'a1',
+      'name': 'HDFC Salary',
+      'is_active': true,
+    });
+    expect(a.id, 'a1');
+    expect(a.name, 'HDFC Salary');
+    expect(a.isActive, isTrue);
+  });
+
+  test('bankAccountUsageFromRow accepts the count as a string', () {
+    final u = bankAccountUsageFromRow({
+      'bank_account_id': 'a1',
+      'name': 'SBI Rentals',
+      'is_active': false,
+      'active_source_count': '2',
+    });
+    expect(u.account.name, 'SBI Rentals');
+    expect(u.account.isActive, isFalse);
+    expect(u.activeSourceCount, 2);
+  });
+
+  test('bankAccountReconciliationFromRow handles a missing balance', () {
+    final unset = bankAccountReconciliationFromRow({
+      'bank_account_id': 'a1',
+      'name': 'HDFC Salary',
+      'is_active': true,
+      'sources_total': '0.00',
+      'bank_balance': null,
+      'as_of': null,
+    });
+    expect(unset.isSet, isFalse);
+    expect(unset.asOf, isNull);
+    final set = bankAccountReconciliationFromRow({
+      'bank_account_id': 'a1',
+      'name': 'HDFC Salary',
+      'is_active': true,
+      'sources_total': '75600.00',
+      'bank_balance': '75600.00',
+      'as_of': '2026-11-26',
+    });
+    expect(set.isSet, isTrue);
+    expect(set.asOf, DateTime(2026, 11, 26));
+    expect(set.matches, isTrue);
+  });
+
+  test('sourceFromRow reads the account, embedded or not', () {
+    final base = {
+      'id': 's',
+      'name': 'Salary',
+      'kind': 'Employment',
+      'opening_balance': '2000.00',
+      'is_active': true,
+      'opening_date': '2026-10-01',
+      'bank_account_id': 'a1',
+    };
+    final withName = sourceFromRow({
+      ...base,
+      'bank_accounts': {'name': 'HDFC Salary'},
+    });
+    expect(withName.bankAccountId, 'a1');
+    expect(withName.bankAccountName, 'HDFC Salary');
+    final without = sourceFromRow(base);
+    expect(without.bankAccountId, 'a1');
+    expect(without.bankAccountName, isNull);
+  });
+
+  test('sourceSummaryFromRow reads the two account fields', () {
+    final s = sourceSummaryFromRow({
+      'source_id': 'a',
+      'name': 'Salary',
+      'kind': 'Employment',
+      'opening_balance': '2000.00',
+      'is_active': true,
+      'month_opening': '15000.00',
+      'income': '0',
+      'expense': '0',
+      'invested': '0',
+      'saved': '0',
+      'closing': '15000.00',
+      'invested_saved_to_date': '0',
+      'bank_account_id': 'a1',
+      'bank_account_name': 'HDFC Salary',
+    });
+    expect(s.source.bankAccountId, 'a1');
+    expect(s.source.bankAccountName, 'HDFC Salary');
   });
 }

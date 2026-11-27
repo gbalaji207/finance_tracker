@@ -11,7 +11,9 @@ import 'package:finance_tracker/features/auth/cubit/auth_cubit.dart';
 import 'package:finance_tracker/features/settings/cubit/settings_cubit.dart';
 import 'package:finance_tracker/features/settings/cubit/settings_state.dart';
 import 'package:finance_tracker/features/settings/widgets/account_card.dart';
+import 'package:finance_tracker/features/settings/widgets/bank_accounts_card.dart';
 import 'package:finance_tracker/features/settings/widgets/categories_card.dart';
+import 'package:finance_tracker/features/settings/widgets/new_bank_account_card.dart';
 import 'package:finance_tracker/features/settings/widgets/new_category_card.dart';
 import 'package:finance_tracker/features/settings/widgets/new_source_card.dart';
 import 'package:finance_tracker/features/settings/widgets/sources_card.dart';
@@ -64,8 +66,20 @@ class _SettingsView extends StatelessWidget {
             const PageHeader(
               title: 'Settings',
               subtitle: AppConfig.useSupabase
-                  ? 'Sources, categories and your account'
-                  : 'Sample data · sources, categories and your account',
+                  ? 'Bank accounts, sources, categories and your account'
+                  : 'Sample data · bank accounts, sources, categories and '
+                        'your account',
+            ),
+            TwoPane(
+              primaryMin: 560,
+              secondaryWidth: 340,
+              primary: BankAccountsCard(
+                accounts: state.bankAccounts,
+                onEdit: (_) => _notWired(context),
+                onToggleActive: (a) =>
+                    _report(context, cubit.toggleBankAccountActive(a.id)),
+              ),
+              secondary: NewBankAccountCard(onSave: cubit.addBankAccount),
             ),
             TwoPane(
               primaryMin: 560,
@@ -76,7 +90,10 @@ class _SettingsView extends StatelessWidget {
                 onToggleActive: (s) =>
                     _report(context, cubit.toggleSourceActive(s.id)),
               ),
-              secondary: NewSourceCard(onSave: cubit.addSource),
+              secondary: NewSourceCard(
+                bankAccounts: state.activeBankAccounts,
+                onSave: cubit.addSource,
+              ),
             ),
             TwoPane(
               primaryMin: 560,

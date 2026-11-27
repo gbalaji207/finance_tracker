@@ -8,23 +8,23 @@ enum TxType {
   savings;
 
   String get label => switch (this) {
-        income => 'Income',
-        expense => 'Expense',
-        investment => 'Investment',
-        savings => 'Savings',
-      };
+    income => 'Income',
+    expense => 'Expense',
+    investment => 'Investment',
+    savings => 'Savings',
+  };
 
   Color get badgeBg => switch (this) {
-        income => AppColors.incomeBg,
-        expense => AppColors.expenseBg,
-        investment => AppColors.investmentBg,
-        savings => AppColors.savingsBg,
-      };
+    income => AppColors.incomeBg,
+    expense => AppColors.expenseBg,
+    investment => AppColors.investmentBg,
+    savings => AppColors.savingsBg,
+  };
 
   Color get badgeFg => switch (this) {
-        income => AppColors.income,
-        expense => AppColors.expenseFg,
-        investment => AppColors.investmentFg,
-        savings => AppColors.savingsFg,
-      };
+    income => AppColors.income,
+    expense => AppColors.expenseFg,
+    investment => AppColors.investmentFg,
+    savings => AppColors.savingsFg,
+  };
 }

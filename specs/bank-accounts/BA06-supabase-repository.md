@@ -51,14 +51,14 @@ Add an account filter to Transactions or the reports.
 
 ## Verify (Supabase mode, signed in, after BA05 and 06)
 
-- [ ] Dashboard strip: `Sum of source balances ₹1,32,400`, `Bank balances, all accounts ₹1,32,400`, green `Matches · difference ₹0`; the list shows HDFC Salary (₹75,600 / ₹75,600 · 26 Nov) and SBI Rentals (₹56,800 / ₹56,800 · 26 Nov). Source cards carry their account names. All other card numbers are as in B05.
-- [ ] Update the HDFC Salary row to `75200` as on today: its row reads `Off by ₹400`, SBI Rentals still matches, the top pill reads `Off by ₹400 in 1 account`. Reload: it persists. In **Table Editor, bank_balances** there are now two rows for HDFC Salary (26 Nov and today) and one for SBI Rentals. Restore `75600` for today's date.
-- [ ] Saving a second time for the same account and date replaces the row instead of adding one (the row count stays the same).
-- [ ] Settings: Bank accounts shows HDFC Salary 2 and SBI Rentals 2; the sources table shows the right account per source.
-- [ ] Add a bank account "Test account": it appears in Settings and as a Dashboard row (`Sources ₹0`, `Not set`, pill adds `Balance not set for 1 account`). Add a source "Test source" under it with opening balance 1000, then give the account a balance of 1000 in the dialog: the account matches. Adding "Test account" again fails with "That name is already used."
-- [ ] Archiving HDFC Salary is blocked (it has active sources). Clean up: archive "Test source" then "Test account" (delete the rows in Table Editor if you want them gone).
-- [ ] Transactions, Monthly report, Source report and templates behave exactly as before (accounts do not change them).
-- [ ] Sample mode still works. `flutter analyze` and `flutter test` pass.
+- [x] Dashboard strip: `Sum of source balances ₹1,32,400`, `Bank balances, all accounts ₹1,32,400`, green `Matches · difference ₹0`; the list shows HDFC Salary (₹75,600 / ₹75,600 · 26 Nov) and SBI Rentals (₹56,800 / ₹56,800 · 26 Nov). Source cards carry their account names. All other card numbers are as in B05.
+- [x] Update the HDFC Salary row to `75200` as on today: its row reads `Off by ₹400`, SBI Rentals still matches, the top pill reads `Off by ₹400 in 1 account`. Reload: it persists. In **Table Editor, bank_balances** there are now two rows for HDFC Salary (26 Nov and today) and one for SBI Rentals. Restore `75600` for today's date.
+- [x] Saving a second time for the same account and date replaces the row instead of adding one (the row count stays the same).
+- [x] Settings: Bank accounts shows HDFC Salary 2 and SBI Rentals 2; the sources table shows the right account per source.
+- [x] Add a bank account "Test account": it appears in Settings and as a Dashboard row (`Sources ₹0`, `Not set`, pill adds `Balance not set for 1 account`). Add a source "Test source" under it with opening balance 1000, then give the account a balance of 1000 in the dialog: the account matches. Adding "Test account" again fails with "That name is already used."
+- [x] Archiving HDFC Salary is blocked (it has active sources). Clean up: archive "Test source" then "Test account" (delete the rows in Table Editor if you want them gone).
+- [x] Transactions, Monthly report, Source report and templates behave exactly as before (accounts do not change them).
+- [x] Sample mode still works. `flutter analyze` and `flutter test` pass.
 
 ## After this
 

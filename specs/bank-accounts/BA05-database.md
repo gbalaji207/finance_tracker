@@ -17,24 +17,24 @@ If you already wiped the sample data and have real rows instead, skip 06 and ren
 
 ## Verify
 
-- [ ] **Table Editor** lists `bank_accounts` with RLS enabled and one policy.
-- [ ] After 05 (and 06 for sample data), this returns the rows listed (sources total and bank balance; dates are 26 Nov 2026):
+- [x] **Table Editor** lists `bank_accounts` with RLS enabled and one policy.
+- [x] After 05 (and 06 for sample data), this returns the rows listed (sources total and bank balance; dates are 26 Nov 2026):
   ```sql
   select name, is_active, sources_total, bank_balance, as_of from public.current_reconciliation();
   ```
   After 05 only: `Main account`, 132400, 132400.
   After 06: `HDFC Salary` 75600 / 75600 and `SBI Rentals` 56800 / 56800.
-- [ ] `select name, active_source_count from public.bank_account_usage();` gives HDFC Salary 2 and SBI Rentals 2 (after 06).
-- [ ] Monthly figures are unchanged. This must still return income 228000, expense 82600, invested 30000, saved 16000, closing 132400, and each row now has a `bank_account_name`:
+- [x] `select name, active_source_count from public.bank_account_usage();` gives HDFC Salary 2 and SBI Rentals 2 (after 06).
+- [x] Monthly figures are unchanged. This must still return income 228000, expense 82600, invested 30000, saved 16000, closing 132400, and each row now has a `bank_account_name`:
   ```sql
   select name, bank_account_name, closing from public.source_summaries('2026-11-01');
   ```
-- [ ] The database refuses a source without an account. This must fail with a not-null error:
+- [x] The database refuses a source without an account. This must fail with a not-null error:
   ```sql
   insert into public.sources (user_id, name, kind)
   select id, 'x', 'Other' from auth.users limit 1;
   ```
-- [ ] Anonymous access is blocked (must fail with "permission denied"):
+- [x] Anonymous access is blocked (must fail with "permission denied"):
   ```sql
   begin; set local role anon; select * from public.bank_accounts; rollback;
   ```

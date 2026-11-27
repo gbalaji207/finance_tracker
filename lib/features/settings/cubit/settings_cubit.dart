@@ -14,11 +14,13 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> load() async {
     emit(state.copyWith(status: LoadStatus.loading, clearError: true));
     try {
+      final bankAccounts = await _repo.bankAccountUsage();
       final sources = await _repo.allSources();
       final usage = await _repo.categoryUsage();
       emit(
         state.copyWith(
           status: LoadStatus.loaded,
+          bankAccounts: bankAccounts,
           sources: sources,
           categoryUsage: usage,
         ),
@@ -33,20 +35,44 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
   }
 
-  /// Runs a write, then reloads the sources and category usage (without the
-  /// page spinner). Returns an error message, or null on success.
+  /// Runs a write, then reloads the bank accounts, sources and category usage
+  /// (without the page spinner). Returns an error message, or null on success.
   Future<String?> _write(Future<void> Function() action) async {
     try {
       await action();
+      final bankAccounts = await _repo.bankAccountUsage();
       final sources = await _repo.allSources();
       final usage = await _repo.categoryUsage();
       if (!isClosed) {
-        emit(state.copyWith(sources: sources, categoryUsage: usage));
+        emit(
+          state.copyWith(
+            bankAccounts: bankAccounts,
+            sources: sources,
+            categoryUsage: usage,
+          ),
+        );
       }
       return null;
     } catch (e) {
       return friendlyError(e);
     }
+  }
+
+  Future<String?> addBankAccount(String name) =>
+      _write(() => _repo.addBankAccount(name));
+
+  /// Archives an active account or restores an archived one. An account that
+  /// still has active sources cannot be archived.
+  Future<String?> toggleBankAccountActive(String id) {
+    final usage = state.bankAccounts.firstWhere((u) => u.account.id == id);
+    if (usage.account.isActive && usage.activeSourceCount > 0) {
+      return Future.value(
+        'This account still has active sources. Archive them first.',
+      );
+    }
+    return _write(
+      () => _repo.setBankAccountActive(id, !usage.account.isActive),
+    );
   }
 
   Future<String?> addSource(SourceInput input) =>

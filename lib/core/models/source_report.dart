@@ -41,11 +41,11 @@ class SourceReport extends Equatable {
 
   @override
   List<Object?> get props => [
-        source,
-        balanceToday,
-        incomeThisMonth,
-        expenseThisMonth,
-        investedSavedToDate,
-        months,
-      ];
+    source,
+    balanceToday,
+    incomeThisMonth,
+    expenseThisMonth,
+    investedSavedToDate,
+    months,
+  ];
 }

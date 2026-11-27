@@ -1,6 +1,7 @@
 import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/supabase/row_mappers.dart';
+import 'package:finance_tracker/core/models/bank_account.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_input.dart';
@@ -31,7 +32,7 @@ class SupabaseFinanceRepository implements FinanceRepository {
   Future<List<Source>> sources() async {
     final data = await _client
         .from('sources')
-        .select()
+        .select('*, bank_accounts(name)')
         .eq('is_active', true)
         .order('created_at');
     return _rows(data).map(sourceFromRow).toList();
@@ -39,7 +40,10 @@ class SupabaseFinanceRepository implements FinanceRepository {
 
   @override
   Future<List<Source>> allSources() async {
-    final data = await _client.from('sources').select().order('created_at');
+    final data = await _client
+        .from('sources')
+        .select('*, bank_accounts(name)')
+        .order('created_at');
     return _rows(data).map(sourceFromRow).toList();
   }
 
@@ -112,7 +116,50 @@ class SupabaseFinanceRepository implements FinanceRepository {
   @override
   Future<BankReconciliation> reconciliation() async {
     final data = await _client.rpc('current_reconciliation');
-    return reconciliationFromRow(_rows(data).first);
+    return BankReconciliation(
+      _rows(data).map(bankAccountReconciliationFromRow).toList(),
+    );
+  }
+
+  @override
+  Future<List<BankAccount>> bankAccounts() async {
+    final data = await _client
+        .from('bank_accounts')
+        .select()
+        .eq('is_active', true)
+        .order('created_at');
+    return _rows(data).map(bankAccountFromRow).toList();
+  }
+
+  @override
+  Future<List<BankAccount>> allBankAccounts() async {
+    final data = await _client
+        .from('bank_accounts')
+        .select()
+        .order('created_at');
+    return _rows(data).map(bankAccountFromRow).toList();
+  }
+
+  @override
+  Future<List<BankAccountUsage>> bankAccountUsage() async {
+    final data = await _client.rpc('bank_account_usage');
+    return _rows(data).map(bankAccountUsageFromRow).toList();
+  }
+
+  @override
+  Future<void> addBankAccount(String name) async {
+    // user_id is filled by the database default.
+    await _client.from('bank_accounts').insert({'name': name.trim()});
+  }
+
+  @override
+  Future<void> setBankAccountActive(String id, bool active) async {
+    final rows = await _client
+        .from('bank_accounts')
+        .update({'is_active': active})
+        .eq('id', id)
+        .select('id');
+    if (rows.isEmpty) throw StateError('Not found');
   }
 
   @override
@@ -286,12 +333,17 @@ class SupabaseFinanceRepository implements FinanceRepository {
   }
 
   @override
-  Future<void> setBankBalance(double balance, DateTime asOf) async {
+  Future<void> setBankBalance(
+    String bankAccountId,
+    double balance,
+    DateTime asOf,
+  ) async {
     await _client.from('bank_balances').upsert({
       'user_id': _client.auth.currentUser!.id,
+      'bank_account_id': bankAccountId,
       'as_of': sqlDate(asOf),
       'balance': balance,
-    }, onConflict: 'user_id,as_of');
+    }, onConflict: 'bank_account_id,as_of');
   }
 
   @override
@@ -301,6 +353,7 @@ class SupabaseFinanceRepository implements FinanceRepository {
       'kind': input.kind,
       'opening_balance': input.openingBalance,
       'opening_date': sqlDate(input.openingDate),
+      'bank_account_id': input.bankAccountId,
     });
   }
 

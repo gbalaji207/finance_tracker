@@ -38,11 +38,15 @@ class DashboardCubit extends Cubit<DashboardState> {
     }
   }
 
-  /// Saves the bank balance for [asOf], then reloads the reconciliation.
-  /// Returns an error message, or null on success.
-  Future<String?> updateBankBalance(double balance, DateTime asOf) async {
+  /// Saves the bank balance of [accountId] for [asOf], then reloads the
+  /// reconciliation. Returns an error message, or null on success.
+  Future<String?> updateBankBalance(
+    String accountId,
+    double balance,
+    DateTime asOf,
+  ) async {
     try {
-      await _repo.setBankBalance(balance, asOf);
+      await _repo.setBankBalance(accountId, balance, asOf);
       final reconciliation = await _repo.reconciliation();
       if (!isClosed) emit(state.copyWith(reconciliation: reconciliation));
       return null;
