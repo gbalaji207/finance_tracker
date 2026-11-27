@@ -1,3 +1,5 @@
+import 'package:finance_tracker/core/widgets/app_snack.dart';
+import 'package:finance_tracker/core/widgets/info_box.dart';
 import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
@@ -55,7 +57,12 @@ class _TransactionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TransactionsCubit, TransactionsState>(
+    return BlocConsumer<TransactionsCubit, TransactionsState>(
+      listenWhen: (p, c) => c.actionError != null && p.actionError == null,
+      listener: (context, state) {
+        AppSnack.error(context, state.actionError!);
+        context.read<TransactionsCubit>().clearActionError();
+      },
       builder: (context, state) {
         if (state.status == LoadStatus.loading) {
           return const Center(child: CircularProgressIndicator());
@@ -97,6 +104,7 @@ class _TransactionsView extends StatelessWidget {
                     page: state.page!,
                     sources: state.sources,
                     month: state.month,
+                    listLoading: state.listLoading,
                     sourceFilter: state.sourceFilter,
                     typeFilter: state.typeFilter,
                     sourceName: state.sourceName,
@@ -105,21 +113,29 @@ class _TransactionsView extends StatelessWidget {
                     onSourceChanged: cubit.setSourceFilter,
                     onTypeChanged: cubit.setTypeFilter,
                     onQueryChanged: cubit.setQuery,
+                    onPageChanged: cubit.goToPage,
                     selectedId: state.selectedId,
                     onEdit: (t) {
                       cubit.select(t.id);
                       context.read<AddEntryCubit>().startEdit(t);
                     },
                   ),
-                  secondary: EntryPanel(
-                    key: ValueKey(state.selected?.id ?? 'new'),
-                    editing: state.selected,
-                    templates: state.templates,
-                    sourceName: state.sourceName,
-                    sources: state.activeSources,
-                    categories: state.activeCategories,
-                    onDelete: (entry) => _confirmDelete(context, state, entry),
-                  ),
+                  secondary: state.activeSources.isEmpty
+                      ? const InfoBox(
+                          child: Text(
+                            'Add a source in Settings before adding entries.',
+                          ),
+                        )
+                      : EntryPanel(
+                          key: ValueKey(state.selected?.id ?? 'new'),
+                          editing: state.selected,
+                          templates: state.templates,
+                          sourceName: state.sourceName,
+                          sources: state.activeSources,
+                          categories: state.activeCategories,
+                          onDelete: (entry) =>
+                              _confirmDelete(context, state, entry),
+                        ),
                 ),
               ),
             ),

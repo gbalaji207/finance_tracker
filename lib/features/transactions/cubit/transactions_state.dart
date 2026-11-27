@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
@@ -9,26 +8,32 @@ import 'package:finance_tracker/core/models/transaction_page.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
 
 class TransactionsState extends Equatable {
-  TransactionsState({
+  const TransactionsState({
     this.status = LoadStatus.loading,
     this.page,
     this.sources = const [],
     this.categories = const [],
     this.templates = const [],
-    DateTime? month,
+    this.month,
     this.sourceFilter,
     this.typeFilter,
     this.query = '',
     this.selectedId,
     this.errorMessage,
-  }) : month = month ?? appMonth();
+    this.listLoading = false,
+    this.actionError,
+  });
 
   final LoadStatus status;
   final TransactionPage? page;
+
+  /// Active and archived, so names of archived ones still resolve.
   final List<Source> sources;
   final List<Category> categories;
   final List<EntryTemplate> templates;
-  final DateTime month;
+
+  /// First day of the month; null means all months.
+  final DateTime? month;
 
   /// Source id; null means all sources.
   final String? sourceFilter;
@@ -41,6 +46,17 @@ class TransactionsState extends Equatable {
   final String? selectedId;
   final String? errorMessage;
 
+  /// True while the list is being reloaded (the old page stays visible).
+  final bool listLoading;
+
+  /// One-shot message for the page to show as a SnackBar, then clear.
+  final String? actionError;
+
+  List<Source> get activeSources => sources.where((s) => s.isActive).toList();
+
+  List<Category> get activeCategories =>
+      categories.where((c) => c.isActive).toList();
+
   /// The entry being edited, or null when adding a new entry.
   Transaction? get selected {
     final id = selectedId;
@@ -50,11 +66,6 @@ class TransactionsState extends Equatable {
     }
     return null;
   }
-
-  List<Source> get activeSources => sources.where((s) => s.isActive).toList();
-
-  List<Category> get activeCategories =>
-      categories.where((c) => c.isActive).toList();
 
   /// The source name for [id], or [id] itself if the source is unknown.
   String sourceName(String id) {
@@ -74,7 +85,7 @@ class TransactionsState extends Equatable {
   }
 
   /// Filters use `copyWith` with explicit "clear" flags, because null is a
-  /// valid filter value (all sources / all types).
+  /// valid filter value (all months / all sources / all types).
   TransactionsState copyWith({
     LoadStatus? status,
     TransactionPage? page,
@@ -82,22 +93,26 @@ class TransactionsState extends Equatable {
     List<Category>? categories,
     List<EntryTemplate>? templates,
     DateTime? month,
+    bool clearMonth = false,
     String? sourceFilter,
     bool clearSourceFilter = false,
     TxType? typeFilter,
     bool clearTypeFilter = false,
     String? query,
     String? selectedId,
+    bool clearSelected = false,
     String? errorMessage,
     bool clearError = false,
-    bool clearSelected = false,
+    bool? listLoading,
+    String? actionError,
+    bool clearActionError = false,
   }) => TransactionsState(
     status: status ?? this.status,
     page: page ?? this.page,
     sources: sources ?? this.sources,
     categories: categories ?? this.categories,
     templates: templates ?? this.templates,
-    month: month ?? this.month,
+    month: clearMonth ? null : (month ?? this.month),
     sourceFilter: clearSourceFilter
         ? null
         : (sourceFilter ?? this.sourceFilter),
@@ -105,6 +120,8 @@ class TransactionsState extends Equatable {
     query: query ?? this.query,
     selectedId: clearSelected ? null : (selectedId ?? this.selectedId),
     errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    listLoading: listLoading ?? this.listLoading,
+    actionError: clearActionError ? null : (actionError ?? this.actionError),
   );
 
   @override
@@ -120,5 +137,7 @@ class TransactionsState extends Equatable {
     query,
     selectedId,
     errorMessage,
+    listLoading,
+    actionError,
   ];
 }

@@ -8,10 +8,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddEntryCubit extends Cubit<AddEntryState> {
   AddEntryCubit({required this.categories, required this.sources})
-    : super(AddEntryState());
+    : super(_initial(sources, categories));
 
   final List<Category> categories;
   final List<Source> sources;
+
+  /// Expense, the first source, the first expense category, today.
+  static AddEntryState _initial(
+    List<Source> sources,
+    List<Category> categories,
+  ) {
+    String? categoryId;
+    for (final c in categories) {
+      if (c.kind == TxType.expense) {
+        categoryId = c.id;
+        break;
+      }
+    }
+    return AddEntryState(
+      sourceId: sources.isEmpty ? '' : sources.first.id,
+      categoryId: categoryId,
+    );
+  }
 
   /// Income has no category; otherwise the first category of that kind.
   String? _defaultCategory(TxType type) {
@@ -71,5 +89,5 @@ class AddEntryCubit extends Cubit<AddEntryState> {
   );
 
   /// Back to the defaults; also leaves edit mode.
-  void reset() => emit(AddEntryState());
+  void reset() => emit(_initial(sources, categories));
 }

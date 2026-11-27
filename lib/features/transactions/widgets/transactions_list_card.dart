@@ -1,3 +1,5 @@
+import 'package:finance_tracker/core/data/app_clock.dart';
+import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/source.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/models/transaction_page.dart';
@@ -12,6 +14,7 @@ import 'package:finance_tracker/core/widgets/app_dropdown.dart';
 import 'package:finance_tracker/core/widgets/app_table.dart';
 import 'package:finance_tracker/core/widgets/app_text_field.dart';
 import 'package:finance_tracker/core/widgets/app_text_link.dart';
+import 'package:finance_tracker/core/widgets/empty_note.dart';
 import 'package:finance_tracker/core/widgets/type_badge.dart';
 import 'package:flutter/material.dart';
 
@@ -29,21 +32,27 @@ class TransactionsListCard extends StatelessWidget {
     required this.onSourceChanged,
     required this.onTypeChanged,
     required this.onQueryChanged,
+    required this.onPageChanged,
     required this.selectedId,
     required this.onEdit,
+    this.listLoading = false,
   });
 
   final TransactionPage page;
   final List<Source> sources;
-  final DateTime month;
+
+  /// First day of the month; null means all months.
+  final DateTime? month;
   final String? sourceFilter;
   final TxType? typeFilter;
   final String Function(String sourceId) sourceName;
   final String Function(String? categoryId) categoryName;
-  final ValueChanged<DateTime> onMonthChanged;
+  final ValueChanged<DateTime?> onMonthChanged;
   final ValueChanged<String?> onSourceChanged;
   final ValueChanged<TxType?> onTypeChanged;
   final ValueChanged<String> onQueryChanged;
+  final ValueChanged<int> onPageChanged;
+  final bool listLoading;
 
   /// Id of the entry being edited, highlighted in the list.
   final String? selectedId;
@@ -53,6 +62,9 @@ class TransactionsListCard extends StatelessWidget {
   /// selected, so "all" is a real value that is mapped back to null.
   static const _all = 'all';
 
+  static String _monthKey(DateTime m) =>
+      '${m.year}-${m.month.toString().padLeft(2, '0')}';
+
   @override
   Widget build(BuildContext context) {
     return AppCard(
@@ -61,71 +73,137 @@ class TransactionsListCard extends StatelessWidget {
         children: [
           _filters(),
           const SizedBox(height: AppSpacing.s16),
-          AppTable(
-            // Scrolls sideways instead of overflowing in a narrow card.
-            minWidth: 720,
-            columns: const [
-              AppTableColumn('Date', width: 56),
-              AppTableColumn('Description'),
-              AppTableColumn('Source', width: 104),
-              AppTableColumn('Category', width: 112),
-              AppTableColumn('Type', width: 100),
-              AppTableColumn('Amount', width: 100, align: TextAlign.right),
-              AppTableColumn('', width: 56, align: TextAlign.right),
-            ],
-            rows: [
-              for (final t in page.items)
-                AppTableRow(
-                  background: t.id == selectedId ? AppColors.rowSelected : null,
-                  [
-                    AppTableText(AppDates.dayMonth(t.date), secondary: true),
-                    AppTableText(t.description),
-                    AppTableText(sourceName(t.sourceId)),
-                    AppTableText(categoryName(t.categoryId), secondary: true),
-                    TypeBadge(t.type),
-                    AmountText(amount: t.amount, type: t.type),
-                    t.id == selectedId
-                        ? Text(
-                            'Editing',
-                            style: AppTextStyles.buttonSmall.copyWith(
-                              color: AppColors.primaryDark,
-                            ),
-                          )
-                        : AppTextLink(
-                            label: 'Edit',
-                            onPressed: () => onEdit(t),
-                          ),
-                  ],
-                ),
-            ],
+          SizedBox(
+            height: 2,
+            child: listLoading
+                ? const LinearProgressIndicator(
+                    minHeight: 2,
+                    color: AppColors.primary,
+                  )
+                : null,
           ),
+          if (page.items.isEmpty)
+            const EmptyNote('No entries match these filters.')
+          else
+            _table(),
           const SizedBox(height: AppSpacing.s16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Showing ${page.items.length} of ${page.total} entries',
-                style: AppTextStyles.subtitle,
-              ),
-              Text(
-                'Page ${page.page} of ${page.pageCount}',
-                style: AppTextStyles.subtitle,
-              ),
-            ],
-          ),
+          _footer(),
         ],
       ),
     );
   }
 
+  Widget _table() {
+    return AppTable(
+      // Scrolls sideways instead of overflowing in a narrow card.
+      minWidth: 720,
+      columns: const [
+        AppTableColumn('Date', width: 56),
+        AppTableColumn('Description'),
+        AppTableColumn('Source', width: 104),
+        AppTableColumn('Category', width: 112),
+        AppTableColumn('Type', width: 100),
+        AppTableColumn('Amount', width: 100, align: TextAlign.right),
+        AppTableColumn('', width: 56, align: TextAlign.right),
+      ],
+      rows: [
+        for (final t in page.items)
+          AppTableRow(
+            background: t.id == selectedId ? AppColors.rowSelected : null,
+            [
+              AppTableText(AppDates.dayMonth(t.date), secondary: true),
+              AppTableText(t.description),
+              AppTableText(sourceName(t.sourceId)),
+              AppTableText(categoryName(t.categoryId), secondary: true),
+              TypeBadge(t.type),
+              AmountText(amount: t.amount, type: t.type),
+              t.id == selectedId
+                  ? Text(
+                      'Editing',
+                      style: AppTextStyles.buttonSmall.copyWith(
+                        color: AppColors.primaryDark,
+                      ),
+                    )
+                  : AppTextLink(label: 'Edit', onPressed: () => onEdit(t)),
+            ],
+          ),
+      ],
+    );
+  }
+
+  Widget _footer() {
+    final total = page.total;
+    final from = total == 0 ? 0 : (page.page - 1) * kPageSize + 1;
+    final to = total == 0 ? 0 : from + page.items.length - 1;
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.s16,
+      runSpacing: AppSpacing.s8,
+      children: [
+        Text(
+          total == 0 ? 'No entries' : 'Showing $from–$to of $total entries',
+          style: AppTextStyles.subtitle,
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 12,
+          children: [
+            if (page.page > 1)
+              AppTextLink(
+                label: 'Previous',
+                onPressed: () => onPageChanged(page.page - 1),
+              ),
+            Text(
+              'Page ${page.page} of ${page.pageCount}',
+              style: AppTextStyles.subtitle,
+            ),
+            if (page.page < page.pageCount)
+              AppTextLink(
+                label: 'Next',
+                onPressed: () => onPageChanged(page.page + 1),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// "All months", the current month and the 11 before it; the selected month
+  /// is added when it is outside that range.
+  List<DateTime> _monthOptions() {
+    final now = appMonth();
+    final options = [
+      for (var i = 0; i < 12; i++) DateTime(now.year, now.month - i),
+    ];
+    final selected = month;
+    if (selected != null &&
+        !options.any((m) => _monthKey(m) == _monthKey(selected))) {
+      options.add(selected);
+    }
+    return options;
+  }
+
   Widget _filters() {
-    final monthLabel = AppDates.monthYear(month);
+    final selectedMonth = month;
     final fields = <Widget>[
       AppDropdown<String>(
         label: 'Month',
-        value: monthLabel,
-        items: [AppDropdownItem(monthLabel, monthLabel)],
-        onChanged: (_) => onMonthChanged(month),
+        value: selectedMonth == null ? _all : _monthKey(selectedMonth),
+        items: [
+          const AppDropdownItem(_all, 'All months'),
+          for (final m in _monthOptions())
+            AppDropdownItem(_monthKey(m), AppDates.monthYear(m)),
+        ],
+        onChanged: (v) {
+          if (v == null) return;
+          if (v == _all) {
+            onMonthChanged(null);
+          } else {
+            final parts = v.split('-');
+            onMonthChanged(DateTime(int.parse(parts[0]), int.parse(parts[1])));
+          }
+        },
       ),
       AppDropdown<String>(
         label: 'Source',

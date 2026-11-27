@@ -460,7 +460,13 @@ class MockFinanceRepository implements FinanceRepository {
   ];
 
   @override
-  Future<TransactionPage> transactions({int page = 1}) async =>
+  Future<TransactionPage> transactions({
+    DateTime? month,
+    String? sourceId,
+    TxType? type,
+    String query = '',
+    int page = 1,
+  }) async =>
       TransactionPage(items: _transactions, total: 38, page: 1, pageCount: 4);
 
   @override

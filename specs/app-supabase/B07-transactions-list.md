@@ -72,11 +72,11 @@ Write anything. Keep the filters in memory only (not in the URL).
 
 ## Verify (Supabase mode, sample data)
 
-- [ ] Default view: month November 2026, footer `Showing 1–10 of 27 entries`, `Page 1 of 3`, "Next" visible, "Previous" hidden. Next, Next: `Showing 21–27 of 27 entries`, "Next" hidden.
-- [ ] Source = Aqua 105 gives 4 entries; Type = Income gives 4; Type = Investment gives 2 (SIP: index fund and Mutual fund top-up); both together (Aqua 105 + Income) give 1.
-- [ ] Search `groceries` gives 6 entries; clearing it restores 27. Typing quickly does not flicker or reorder results.
-- [ ] Month = All months: 56 entries, `Page 1 of 6`; searching `EMI` there gives 2 (October and November Home EMI). Month = October 2026: 17 entries.
-- [ ] Search for text that matches nothing shows "No entries match these filters."
-- [ ] Rows show names of sources and categories (no raw ids), income rows show `—` as category.
-- [ ] Sample mode: footer reads `Showing 1–10 of 38 entries`, `Page 1 of 4` with "Next" visible (the list itself does not change in sample mode); the entry panel now defaults to category Housing.
-- [ ] `flutter analyze` and `flutter test` pass.
+- [x] Default view: month November 2026, footer `Showing 1–10 of 27 entries`, `Page 1 of 3`, "Next" visible, "Previous" hidden. Next, Next: `Showing 21–27 of 27 entries`, "Next" hidden.
+- [x] Source = Aqua 105 gives 4 entries; Type = Income gives 4; Type = Investment gives 2 (SIP: index fund and Mutual fund top-up); both together (Aqua 105 + Income) give 1.
+- [x] Search `groceries` gives 6 entries; clearing it restores 27. Typing quickly does not flicker or reorder results.
+- [x] Month = All months: 56 entries, `Page 1 of 6`; searching `EMI` there gives 2 (October and November Home EMI). Month = October 2026: 17 entries.
+- [x] Search for text that matches nothing shows "No entries match these filters."
+- [x] Rows show names of sources and categories (no raw ids), income rows show `—` as category.
+- [x] Sample mode: footer reads `Showing 1–10 of 38 entries`, `Page 1 of 4` with "Next" visible (the list itself does not change in sample mode); the entry panel now defaults to category Housing.
+- [x] `flutter analyze` and `flutter test` pass.

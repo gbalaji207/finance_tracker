@@ -8,6 +8,9 @@ import 'package:finance_tracker/core/models/source_report.dart';
 import 'package:finance_tracker/core/models/source_summary.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/models/transaction_page.dart';
+import 'package:finance_tracker/core/models/tx_type.dart';
+
+const kPageSize = 10;
 
 abstract interface class FinanceRepository {
   /// Active sources only (these are the ones offered for new entries).
@@ -26,7 +29,13 @@ abstract interface class FinanceRepository {
   Future<BankReconciliation> reconciliation();
   Future<List<SourceSummary>> sourceSummaries(DateTime month);
   Future<List<Transaction>> recentTransactions();
-  Future<TransactionPage> transactions({int page = 1});
+  Future<TransactionPage> transactions({
+    DateTime? month, // null = all months
+    String? sourceId,
+    TxType? type,
+    String query = '',
+    int page = 1,
+  });
   Future<List<EntryTemplate>> templates();
   Future<List<EntryTemplate>> quickAddTemplates();
   Future<List<Transaction>> previousMonthEntries(DateTime month);

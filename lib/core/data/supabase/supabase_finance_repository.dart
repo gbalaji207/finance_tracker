@@ -11,6 +11,7 @@ import 'package:finance_tracker/core/models/source_report.dart';
 import 'package:finance_tracker/core/models/source_summary.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/models/transaction_page.dart';
+import 'package:finance_tracker/core/models/tx_type.dart';
 import 'package:finance_tracker/core/utils/sql_date.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide toDouble;
 
@@ -131,8 +132,47 @@ class SupabaseFinanceRepository implements FinanceRepository {
   }
 
   @override
-  Future<TransactionPage> transactions({int page = 1}) =>
-      throw UnimplementedError('B07');
+  Future<TransactionPage> transactions({
+    DateTime? month,
+    String? sourceId,
+    TxType? type,
+    String query = '',
+    int page = 1,
+  }) async {
+    var q = _client
+        .from('transactions')
+        .select(
+          'id, tx_date, type, source_id, category_id, amount, description',
+        );
+    if (month != null) {
+      final from = DateTime(month.year, month.month);
+      final to = DateTime(month.year, month.month + 1);
+      q = q.gte('tx_date', sqlDate(from)).lt('tx_date', sqlDate(to));
+    }
+    if (sourceId != null) q = q.eq('source_id', sourceId);
+    if (type != null) q = q.eq('type', type.name);
+    final text = query.trim();
+    if (text.isNotEmpty) {
+      final escaped = text
+          .replaceAll(r'\', r'\\')
+          .replaceAll('%', r'\%')
+          .replaceAll('_', r'\_');
+      q = q.ilike('description', '%$escaped%');
+    }
+    final response = await q
+        .order('tx_date', ascending: false)
+        .order('created_at', ascending: false)
+        .range((page - 1) * kPageSize, page * kPageSize - 1)
+        .count(CountOption.exact);
+    final total = response.count;
+    final pageCount = total == 0 ? 1 : (total / kPageSize).ceil();
+    return TransactionPage(
+      items: _rows(response.data).map(transactionFromRow).toList(),
+      total: total,
+      page: page,
+      pageCount: pageCount,
+    );
+  }
 
   @override
   Future<MonthlyReport> monthlyReport(DateTime month) async {

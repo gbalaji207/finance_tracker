@@ -5,8 +5,8 @@ import 'package:finance_tracker/core/models/tx_type.dart';
 class AddEntryState extends Equatable {
   AddEntryState({
     this.type = TxType.expense,
-    this.sourceId = 'salary',
-    this.categoryId = 'groceries',
+    this.sourceId = '',
+    this.categoryId,
     DateTime? date,
     this.editingId,
   }) : date = date ?? appToday();
