@@ -1,6 +1,8 @@
 -- 04-seed.sql
 -- Sample data for development. It reproduces the November 2026 figures from the wireframes.
--- Needs your login user to exist first (Authentication > Users). Run once.
+-- Needs your login user to exist first (Authentication > Users) and 05-bank-accounts.sql to have been run.
+-- (If you loaded an earlier version of this seed before 05 existed, do not run this again; run 06 instead.)
+-- Run once.
 
 do $$
 begin
@@ -12,18 +14,25 @@ begin
   end if;
 end $$;
 
+-- Bank accounts.
+insert into public.bank_accounts (user_id, name, created_at)
+select u.id, v.name, timestamptz '2026-06-01 00:00:00+00' + v.n * interval '1 second'
+from (select id from auth.users order by created_at limit 1) u
+cross join (values (1, 'HDFC Salary'), (2, 'SBI Rentals')) as v(n, name);
+
 -- Sources. Opening balances are the balance on opening_date (not on today).
-insert into public.sources (user_id, name, kind, opening_balance, opening_date, is_active, created_at)
+insert into public.sources (user_id, name, kind, opening_balance, opening_date, is_active, created_at, bank_account_id)
 select u.id, v.name, v.kind, v.opening, v.odate::date, v.active,
-       timestamptz '2026-06-01 00:00:00+00' + v.n * interval '1 second'
+       timestamptz '2026-06-01 00:00:00+00' + v.n * interval '1 second', a.id
 from (select id from auth.users order by created_at limit 1) u
 cross join (values
-  (1, 'Salary',        'Employment', 2000, '2026-10-01', true),
-  (2, 'Side hustle',   'Freelance',  3000, '2026-10-01', true),
-  (3, 'Aqua 105',      'Rental',     6000, '2026-06-01', true),
-  (4, 'VR',            'Rental',     2100, '2026-10-01', true),
-  (5, 'Old freelance', 'Freelance',     0, '2026-10-01', false)
-) as v(n, name, kind, opening, odate, active);
+  (1, 'Salary',        'Employment', 2000, '2026-10-01', true,  'HDFC Salary'),
+  (2, 'Side hustle',   'Freelance',  3000, '2026-10-01', true,  'HDFC Salary'),
+  (3, 'Aqua 105',      'Rental',     6000, '2026-06-01', true,  'SBI Rentals'),
+  (4, 'VR',            'Rental',     2100, '2026-10-01', true,  'SBI Rentals'),
+  (5, 'Old freelance', 'Freelance',     0, '2026-10-01', false, 'HDFC Salary')
+) as v(n, name, kind, opening, odate, active, acct)
+join public.bank_accounts a on a.name = v.acct;
 
 -- Categories.
 insert into public.categories (user_id, name, kind, created_at)
@@ -125,6 +134,9 @@ cross join (values
 join public.sources s on s.name = v.src
 left join public.categories c on c.name = v.cat;
 
--- Bank balance as on 26 Nov 2026.
-insert into public.bank_balances (user_id, as_of, balance)
-select id, date '2026-11-26', 132400 from auth.users order by created_at limit 1;
+-- Bank balances as on 26 Nov 2026 (HDFC Salary 75,600 and SBI Rentals 56,800, together 1,32,400).
+insert into public.bank_balances (user_id, bank_account_id, as_of, balance)
+select u.id, a.id, date '2026-11-26', v.balance
+from (select id from auth.users order by created_at limit 1) u
+cross join (values ('HDFC Salary', 75600), ('SBI Rentals', 56800)) as v(acct, balance)
+join public.bank_accounts a on a.name = v.acct;
