@@ -17,6 +17,7 @@ class DashboardState extends Equatable {
     this.recent = const [],
     this.quickAdd = const [],
     this.errorMessage,
+    this.actionError,
   }) : month = month ?? appMonth();
 
   final LoadStatus status;
@@ -27,6 +28,9 @@ class DashboardState extends Equatable {
   final List<Transaction> recent;
   final List<EntryTemplate> quickAdd;
   final String? errorMessage;
+
+  /// One-shot message for the page to show as a SnackBar, then clear.
+  final String? actionError;
 
   List<Source> get activeSources => sources.where((s) => s.isActive).toList();
 
@@ -48,6 +52,8 @@ class DashboardState extends Equatable {
     List<EntryTemplate>? quickAdd,
     String? errorMessage,
     bool clearError = false,
+    String? actionError,
+    bool clearActionError = false,
   }) => DashboardState(
     status: status ?? this.status,
     month: month ?? this.month,
@@ -57,6 +63,7 @@ class DashboardState extends Equatable {
     recent: recent ?? this.recent,
     quickAdd: quickAdd ?? this.quickAdd,
     errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    actionError: clearActionError ? null : (actionError ?? this.actionError),
   );
 
   @override
@@ -69,5 +76,6 @@ class DashboardState extends Equatable {
     recent,
     quickAdd,
     errorMessage,
+    actionError,
   ];
 }

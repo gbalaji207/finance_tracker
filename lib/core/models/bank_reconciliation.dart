@@ -8,10 +8,13 @@ class BankReconciliation extends Equatable {
   });
 
   final double sourcesTotal;
-  final double bankBalance;
-  final DateTime asOf;
 
-  double get difference => sourcesTotal - bankBalance;
+  /// Null until a bank balance has been entered.
+  final double? bankBalance;
+  final DateTime? asOf;
+
+  double? get difference =>
+      bankBalance == null ? null : sourcesTotal - bankBalance!;
 
   @override
   List<Object?> get props => [sourcesTotal, bankBalance, asOf];

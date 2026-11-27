@@ -9,9 +9,16 @@ import 'package:finance_tracker/core/widgets/key_value_row.dart';
 import 'package:flutter/material.dart';
 
 class SourceBalanceCard extends StatelessWidget {
-  const SourceBalanceCard({super.key, required this.summary});
+  const SourceBalanceCard({
+    super.key,
+    required this.summary,
+    this.balanceLabel = 'Balance as on today',
+    this.monthLabel = 'This month',
+  });
 
   final SourceSummary summary;
+  final String balanceLabel;
+  final String monthLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +43,7 @@ class SourceBalanceCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Balance as on today', style: AppTextStyles.caption),
+              Text(balanceLabel, style: AppTextStyles.caption),
               Text(
                 Money.plain(summary.closing),
                 style: AppTextStyles.balanceValue,
@@ -48,7 +55,7 @@ class SourceBalanceCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 6,
               children: [
-                Text('This month', style: AppTextStyles.caption),
+                Text(monthLabel, style: AppTextStyles.caption),
                 KeyValueRow(
                   label: 'Income',
                   value: Money.signed(summary.income, TxType.income),

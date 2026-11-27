@@ -1,3 +1,5 @@
+import 'package:finance_tracker/core/widgets/app_snack.dart';
+import 'package:finance_tracker/core/widgets/empty_note.dart';
 import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
@@ -44,15 +46,20 @@ class _DashboardView extends StatelessWidget {
     final result = await showBankBalanceDialog(
       context,
       sourcesTotal: current.sourcesTotal,
-      currentBankBalance: current.bankBalance,
-      asOf: current.asOf,
+      currentBankBalance: current.bankBalance ?? current.sourcesTotal,
+      asOf: current.asOf ?? appToday(),
     );
     if (result != null) cubit.updateBankBalance(result.balance, result.asOf);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DashboardCubit, DashboardState>(
+    return BlocConsumer<DashboardCubit, DashboardState>(
+      listenWhen: (p, c) => c.actionError != null && p.actionError == null,
+      listener: (context, state) {
+        AppSnack.error(context, state.actionError!);
+        context.read<DashboardCubit>().clearActionError();
+      },
       builder: (context, state) {
         if (state.status == LoadStatus.loading) {
           return const Center(child: CircularProgressIndicator());
@@ -64,6 +71,9 @@ class _DashboardView extends StatelessWidget {
           );
         }
         final cubit = context.read<DashboardCubit>();
+        final now = appMonth();
+        final isCurrentMonth =
+            state.month.year == now.year && state.month.month == now.month;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: AppSpacing.s24,
@@ -86,7 +96,18 @@ class _DashboardView extends StatelessWidget {
               data: state.reconciliation!,
               onUpdateBankBalance: () => _updateBankBalance(context),
             ),
-            SourceCardsSection(summaries: state.summaries),
+            if (state.summaries.isEmpty)
+              const EmptyNote('No sources yet. Add one in Settings.')
+            else
+              SourceCardsSection(
+                summaries: state.summaries,
+                balanceLabel: isCurrentMonth
+                    ? 'Balance as on today'
+                    : 'Balance at end of ${AppDates.monthYear(state.month)}',
+                monthLabel: isCurrentMonth
+                    ? 'This month'
+                    : AppDates.monthYear(state.month),
+              ),
             TwoPane(
               primary: RecentEntriesCard(
                 entries: state.recent,

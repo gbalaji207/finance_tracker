@@ -20,7 +20,8 @@ class ReconciliationStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final matches = data.difference == 0;
+    final difference = data.difference;
+    final asOf = data.asOf;
     return AppCard(
       padding: const EdgeInsets.symmetric(
         vertical: AppSpacing.s16,
@@ -40,16 +41,21 @@ class ReconciliationStrip extends StatelessWidget {
                   value: Money.plain(data.sourcesTotal),
                 ),
                 _Figure(
-                  caption: 'Bank balance (entered ${AppDates.dayMonth(data.asOf)})',
-                  value: Money.plain(data.bankBalance),
+                  caption: asOf == null
+                      ? 'Bank balance'
+                      : 'Bank balance (entered ${AppDates.dayMonth(asOf)})',
+                  value: data.bankBalance == null
+                      ? 'Not set'
+                      : Money.plain(data.bankBalance!),
                 ),
-                if (matches)
-                  const StatusPill(text: 'Matches · difference ₹0')
-                else
-                  StatusPill(
-                    text: 'Off by ${Money.plain(data.difference.abs())}',
-                    tone: StatusTone.warning,
-                  ),
+                if (difference != null)
+                  if (difference == 0)
+                    const StatusPill(text: 'Matches · difference ₹0')
+                  else
+                    StatusPill(
+                      text: 'Off by ${Money.plain(difference.abs())}',
+                      tone: StatusTone.warning,
+                    ),
               ],
             ),
           ),

@@ -50,10 +50,10 @@ Make the reconciliation or recent entries depend on the selected month; they are
 
 ## Verify (Supabase mode, signed in, November 2026 and the sample data)
 
-- [ ] Source cards: Salary ₹53,200 with income +₹1,20,000, expense −₹55,800, invested −₹20,000, saved −₹6,000, to date ₹76,000; Side hustle ₹22,400 (+₹35,000, −₹8,600, −₹10,000, ₹0, to date ₹30,000); Aqua 105 ₹31,000 (+₹45,000, −₹12,000, ₹0, −₹10,000, to date ₹1,80,000); VR ₹25,800 (+₹28,000, −₹6,200, ₹0, ₹0, to date ₹24,000). The archived "Old freelance" card is not shown.
-- [ ] Strip: sum ₹1,32,400, bank ₹1,32,400 (entered 26 Nov), green "Matches" pill.
-- [ ] Recent entries: six rows, newest first: Home EMI and Groceries (25 Nov), SIP: index fund (24 Nov), the two Rent received entries (22 Nov, either order), Groceries (21 Nov).
-- [ ] Quick add: Home EMI, SIP: index fund, Rent received (Aqua 105), Internet bill.
-- [ ] Month selector, previous month: cards read "Balance at end of October 2026" and show Salary ₹15,000, Side hustle ₹6,000, Aqua 105 ₹8,000, VR ₹4,000. Go back to November: the numbers above return. Go to December 2026: balances stay (₹53,200 etc.) with all flows `₹0`.
-- [ ] Turn the network off (dev tools, Offline) and reload: the Dashboard shows "Could not reach the server. Check your connection." with a working "Try again" once back online.
-- [ ] Sample mode unchanged. `flutter analyze` and `flutter test` pass.
+- [x] Source cards: Salary ₹53,200 with income +₹1,20,000, expense −₹55,800, invested −₹20,000, saved −₹6,000, to date ₹76,000; Side hustle ₹22,400 (+₹35,000, −₹8,600, −₹10,000, ₹0, to date ₹30,000); Aqua 105 ₹31,000 (+₹45,000, −₹12,000, ₹0, −₹10,000, to date ₹1,80,000); VR ₹25,800 (+₹28,000, −₹6,200, ₹0, ₹0, to date ₹24,000). The archived "Old freelance" card is not shown.
+- [x] Strip: sum ₹1,32,400, bank ₹1,32,400 (entered 26 Nov), green "Matches" pill.
+- [x] Recent entries: six rows, newest first: Home EMI and Groceries (25 Nov), SIP: index fund (24 Nov), the two Rent received entries (22 Nov, either order), Groceries (21 Nov).
+- [x] Quick add: Home EMI, SIP: index fund, Rent received (Aqua 105), Internet bill.
+- [x] Month selector, previous month: cards read "Balance at end of October 2026" and show Salary ₹15,000, Side hustle ₹6,000, Aqua 105 ₹8,000, VR ₹4,000. Go back to November: the numbers above return. Go to December 2026: balances stay (₹53,200 etc.) with all flows `₹0`.
+- [x] Turn the network off (dev tools, Offline) and reload: the Dashboard shows "Could not reach the server. Check your connection." with a working "Try again" once back online.
+- [x] Sample mode unchanged. `flutter analyze` and `flutter test` pass.

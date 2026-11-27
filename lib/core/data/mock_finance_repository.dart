@@ -132,6 +132,7 @@ class MockFinanceRepository implements FinanceRepository {
       saved: 6000,
       closing: 53200,
       investedSavedToDate: 410000,
+      monthOpening: 15000,
     ),
     SourceSummary(
       source: _sideHustle,
@@ -141,6 +142,7 @@ class MockFinanceRepository implements FinanceRepository {
       saved: 0,
       closing: 22400,
       investedSavedToDate: 60000,
+      monthOpening: 6000,
     ),
     SourceSummary(
       source: _aqua105,
@@ -150,6 +152,7 @@ class MockFinanceRepository implements FinanceRepository {
       saved: 10000,
       closing: 31000,
       investedSavedToDate: 180000,
+      monthOpening: 8000,
     ),
     SourceSummary(
       source: _vr,
@@ -159,6 +162,7 @@ class MockFinanceRepository implements FinanceRepository {
       saved: 0,
       closing: 25800,
       investedSavedToDate: 0,
+      monthOpening: 4000,
     ),
   ];
 

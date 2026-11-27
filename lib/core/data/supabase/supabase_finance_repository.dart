@@ -104,16 +104,30 @@ class SupabaseFinanceRepository implements FinanceRepository {
   }
 
   @override
-  Future<BankReconciliation> reconciliation() =>
-      throw UnimplementedError('B05');
+  Future<BankReconciliation> reconciliation() async {
+    final data = await _client.rpc('current_reconciliation');
+    return reconciliationFromRow(_rows(data).first);
+  }
 
   @override
-  Future<List<SourceSummary>> sourceSummaries(DateTime month) =>
-      throw UnimplementedError('B05');
+  Future<List<SourceSummary>> sourceSummaries(DateTime month) async {
+    final data = await _client.rpc(
+      'source_summaries',
+      params: {'p_month': sqlDate(month)},
+    );
+    return _rows(data).map(sourceSummaryFromRow).toList();
+  }
 
   @override
-  Future<List<Transaction>> recentTransactions() =>
-      throw UnimplementedError('B05');
+  Future<List<Transaction>> recentTransactions() async {
+    final data = await _client
+        .from('transactions')
+        .select()
+        .order('tx_date', ascending: false)
+        .order('created_at', ascending: false)
+        .limit(6);
+    return _rows(data).map(transactionFromRow).toList();
+  }
 
   @override
   Future<TransactionPage> transactions({int page = 1}) =>

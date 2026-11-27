@@ -10,6 +10,7 @@ class SourceSummary extends Equatable {
     required this.saved,
     required this.closing,
     required this.investedSavedToDate,
+    this.monthOpening,
   });
 
   final Source source;
@@ -20,16 +21,20 @@ class SourceSummary extends Equatable {
   final double closing;
   final double investedSavedToDate;
 
-  double get opening => source.openingBalance;
+  /// Balance at the start of the month (from the database).
+  final double? monthOpening;
+
+  double get opening => monthOpening ?? source.openingBalance;
 
   @override
   List<Object?> get props => [
-        source,
-        income,
-        expense,
-        invested,
-        saved,
-        closing,
-        investedSavedToDate,
-      ];
+    source,
+    income,
+    expense,
+    invested,
+    saved,
+    closing,
+    investedSavedToDate,
+    monthOpening,
+  ];
 }

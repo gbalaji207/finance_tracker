@@ -1,7 +1,9 @@
+import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/source.dart';
+import 'package:finance_tracker/core/models/source_summary.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
 
@@ -57,3 +59,29 @@ Transaction transactionFromRow(Map<String, dynamic> r) => Transaction(
   amount: toDouble(r['amount']),
   description: (r['description'] as String?) ?? '',
 );
+
+SourceSummary sourceSummaryFromRow(Map<String, dynamic> r) => SourceSummary(
+  source: Source(
+    id: r['source_id'] as String,
+    name: r['name'] as String,
+    kind: r['kind'] as String,
+    openingBalance: toDouble(r['opening_balance']),
+    isActive: r['is_active'] as bool,
+  ),
+  monthOpening: toDouble(r['month_opening']),
+  income: toDouble(r['income']),
+  expense: toDouble(r['expense']),
+  invested: toDouble(r['invested']),
+  saved: toDouble(r['saved']),
+  closing: toDouble(r['closing']),
+  investedSavedToDate: toDouble(r['invested_saved_to_date']),
+);
+
+BankReconciliation reconciliationFromRow(Map<String, dynamic> r) =>
+    BankReconciliation(
+      sourcesTotal: toDouble(r['sources_total']),
+      bankBalance: r['bank_balance'] == null
+          ? null
+          : toDouble(r['bank_balance']),
+      asOf: r['as_of'] == null ? null : DateTime.parse(r['as_of'] as String),
+    );

@@ -4,9 +4,16 @@ import 'package:finance_tracker/features/dashboard/widgets/source_balance_card.d
 import 'package:flutter/material.dart';
 
 class SourceCardsSection extends StatelessWidget {
-  const SourceCardsSection({super.key, required this.summaries});
+  const SourceCardsSection({
+    super.key,
+    required this.summaries,
+    required this.balanceLabel,
+    required this.monthLabel,
+  });
 
   final List<SourceSummary> summaries;
+  final String balanceLabel;
+  final String monthLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +22,12 @@ class SourceCardsSection extends StatelessWidget {
       maxColumns: 4,
       spacing: 16,
       children: [
-        for (final s in summaries) SourceBalanceCard(summary: s),
+        for (final s in summaries)
+          SourceBalanceCard(
+            summary: s,
+            balanceLabel: balanceLabel,
+            monthLabel: monthLabel,
+          ),
       ],
     );
   }

@@ -9,6 +9,7 @@ class DashboardCubit extends Cubit<DashboardState> {
   DashboardCubit(this._repo) : super(DashboardState());
 
   final FinanceRepository _repo;
+  int _monthRequest = 0;
 
   Future<void> load() async {
     emit(state.copyWith(status: LoadStatus.loading, clearError: true));
@@ -54,6 +55,20 @@ class DashboardCubit extends Cubit<DashboardState> {
     );
   }
 
-  /// Only the month changes in this phase; the data stays the same.
-  void changeMonth(DateTime month) => emit(state.copyWith(month: month));
+  /// Reloads only the source cards for [month]; the rest of the page stays.
+  Future<void> changeMonth(DateTime month) async {
+    final previous = state.month;
+    final request = ++_monthRequest;
+    emit(state.copyWith(month: month));
+    try {
+      final summaries = await _repo.sourceSummaries(month);
+      if (request != _monthRequest || isClosed) return;
+      emit(state.copyWith(summaries: summaries));
+    } catch (e) {
+      if (request != _monthRequest || isClosed) return;
+      emit(state.copyWith(month: previous, actionError: friendlyError(e)));
+    }
+  }
+
+  void clearActionError() => emit(state.copyWith(clearActionError: true));
 }
