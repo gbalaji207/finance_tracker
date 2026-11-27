@@ -1,6 +1,7 @@
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
+import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
@@ -8,6 +9,7 @@ import 'package:finance_tracker/core/widgets/two_pane.dart';
 import 'package:finance_tracker/features/transactions/cubit/add_entry_cubit.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_cubit.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_state.dart';
+import 'package:finance_tracker/features/transactions/widgets/delete_entry_dialog.dart';
 import 'package:finance_tracker/features/transactions/widgets/entry_panel.dart';
 import 'package:finance_tracker/features/transactions/widgets/transactions_list_card.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,26 @@ class TransactionsPage extends StatelessWidget {
 
 class _TransactionsView extends StatelessWidget {
   const _TransactionsView();
+
+  /// Reads the source balance, then asks for confirmation.
+  Future<bool> _confirmDelete(
+    BuildContext context,
+    TransactionsState state,
+    Transaction entry,
+  ) async {
+    final balance = await context.read<FinanceRepository>().sourceBalance(
+      entry.sourceId,
+    );
+    if (!context.mounted) return false;
+    final confirmed = await showDeleteEntryDialog(
+      context,
+      entry: entry,
+      sourceName: state.sourceName(entry.sourceId),
+      categoryName: state.categoryName(entry.categoryId),
+      balanceBefore: balance,
+    );
+    return confirmed ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +110,7 @@ class _TransactionsView extends StatelessWidget {
                     sourceName: state.sourceName,
                     sources: state.sources,
                     categories: state.categories,
+                    onDelete: (entry) => _confirmDelete(context, state, entry),
                   ),
                 ),
               ),

@@ -48,7 +48,7 @@ Remove the entry from the list or persist anything.
 
 ## Verify
 
-- [ ] Edit "Home EMI", click "Delete entry": a centered dialog shows "Delete this entry?", the entry summary with `−₹32,000`, the paragraph, and the bordered line `Salary balance ₹53,200 → ₹85,200`.
-- [ ] Cancel closes it and keeps edit mode; Delete entry closes it, shows the SnackBar and returns the panel to "New entry".
-- [ ] For an income entry such as "Rent received" (Aqua 105, +₹45,000) the line reads `Aqua 105 balance ₹31,000 → −₹14,000` (the balance goes down, and a negative result shows a minus sign).
-- [ ] The dialog scrolls instead of overflowing on a short window; Esc closes it. `flutter analyze` is clean.
+- [x] Edit "Home EMI", click "Delete entry": a centered dialog shows "Delete this entry?", the entry summary with `−₹32,000`, the paragraph, and the bordered line `Salary balance ₹53,200 → ₹85,200`.
+- [x] Cancel closes it and keeps edit mode; Delete entry closes it, shows the SnackBar and returns the panel to "New entry".
+- [x] For an income entry such as "Rent received" (Aqua 105, +₹45,000) the line reads `Aqua 105 balance ₹31,000 → −₹14,000` (the balance goes down, and a negative result shows a minus sign).
+- [x] The dialog scrolls instead of overflowing on a short window; Esc closes it. `flutter analyze` is clean.

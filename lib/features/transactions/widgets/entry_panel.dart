@@ -29,6 +29,7 @@ class EntryPanel extends StatefulWidget {
     required this.sourceName,
     required this.sources,
     required this.categories,
+    required this.onDelete,
     this.editing,
   });
 
@@ -39,6 +40,11 @@ class EntryPanel extends StatefulWidget {
 
   /// The entry being edited; null for add mode.
   final Transaction? editing;
+
+  /// Asks for confirmation and resolves to true when the entry should be
+  /// deleted. The page implements it (it needs the repository), so the panel
+  /// itself stays free of data access.
+  final Future<bool> Function(Transaction entry) onDelete;
 
   @override
   State<EntryPanel> createState() => _EntryPanelState();
@@ -98,6 +104,15 @@ class _EntryPanelState extends State<EntryPanel> {
   void _leaveEditMode() {
     context.read<TransactionsCubit>().select(null);
     context.read<AddEntryCubit>().reset();
+  }
+
+  Future<void> _delete() async {
+    final editing = widget.editing;
+    if (editing == null) return;
+    final confirmed = await widget.onDelete(editing);
+    if (!confirmed || !mounted) return;
+    _showMessage('Entry deleted (sample data, nothing is stored yet)');
+    _leaveEditMode();
   }
 
   void _saveChanges() {
@@ -267,12 +282,11 @@ class _EntryPanelState extends State<EntryPanel> {
         decoration: const BoxDecoration(
           border: Border(top: BorderSide(color: AppColors.divider)),
         ),
-        // Until the delete dialog exists this only shows a message.
         child: AppButton(
           label: 'Delete entry',
           variant: AppButtonVariant.dangerOutline,
           expand: true,
-          onPressed: () => _showMessage('Not wired yet (sample data)'),
+          onPressed: _delete,
         ),
       ),
     ];
