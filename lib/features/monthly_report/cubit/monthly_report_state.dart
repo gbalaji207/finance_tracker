@@ -9,6 +9,7 @@ class MonthlyReportState extends Equatable {
     DateTime? month,
     this.report,
     this.errorMessage,
+    this.actionError,
   }) : month = month ?? appMonth();
 
   final LoadStatus status;
@@ -16,19 +17,25 @@ class MonthlyReportState extends Equatable {
   final MonthlyReport? report;
   final String? errorMessage;
 
+  /// One-shot message for the page to show as a SnackBar, then clear.
+  final String? actionError;
+
   MonthlyReportState copyWith({
     LoadStatus? status,
     DateTime? month,
     MonthlyReport? report,
     String? errorMessage,
     bool clearError = false,
+    String? actionError,
+    bool clearActionError = false,
   }) => MonthlyReportState(
     status: status ?? this.status,
     month: month ?? this.month,
     report: report ?? this.report,
     errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    actionError: clearActionError ? null : (actionError ?? this.actionError),
   );
 
   @override
-  List<Object?> get props => [status, month, report, errorMessage];
+  List<Object?> get props => [status, month, report, errorMessage, actionError];
 }

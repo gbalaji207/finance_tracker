@@ -1,4 +1,5 @@
 import 'package:finance_tracker/core/data/supabase/row_mappers.dart';
+import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -128,5 +129,25 @@ void main() {
     expect(r.bankBalance, isNull);
     expect(r.asOf, isNull);
     expect(r.difference, isNull);
+  });
+
+  test('sourceMonthRowFromRow maps a source_month_rows row', () {
+    final r = sourceMonthRowFromRow({
+      'month': '2026-11-01',
+      'income': '45000.00',
+      'expense': 12000,
+      'invested_saved': '10000.00',
+      'closing': 31000.0,
+    });
+    expect(r.month, DateTime(2026, 11, 1));
+    expect(r.income, 45000);
+    expect(r.expense, 12000);
+    expect(r.investedSaved, 10000);
+    expect(r.closing, 31000);
+  });
+
+  test('MonthlyReport with income 0 has a savings rate of 0', () {
+    const report = MonthlyReport(bySource: [], expenseByCategory: []);
+    expect(report.savingsRate, 0);
   });
 }

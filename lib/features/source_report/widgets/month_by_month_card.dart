@@ -6,6 +6,7 @@ import 'package:finance_tracker/core/utils/app_dates.dart';
 import 'package:finance_tracker/core/utils/money.dart';
 import 'package:finance_tracker/core/widgets/app_card.dart';
 import 'package:finance_tracker/core/widgets/app_table.dart';
+import 'package:finance_tracker/core/widgets/empty_note.dart';
 import 'package:flutter/material.dart';
 
 class MonthByMonthCard extends StatelessWidget {
@@ -22,26 +23,32 @@ class MonthByMonthCard extends StatelessWidget {
         children: [
           Text('Month by month', style: AppTextStyles.sectionTitle),
           const SizedBox(height: AppSpacing.s8),
-          AppTable(
-            minWidth: 520,
-            columns: const [
-              AppTableColumn('Month', flex: 1.2),
-              AppTableColumn('Income', align: TextAlign.right),
-              AppTableColumn('Expense', align: TextAlign.right),
-              AppTableColumn('Invested / saved', align: TextAlign.right),
-              AppTableColumn('Closing balance', align: TextAlign.right),
-            ],
-            rows: [
-              for (final m in months)
-                AppTableRow([
-                  AppTableText(AppDates.monthYearShort(m.month), bold: true),
-                  AppTableText(Money.plain(m.income), color: AppColors.income),
-                  AppTableText(Money.plain(m.expense)),
-                  AppTableText(Money.plain(m.investedSaved)),
-                  AppTableText(Money.plain(m.closing), bold: true),
-                ]),
-            ],
-          ),
+          if (months.isEmpty)
+            const EmptyNote('No history yet.')
+          else
+            AppTable(
+              minWidth: 520,
+              columns: const [
+                AppTableColumn('Month', flex: 1.2),
+                AppTableColumn('Income', align: TextAlign.right),
+                AppTableColumn('Expense', align: TextAlign.right),
+                AppTableColumn('Invested / saved', align: TextAlign.right),
+                AppTableColumn('Closing balance', align: TextAlign.right),
+              ],
+              rows: [
+                for (final m in months)
+                  AppTableRow([
+                    AppTableText(AppDates.monthYearShort(m.month), bold: true),
+                    AppTableText(
+                      Money.plain(m.income),
+                      color: AppColors.income,
+                    ),
+                    AppTableText(Money.plain(m.expense)),
+                    AppTableText(Money.plain(m.investedSaved)),
+                    AppTableText(Money.plain(m.closing), bold: true),
+                  ]),
+              ],
+            ),
         ],
       ),
     );

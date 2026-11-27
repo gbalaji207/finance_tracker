@@ -60,10 +60,10 @@ Add: a `source_month_rows` row maps to `SourceMonthRow`; `MonthlyReport` with in
 
 ## Verify (Supabase mode, signed in)
 
-- [ ] Monthly report, November 2026: income ₹2,28,000, expense ₹82,600, invested ₹30,000, saved ₹16,000, closing ₹1,32,400, savings rate about 20%. By-source table: openings 15,000 / 6,000 / 8,000 / 4,000 (total ₹33,000) and the four closing balances from the Dashboard. Categories: Housing ₹32,000, Groceries ₹15,000, Property upkeep ₹14,600, Other ₹12,000, Utilities ₹9,000.
-- [ ] Previous month (October 2026): income ₹2,23,000, expense ₹76,600, invested ₹40,000, saved ₹94,000, closing ₹33,000; categories Housing ₹32,000, Groceries ₹14,000, Other ₹12,000, Property upkeep ₹10,500, Utilities ₹8,100.
-- [ ] A month with no entries (for example January 2027): totals show ₹0, savings rate 0%, "No expenses in this month." and no crash.
-- [ ] Source report: choosing **Aqua 105** shows balance ₹31,000, income this month ₹45,000, expense ₹12,000, to date ₹1,80,000, and the six months June to November with closing 2,000 / 8,000 / 9,500 / 13,500 / 8,000 / 31,000 (as in the wireframe table, oldest at the bottom).
-- [ ] Choosing **Salary** shows only October and November: November income ₹1,20,000, expense ₹55,800, invested/saved ₹26,000, closing ₹53,200; October income ₹1,20,000, expense ₹57,000, invested/saved ₹50,000, closing ₹15,000. The chart shows two groups without overflow.
-- [ ] **Old freelance** (archived) shows balance ₹0 and an empty or near-empty history without errors.
-- [ ] Sample mode: Source report still shows the Aqua 105 numbers; its dropdown now lists the five sample sources. `flutter analyze` and `flutter test` pass.
+- [x] Monthly report, November 2026: income ₹2,28,000, expense ₹82,600, invested ₹30,000, saved ₹16,000, closing ₹1,32,400, savings rate about 20%. By-source table: openings 15,000 / 6,000 / 8,000 / 4,000 (total ₹33,000) and the four closing balances from the Dashboard. Categories: Housing ₹32,000, Groceries ₹15,000, Property upkeep ₹14,600, Other ₹12,000, Utilities ₹9,000.
+- [x] Previous month (October 2026): income ₹2,23,000, expense ₹76,600, invested ₹40,000, saved ₹94,000, closing ₹33,000; categories Housing ₹32,000, Groceries ₹14,000, Other ₹12,000, Property upkeep ₹10,500, Utilities ₹8,100.
+- [x] A month with no entries (for example January 2027): totals show ₹0, savings rate 0%, "No expenses in this month." and no crash.
+- [x] Source report: choosing **Aqua 105** shows balance ₹31,000, income this month ₹45,000, expense ₹12,000, to date ₹1,80,000, and the six months June to November with closing 2,000 / 8,000 / 9,500 / 13,500 / 8,000 / 31,000 (as in the wireframe table, oldest at the bottom).
+- [x] Choosing **Salary** shows only October and November: November income ₹1,20,000, expense ₹55,800, invested/saved ₹26,000, closing ₹53,200; October income ₹1,20,000, expense ₹57,000, invested/saved ₹50,000, closing ₹15,000. The chart shows two groups without overflow.
+- [x] **Old freelance** (archived) shows balance ₹0 and an empty or near-empty history without errors.
+- [x] Sample mode: Source report still shows the Aqua 105 numbers; its dropdown now lists the five sample sources. `flutter analyze` and `flutter test` pass.

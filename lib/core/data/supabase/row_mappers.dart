@@ -3,6 +3,7 @@ import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/source.dart';
+import 'package:finance_tracker/core/models/source_report.dart';
 import 'package:finance_tracker/core/models/source_summary.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
@@ -85,3 +86,11 @@ BankReconciliation reconciliationFromRow(Map<String, dynamic> r) =>
           : toDouble(r['bank_balance']),
       asOf: r['as_of'] == null ? null : DateTime.parse(r['as_of'] as String),
     );
+
+SourceMonthRow sourceMonthRowFromRow(Map<String, dynamic> r) => SourceMonthRow(
+  month: DateTime.parse(r['month'] as String),
+  income: toDouble(r['income']),
+  expense: toDouble(r['expense']),
+  investedSaved: toDouble(r['invested_saved']),
+  closing: toDouble(r['closing']),
+);

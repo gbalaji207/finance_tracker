@@ -6,6 +6,7 @@ import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
 import 'package:finance_tracker/core/utils/app_dates.dart';
 import 'package:finance_tracker/core/widgets/app_card.dart';
+import 'package:finance_tracker/core/widgets/empty_note.dart';
 import 'package:flutter/material.dart';
 
 class IncomeVsSpendCard extends StatelessWidget {
@@ -21,7 +22,10 @@ class IncomeVsSpendCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ordered = months.reversed.toList();
-    final maxIncome = ordered.fold<double>(0, (m, r) => math.max(m, r.income));
+    final maxValue = ordered.fold<double>(
+      0,
+      (m, r) => math.max(m, math.max(r.income, r.expense)),
+    );
 
     return AppCard(
       child: Column(
@@ -45,27 +49,32 @@ class IncomeVsSpendCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.s16),
-          Semantics(
-            label: _semanticsLabel(ordered),
-            image: true,
-            child: Container(
-              height: 190,
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s8),
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(color: AppColors.controlBorder),
+          if (ordered.isEmpty)
+            const EmptyNote('No history yet.')
+          else
+            Semantics(
+              label: _semanticsLabel(ordered),
+              image: true,
+              child: Container(
+                height: 190,
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s8),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: AppColors.controlBorder),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  spacing: AppSpacing.s24,
+                  children: [
+                    for (final m in ordered)
+                      Expanded(
+                        child: _MonthGroup(row: m, maxValue: maxValue),
+                      ),
+                  ],
                 ),
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                spacing: AppSpacing.s24,
-                children: [
-                  for (final m in ordered)
-                    Expanded(child: _MonthGroup(row: m, maxIncome: maxIncome)),
-                ],
-              ),
             ),
-          ),
         ],
       ),
     );
@@ -73,22 +82,20 @@ class IncomeVsSpendCard extends StatelessWidget {
 
   static String _semanticsLabel(List<SourceMonthRow> ordered) {
     if (ordered.isEmpty) return 'Bar chart: income against expense per month';
-    final first = AppDates.monthName(ordered.first.month);
-    final last = AppDates.monthName(ordered.last.month);
-    return 'Bar chart: income against expense per month, '
-        '$first to $last ${ordered.last.month.year}';
+    final first = AppDates.monthYearShort(ordered.first.month);
+    final last = AppDates.monthYearShort(ordered.last.month);
+    return 'Bar chart: income against expense per month, $first to $last';
   }
 }
 
 class _MonthGroup extends StatelessWidget {
-  const _MonthGroup({required this.row, required this.maxIncome});
+  const _MonthGroup({required this.row, required this.maxValue});
 
   final SourceMonthRow row;
-  final double maxIncome;
+  final double maxValue;
 
-  double _height(double amount) => maxIncome == 0
-      ? 0
-      : amount / maxIncome * IncomeVsSpendCard._barAreaHeight;
+  double _height(double amount) =>
+      maxValue == 0 ? 0 : amount / maxValue * IncomeVsSpendCard._barAreaHeight;
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/supabase/row_mappers.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
@@ -134,10 +135,53 @@ class SupabaseFinanceRepository implements FinanceRepository {
       throw UnimplementedError('B07');
 
   @override
-  Future<MonthlyReport> monthlyReport(DateTime month) =>
-      throw UnimplementedError('B06');
+  Future<MonthlyReport> monthlyReport(DateTime month) async {
+    final results = await Future.wait<Object?>([
+      sourceSummaries(month),
+      _client.rpc('expense_by_category', params: {'p_month': sqlDate(month)}),
+    ]);
+    final summaries = results[0] as List<SourceSummary>;
+    final rows = _rows(results[1]);
+    return MonthlyReport(
+      bySource: summaries,
+      expenseByCategory: [
+        for (final r in rows)
+          CategoryTotal(
+            name: r['category'] as String,
+            amount: toDouble(r['amount']),
+          ),
+      ],
+    );
+  }
 
   @override
-  Future<SourceReport> sourceReport(String sourceId) =>
-      throw UnimplementedError('B06');
+  Future<SourceReport> sourceReport(String sourceId) async {
+    final all = await allSources();
+    final source = all.firstWhere(
+      (s) => s.id == sourceId,
+      orElse: () => throw StateError('Source not found'),
+    );
+    final summaries = await sourceSummaries(appMonth());
+    SourceSummary? thisMonth;
+    for (final s in summaries) {
+      if (s.source.id == sourceId) thisMonth = s;
+    }
+    final balance = await sourceBalance(sourceId);
+    final data = await _client.rpc(
+      'source_month_rows',
+      params: {
+        'p_source': sourceId,
+        'p_end_month': sqlDate(appToday()),
+        'p_months': 6,
+      },
+    );
+    return SourceReport(
+      source: source,
+      balanceToday: balance,
+      incomeThisMonth: thisMonth?.income ?? 0,
+      expenseThisMonth: thisMonth?.expense ?? 0,
+      investedSavedToDate: thisMonth?.investedSavedToDate ?? 0,
+      months: _rows(data).map(sourceMonthRowFromRow).toList(),
+    );
+  }
 }

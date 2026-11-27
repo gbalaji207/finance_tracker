@@ -483,7 +483,10 @@ class MockFinanceRepository implements FinanceRepository {
 
   @override
   Future<SourceReport> sourceReport(String sourceId) async => SourceReport(
-    source: _aqua105,
+    source: _allSources.firstWhere(
+      (s) => s.id == sourceId,
+      orElse: () => _aqua105,
+    ),
     balanceToday: 31000,
     incomeThisMonth: 45000,
     expenseThisMonth: 12000,

@@ -1,9 +1,11 @@
-import 'package:finance_tracker/core/widgets/error_view.dart';
+import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
-import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/app_dropdown.dart';
+import 'package:finance_tracker/core/widgets/app_snack.dart';
+import 'package:finance_tracker/core/widgets/empty_note.dart';
+import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
 import 'package:finance_tracker/features/source_report/cubit/source_report_cubit.dart';
 import 'package:finance_tracker/features/source_report/cubit/source_report_state.dart';
@@ -30,7 +32,12 @@ class _SourceReportView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SourceReportCubit, SourceReportState>(
+    return BlocConsumer<SourceReportCubit, SourceReportState>(
+      listenWhen: (p, c) => c.actionError != null && p.actionError == null,
+      listener: (context, state) {
+        AppSnack.error(context, state.actionError!);
+        context.read<SourceReportCubit>().clearActionError();
+      },
       builder: (context, state) {
         if (state.status == LoadStatus.loading) {
           return const Center(child: CircularProgressIndicator());
@@ -41,6 +48,8 @@ class _SourceReportView extends StatelessWidget {
             onRetry: context.read<SourceReportCubit>().load,
           );
         }
+        final cubit = context.read<SourceReportCubit>();
+        final report = state.report;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: AppSpacing.s24,
@@ -56,9 +65,17 @@ class _SourceReportView extends StatelessWidget {
                   width: 180,
                   child: AppDropdown<String>(
                     label: 'Source',
-                    items: const [AppDropdownItem('aqua-105', 'Aqua 105')],
-                    value: 'aqua-105',
-                    onChanged: (_) {},
+                    items: [
+                      for (final s in state.sources)
+                        AppDropdownItem(
+                          s.id,
+                          s.isActive ? s.name : '${s.name} (archived)',
+                        ),
+                    ],
+                    value: state.selectedSourceId,
+                    onChanged: (id) {
+                      if (id != null) cubit.select(id);
+                    },
                   ),
                 ),
                 SizedBox(
@@ -72,9 +89,13 @@ class _SourceReportView extends StatelessWidget {
                 ),
               ],
             ),
-            SourceSummaryTiles(report: state.report!),
-            IncomeVsSpendCard(months: state.report!.months),
-            MonthByMonthCard(months: state.report!.months),
+            if (report == null)
+              const EmptyNote('No sources yet. Add one in Settings.')
+            else ...[
+              SourceSummaryTiles(report: report),
+              IncomeVsSpendCard(months: report.months),
+              MonthByMonthCard(months: report.months),
+            ],
           ],
         );
       },
