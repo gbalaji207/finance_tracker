@@ -272,6 +272,7 @@ class SupabaseFinanceRepository implements FinanceRepository {
       incomeThisMonth: thisMonth?.income ?? 0,
       expenseThisMonth: thisMonth?.expense ?? 0,
       investedSavedToDate: thisMonth?.investedSavedToDate ?? 0,
+      partnerThisMonth: thisMonth?.partner ?? 0,
       months: _rows(data).map(sourceMonthRowFromRow).toList(),
     );
   }
@@ -380,6 +381,32 @@ class SupabaseFinanceRepository implements FinanceRepository {
     final rows = await _client
         .from('categories')
         .update({'is_active': active})
+        .eq('id', id)
+        .select('id');
+    if (rows.isEmpty) throw StateError('Not found');
+  }
+
+  @override
+  Future<void> updateSource(String id, SourceInput input) async {
+    final rows = await _client
+        .from('sources')
+        .update({
+          'name': input.name.trim(),
+          'kind': input.kind,
+          'bank_account_id': input.bankAccountId,
+          'opening_balance': input.openingBalance,
+          'opening_date': sqlDate(input.openingDate),
+        })
+        .eq('id', id)
+        .select('id');
+    if (rows.isEmpty) throw StateError('Not found');
+  }
+
+  @override
+  Future<void> renameBankAccount(String id, String name) async {
+    final rows = await _client
+        .from('bank_accounts')
+        .update({'name': name.trim()})
         .eq('id', id)
         .select('id');
     if (rows.isEmpty) throw StateError('Not found');

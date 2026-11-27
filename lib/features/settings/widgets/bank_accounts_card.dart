@@ -13,11 +13,15 @@ class BankAccountsCard extends StatelessWidget {
     super.key,
     required this.accounts,
     required this.onEdit,
+    this.editingId,
     required this.onToggleActive,
   });
 
   final List<BankAccountUsage> accounts;
   final ValueChanged<BankAccount> onEdit;
+
+  /// The account being renamed; its row is highlighted.
+  final String? editingId;
 
   /// Archives an active account or restores an archived one.
   final ValueChanged<BankAccount> onToggleActive;
@@ -52,35 +56,40 @@ class BankAccountsCard extends StatelessWidget {
             ],
             rows: [
               for (final u in accounts)
-                AppTableRow([
-                  Text(u.account.name, style: AppTextStyles.bodyStrong),
-                  AppTableText('${u.activeSourceCount}'),
-                  u.account.isActive
-                      ? const AppBadge(
-                          text: 'Active',
-                          background: AppColors.incomeBg,
-                          foreground: AppColors.income,
-                        )
-                      : const AppBadge(
-                          text: 'Archived',
-                          background: AppColors.neutralBg,
-                          foreground: AppColors.neutralFg,
+                AppTableRow(
+                  background: u.account.id == editingId
+                      ? AppColors.rowSelected
+                      : null,
+                  [
+                    Text(u.account.name, style: AppTextStyles.bodyStrong),
+                    AppTableText('${u.activeSourceCount}'),
+                    u.account.isActive
+                        ? const AppBadge(
+                            text: 'Active',
+                            background: AppColors.incomeBg,
+                            foreground: AppColors.income,
+                          )
+                        : const AppBadge(
+                            text: 'Archived',
+                            background: AppColors.neutralBg,
+                            foreground: AppColors.neutralFg,
+                          ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: AppSpacing.s16,
+                      children: [
+                        AppTextLink(
+                          label: 'Edit',
+                          onPressed: () => onEdit(u.account),
                         ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: AppSpacing.s16,
-                    children: [
-                      AppTextLink(
-                        label: 'Edit',
-                        onPressed: () => onEdit(u.account),
-                      ),
-                      AppTextLink(
-                        label: u.account.isActive ? 'Archive' : 'Restore',
-                        onPressed: () => onToggleActive(u.account),
-                      ),
-                    ],
-                  ),
-                ]),
+                        AppTextLink(
+                          label: u.account.isActive ? 'Archive' : 'Restore',
+                          onPressed: () => onToggleActive(u.account),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
             ],
           ),
         ],

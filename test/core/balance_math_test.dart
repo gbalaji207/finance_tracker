@@ -23,6 +23,9 @@ void main() {
     test('deleting income subtracts it, even below zero', () {
       expect(BalanceMath.afterDeleting(entry(TxType.income, 45000), 31000), -14000);
     });
+    test('deleting a partner transfer adds it back', () {
+      expect(BalanceMath.afterDeleting(entry(TxType.partner, 8000), 45200), 53200);
+    });
     test('deleting savings adds it back', () {
       expect(BalanceMath.afterDeleting(entry(TxType.savings, 10000), 1000), 11000);
     });

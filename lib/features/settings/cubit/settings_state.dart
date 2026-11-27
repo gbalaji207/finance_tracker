@@ -11,6 +11,8 @@ class SettingsState extends Equatable {
     this.sources = const [],
     this.categoryUsage = const [],
     this.errorMessage,
+    this.editingSourceId,
+    this.editingBankAccountId,
   });
 
   final LoadStatus status;
@@ -23,11 +25,45 @@ class SettingsState extends Equatable {
   final List<CategoryUsage> categoryUsage;
   final String? errorMessage;
 
+  /// The source or bank account being edited; both null when adding.
+  final String? editingSourceId;
+  final String? editingBankAccountId;
+
   /// The accounts a new source can be placed in.
   List<BankAccount> get activeBankAccounts => [
     for (final u in bankAccounts)
       if (u.account.isActive) u.account,
   ];
+
+  /// The source being edited, or null.
+  Source? get editingSource {
+    final id = editingSourceId;
+    if (id == null) return null;
+    for (final s in sources) {
+      if (s.id == id) return s;
+    }
+    return null;
+  }
+
+  /// The bank account being edited, or null.
+  BankAccount? get editingBankAccount {
+    final id = editingBankAccountId;
+    if (id == null) return null;
+    for (final u in bankAccounts) {
+      if (u.account.id == id) return u.account;
+    }
+    return null;
+  }
+
+  /// The accounts offered in the source form: the active ones, plus the
+  /// account the edited source currently belongs to (even if archived).
+  List<BankAccount> get accountsForSourceForm {
+    final currentId = editingSource?.bankAccountId;
+    return [
+      for (final u in bankAccounts)
+        if (u.account.isActive || u.account.id == currentId) u.account,
+    ];
+  }
 
   SettingsState copyWith({
     LoadStatus? status,
@@ -36,12 +72,21 @@ class SettingsState extends Equatable {
     List<CategoryUsage>? categoryUsage,
     String? errorMessage,
     bool clearError = false,
+    String? editingSourceId,
+    String? editingBankAccountId,
+    bool clearEditing = false,
   }) => SettingsState(
     status: status ?? this.status,
     bankAccounts: bankAccounts ?? this.bankAccounts,
     sources: sources ?? this.sources,
     categoryUsage: categoryUsage ?? this.categoryUsage,
     errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    editingSourceId: clearEditing
+        ? null
+        : (editingSourceId ?? this.editingSourceId),
+    editingBankAccountId: clearEditing
+        ? null
+        : (editingBankAccountId ?? this.editingBankAccountId),
   );
 
   @override
@@ -51,5 +96,7 @@ class SettingsState extends Equatable {
     sources,
     categoryUsage,
     errorMessage,
+    editingSourceId,
+    editingBankAccountId,
   ];
 }

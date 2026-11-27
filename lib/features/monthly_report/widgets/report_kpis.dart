@@ -19,6 +19,7 @@ class ReportKpis extends StatelessWidget {
         KpiTile(label: 'Expense', value: Money.plain(report.expense)),
         KpiTile(label: 'Invested', value: Money.plain(report.invested)),
         KpiTile(label: 'Saved', value: Money.plain(report.saved)),
+        KpiTile(label: 'Jillu', value: Money.plain(report.partner)),
         KpiTile(
           label: 'Savings rate (invested + saved)',
           value: '${(report.savingsRate * 100).round()}%',

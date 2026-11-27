@@ -227,4 +227,62 @@ void main() {
     expect(s.source.bankAccountId, 'a1');
     expect(s.source.bankAccountName, 'HDFC Salary');
   });
+
+  group('partner', () {
+    final summaryRow = {
+      'source_id': 'a',
+      'name': 'Salary',
+      'kind': 'Employment',
+      'opening_balance': '2000.00',
+      'is_active': true,
+      'month_opening': '15000.00',
+      'income': '120000.00',
+      'expense': '47800.00',
+      'invested': '20000.00',
+      'saved': '6000.00',
+      'closing': '53200.00',
+      'invested_saved_to_date': '76000.00',
+    };
+
+    test('sourceSummaryFromRow reads partner as a string', () {
+      final s = sourceSummaryFromRow({...summaryRow, 'partner': '8000.00'});
+      expect(s.partner, 8000);
+    });
+
+    test('sourceSummaryFromRow treats a missing partner as 0', () {
+      expect(sourceSummaryFromRow(summaryRow).partner, 0);
+    });
+
+    test('sourceMonthRowFromRow reads partner', () {
+      final r = sourceMonthRowFromRow({
+        'month': '2026-09-01',
+        'income': '45000.00',
+        'expense': '6000.00',
+        'invested_saved': '30000.00',
+        'partner': '5000.00',
+        'closing': '13500.00',
+      });
+      expect(r.partner, 5000);
+    });
+
+    test('a partner category and a partner entry map by name', () {
+      final c = categoryFromRow({
+        'id': 'c1',
+        'name': 'Day-to-day',
+        'kind': 'partner',
+        'is_active': true,
+      });
+      expect(c.kind, TxType.partner);
+      final t = transactionFromRow({
+        'id': 't1',
+        'tx_date': '2026-11-10',
+        'type': 'partner',
+        'source_id': 's1',
+        'category_id': 'c1',
+        'amount': '1000.00',
+        'description': '',
+      });
+      expect(t.type, TxType.partner);
+    });
+  });
 }

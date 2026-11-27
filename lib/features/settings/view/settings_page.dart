@@ -11,11 +11,11 @@ import 'package:finance_tracker/features/auth/cubit/auth_cubit.dart';
 import 'package:finance_tracker/features/settings/cubit/settings_cubit.dart';
 import 'package:finance_tracker/features/settings/cubit/settings_state.dart';
 import 'package:finance_tracker/features/settings/widgets/account_card.dart';
+import 'package:finance_tracker/features/settings/widgets/bank_account_form_card.dart';
 import 'package:finance_tracker/features/settings/widgets/bank_accounts_card.dart';
 import 'package:finance_tracker/features/settings/widgets/categories_card.dart';
-import 'package:finance_tracker/features/settings/widgets/new_bank_account_card.dart';
 import 'package:finance_tracker/features/settings/widgets/new_category_card.dart';
-import 'package:finance_tracker/features/settings/widgets/new_source_card.dart';
+import 'package:finance_tracker/features/settings/widgets/source_form_card.dart';
 import 'package:finance_tracker/features/settings/widgets/sources_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -75,24 +75,42 @@ class _SettingsView extends StatelessWidget {
               secondaryWidth: 340,
               primary: BankAccountsCard(
                 accounts: state.bankAccounts,
-                onEdit: (_) => _notWired(context),
+                editingId: state.editingBankAccountId,
+                onEdit: (a) => cubit.startEditBankAccount(a.id),
                 onToggleActive: (a) =>
                     _report(context, cubit.toggleBankAccountActive(a.id)),
               ),
-              secondary: NewBankAccountCard(onSave: cubit.addBankAccount),
+              secondary: BankAccountFormCard(
+                key: ValueKey(state.editingBankAccountId ?? 'new'),
+                editing: state.editingBankAccount,
+                onSave: state.editingBankAccount == null
+                    ? cubit.addBankAccount
+                    : (name) => cubit.renameBankAccount(
+                        state.editingBankAccount!.id,
+                        name,
+                      ),
+                onCancel: cubit.cancelEdit,
+              ),
             ),
             TwoPane(
               primaryMin: 560,
               secondaryWidth: 340,
               primary: SourcesCard(
                 sources: state.sources,
-                onEdit: (_) => _notWired(context),
+                editingId: state.editingSourceId,
+                onEdit: (s) => cubit.startEditSource(s.id),
                 onToggleActive: (s) =>
                     _report(context, cubit.toggleSourceActive(s.id)),
               ),
-              secondary: NewSourceCard(
-                bankAccounts: state.activeBankAccounts,
-                onSave: cubit.addSource,
+              secondary: SourceFormCard(
+                key: ValueKey(state.editingSourceId ?? 'new'),
+                bankAccounts: state.accountsForSourceForm,
+                editing: state.editingSource,
+                onSave: state.editingSource == null
+                    ? cubit.addSource
+                    : (input) =>
+                          cubit.updateSource(state.editingSource!.id, input),
+                onCancel: cubit.cancelEdit,
               ),
             ),
             TwoPane(

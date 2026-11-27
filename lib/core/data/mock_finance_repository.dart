@@ -33,13 +33,53 @@ class MockFinanceRepository implements FinanceRepository {
     'sbi-rentals': (balance: 56800, asOf: mockToday),
   };
   final Map<String, bool> _sourceActive = {};
+  final Map<String, Source> _sourceEdits = {};
+  final Map<String, String> _accountNames = {};
   final Map<String, bool> _categoryActive = {};
   final List<Source> _addedSources = [];
   final List<Category> _addedCategories = [];
   int _nextNewId = 1;
 
-  Source _sourceNow(Source s) =>
-      s.copyWith(isActive: _sourceActive[s.id] ?? s.isActive);
+  /// The name of the account now (it may have been renamed in memory).
+  String? _accountName(String? id) {
+    if (id == null) return null;
+    for (final a in [_hdfc, _sbi, ..._addedAccounts]) {
+      if (a.id == id) return _accountNames[a.id] ?? a.name;
+    }
+    return null;
+  }
+
+  /// [s] with the in-memory edits applied: its own edit, its archived flag
+  /// and the current name of its account.
+  Source _sourceNow(Source s) {
+    final base = _sourceEdits[s.id] ?? s;
+    return Source(
+      id: base.id,
+      name: base.name,
+      kind: base.kind,
+      openingBalance: base.openingBalance,
+      isActive: _sourceActive[s.id] ?? base.isActive,
+      openingDate: base.openingDate,
+      bankAccountId: base.bankAccountId,
+      bankAccountName: _accountName(base.bankAccountId) ?? base.bankAccountName,
+    );
+  }
+
+  /// The fixed sample summaries, carrying the edited source details.
+  List<SourceSummary> get _summariesNow => [
+    for (final m in _summaries)
+      SourceSummary(
+        source: _sourceNow(m.source),
+        income: m.income,
+        expense: m.expense,
+        invested: m.invested,
+        saved: m.saved,
+        closing: m.closing,
+        investedSavedToDate: m.investedSavedToDate,
+        monthOpening: m.monthOpening,
+        partner: m.partner,
+      ),
+  ];
 
   Category _categoryNow(Category c) => Category(
     id: c.id,
@@ -53,7 +93,7 @@ class MockFinanceRepository implements FinanceRepository {
 
   BankAccount _accountNow(BankAccount a) => BankAccount(
     id: a.id,
-    name: a.name,
+    name: _accountNames[a.id] ?? a.name,
     isActive: _accountActive[a.id] ?? a.isActive,
   );
 
@@ -166,6 +206,14 @@ class MockFinanceRepository implements FinanceRepository {
       ),
       entryCount: 5,
     ),
+    CategoryUsage(
+      category: Category(
+        id: 'partner-allowance',
+        name: 'Partner allowance',
+        kind: TxType.partner,
+      ),
+      entryCount: 0,
+    ),
   ];
 
   static const _categories = [
@@ -180,15 +228,21 @@ class MockFinanceRepository implements FinanceRepository {
     Category(id: 'other', name: 'Other', kind: TxType.expense),
     Category(id: 'mutual-funds', name: 'Mutual funds', kind: TxType.investment),
     Category(id: 'fixed-deposit', name: 'Fixed deposit', kind: TxType.savings),
+    Category(
+      id: 'partner-allowance',
+      name: 'Partner allowance',
+      kind: TxType.partner,
+    ),
   ];
 
   static const _summaries = [
     SourceSummary(
       source: _salary,
       income: 120000,
-      expense: 55800,
+      expense: 47800,
       invested: 20000,
       saved: 6000,
+      partner: 8000,
       closing: 53200,
       investedSavedToDate: 410000,
       monthOpening: 15000,
@@ -423,8 +477,8 @@ class MockFinanceRepository implements FinanceRepository {
     CategoryTotal(name: 'Housing', amount: 32000),
     CategoryTotal(name: 'Groceries', amount: 15000),
     CategoryTotal(name: 'Property upkeep', amount: 14600),
-    CategoryTotal(name: 'Other', amount: 12000),
     CategoryTotal(name: 'Utilities', amount: 9000),
+    CategoryTotal(name: 'Other', amount: 4000),
   ];
 
   static final _aquaMonths = <SourceMonthRow>[
@@ -445,8 +499,9 @@ class MockFinanceRepository implements FinanceRepository {
     SourceMonthRow(
       month: DateTime(2026, 9),
       income: 45000,
-      expense: 11000,
+      expense: 6000,
       investedSaved: 30000,
+      partner: 5000,
       closing: 13500,
     ),
     SourceMonthRow(
@@ -498,7 +553,7 @@ class MockFinanceRepository implements FinanceRepository {
   /// (including the archived `old-freelance`).
   @override
   Future<double> sourceBalance(String sourceId) async {
-    for (final s in _summaries) {
+    for (final s in _summariesNow) {
       if (s.source.id == sourceId) return s.closing;
     }
     return 0;
@@ -533,7 +588,7 @@ class MockFinanceRepository implements FinanceRepository {
   /// summaries, plus the opening balance of sources added in memory.
   double _sourcesTotal(String accountId) {
     var total = 0.0;
-    for (final s in _summaries) {
+    for (final s in _summariesNow) {
       if (s.source.bankAccountId == accountId) total += s.closing;
     }
     for (final s in _addedSources) {
@@ -556,7 +611,7 @@ class MockFinanceRepository implements FinanceRepository {
 
   @override
   Future<List<SourceSummary>> sourceSummaries(DateTime month) async =>
-      _summaries;
+      _summariesNow;
 
   @override
   Future<List<Transaction>> recentTransactions() async => [
@@ -586,17 +641,16 @@ class MockFinanceRepository implements FinanceRepository {
       _previousMonth;
 
   @override
-  Future<MonthlyReport> monthlyReport(DateTime month) async =>
-      const MonthlyReport(
-        bySource: _summaries,
-        expenseByCategory: _expenseByCategory,
-      );
+  Future<MonthlyReport> monthlyReport(DateTime month) async => MonthlyReport(
+    bySource: _summariesNow,
+    expenseByCategory: _expenseByCategory,
+  );
 
   @override
   Future<SourceReport> sourceReport(String sourceId) async => SourceReport(
-    source: _allSources.firstWhere(
+    source: _currentSources.firstWhere(
       (s) => s.id == sourceId,
-      orElse: () => _aqua105,
+      orElse: () => _sourceNow(_aqua105),
     ),
     balanceToday: 31000,
     incomeThisMonth: 45000,
@@ -678,5 +732,32 @@ class MockFinanceRepository implements FinanceRepository {
   @override
   Future<void> setCategoryActive(String id, bool active) async {
     _categoryActive[id] = active;
+  }
+
+  @override
+  Future<void> updateSource(String id, SourceInput input) async {
+    final current = _currentSources.where((s) => s.id == id).firstOrNull;
+    if (current == null) throw StateError('Not found');
+    final updated = Source(
+      id: id,
+      name: input.name.trim(),
+      kind: input.kind,
+      openingBalance: input.openingBalance,
+      isActive: current.isActive,
+      openingDate: input.openingDate,
+      bankAccountId: input.bankAccountId,
+      bankAccountName: _accountName(input.bankAccountId),
+    );
+    final i = _addedSources.indexWhere((s) => s.id == id);
+    if (i >= 0) {
+      _addedSources[i] = updated;
+    } else {
+      _sourceEdits[id] = updated;
+    }
+  }
+
+  @override
+  Future<void> renameBankAccount(String id, String name) async {
+    _accountNames[id] = name.trim();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/models/bank_account.dart';
+import 'package:finance_tracker/core/models/source.dart';
 import 'package:finance_tracker/core/models/source_input.dart';
 import 'package:finance_tracker/core/theme/app_colors.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
@@ -13,33 +14,59 @@ import 'package:finance_tracker/core/widgets/app_snack.dart';
 import 'package:finance_tracker/core/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 
-class NewSourceCard extends StatefulWidget {
-  const NewSourceCard({
+/// Adds a source, or changes one when [editing] is set. The page gives it a
+/// `ValueKey` on the edited id so it refills when another source is chosen.
+class SourceFormCard extends StatefulWidget {
+  const SourceFormCard({
     super.key,
     required this.bankAccounts,
     required this.onSave,
+    this.editing,
+    this.onCancel,
   });
 
-  /// Active bank accounts only.
+  /// The accounts to choose from: the active ones, plus the edited source's
+  /// current account.
   final List<BankAccount> bankAccounts;
+
+  /// The source being edited; null when adding.
+  final Source? editing;
 
   /// Saves the source. Resolves to an error message, or null on success.
   final Future<String?> Function(SourceInput input) onSave;
 
+  /// Leaves edit mode (the Cancel button).
+  final VoidCallback? onCancel;
+
   @override
-  State<NewSourceCard> createState() => _NewSourceCardState();
+  State<SourceFormCard> createState() => _SourceFormCardState();
 }
 
-class _NewSourceCardState extends State<NewSourceCard> {
+class _SourceFormCardState extends State<SourceFormCard> {
   static const _kinds = ['Employment', 'Freelance', 'Rental', 'Other'];
 
-  final _name = TextEditingController();
-  final _opening = TextEditingController();
-  String _kind = 'Rental';
+  late final TextEditingController _name;
+  late final TextEditingController _opening;
+  late String _kind;
   String? _bankAccountId;
-  DateTime _openingDate = appToday();
+  late DateTime _openingDate;
   bool _saving = false;
   String? _error;
+
+  bool get _isEditing => widget.editing != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final e = widget.editing;
+    _name = TextEditingController(text: e?.name ?? '');
+    _opening = TextEditingController(
+      text: e == null ? '' : e.openingBalance.toStringAsFixed(0),
+    );
+    _kind = e?.kind ?? 'Rental';
+    _bankAccountId = e?.bankAccountId;
+    _openingDate = e?.openingDate ?? appToday();
+  }
 
   /// The chosen account, or the first one while none is chosen (or the chosen
   /// one is no longer offered).
@@ -96,7 +123,12 @@ class _NewSourceCardState extends State<NewSourceCard> {
       AppSnack.error(context, error);
       return;
     }
-    AppSnack.info(context, AppConfig.note('Source saved'));
+    AppSnack.info(
+      context,
+      AppConfig.note(_isEditing ? 'Source updated' : 'Source saved'),
+    );
+    // After an edit the page switches back to a fresh "New source" form.
+    if (_isEditing) return;
     _name.clear();
     _opening.clear();
     setState(() {
@@ -110,12 +142,19 @@ class _NewSourceCardState extends State<NewSourceCard> {
   @override
   Widget build(BuildContext context) {
     final accounts = widget.bankAccounts;
+    final movesAccount =
+        _isEditing &&
+        _accountId != null &&
+        _accountId != widget.editing!.bankAccountId;
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 14,
         children: [
-          Text('New source', style: AppTextStyles.sectionTitle),
+          Text(
+            _isEditing ? 'Edit source' : 'New source',
+            style: AppTextStyles.sectionTitle,
+          ),
           AppTextField(
             label: 'Name',
             hintText: 'e.g. Aqua 410',
@@ -146,6 +185,12 @@ class _NewSourceCardState extends State<NewSourceCard> {
                     }
                   },
           ),
+          if (movesAccount)
+            Text(
+              "All of this source's past entries move to the new account, "
+              "so both accounts' totals change.",
+              style: AppTextStyles.caption,
+            ),
           AppTextField(
             label: 'Opening balance (₹)',
             hintText: '0',
@@ -155,17 +200,36 @@ class _NewSourceCardState extends State<NewSourceCard> {
             onChanged: (_) => _clearError(),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
+          if (_isEditing)
+            Text(
+              "Changing this changes the source's balance for every month.",
+              style: AppTextStyles.caption,
+            ),
           AppDateField(
             label: 'Opening date',
             helperText: 'Entries before this date are not counted.',
             value: _openingDate,
             onChanged: (d) => setState(() => _openingDate = d),
           ),
-          AppButton(
-            label: 'Save source',
-            size: AppButtonSize.large,
-            expand: true,
-            onPressed: _saving ? null : _save,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 8,
+            children: [
+              AppButton(
+                label: _isEditing ? 'Save changes' : 'Save source',
+                size: AppButtonSize.large,
+                expand: true,
+                onPressed: _saving ? null : _save,
+              ),
+              if (_isEditing)
+                AppButton(
+                  label: 'Cancel',
+                  variant: AppButtonVariant.secondary,
+                  size: AppButtonSize.large,
+                  expand: true,
+                  onPressed: _saving ? null : widget.onCancel,
+                ),
+            ],
           ),
           if (_error != null)
             Semantics(

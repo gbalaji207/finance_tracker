@@ -58,6 +58,31 @@ class SettingsCubit extends Cubit<SettingsState> {
     }
   }
 
+  /// Puts the Sources form into edit mode (and leaves any account edit).
+  void startEditSource(String id) =>
+      emit(state.copyWith(clearEditing: true).copyWith(editingSourceId: id));
+
+  /// Puts the bank account form into edit mode (and leaves any source edit).
+  void startEditBankAccount(String id) => emit(
+    state.copyWith(clearEditing: true).copyWith(editingBankAccountId: id),
+  );
+
+  void cancelEdit() => emit(state.copyWith(clearEditing: true));
+
+  /// Saves the changes, then reloads and leaves edit mode. Returns an error
+  /// message, or null on success.
+  Future<String?> updateSource(String id, SourceInput input) async {
+    final error = await _write(() => _repo.updateSource(id, input));
+    if (error == null && !isClosed) emit(state.copyWith(clearEditing: true));
+    return error;
+  }
+
+  Future<String?> renameBankAccount(String id, String name) async {
+    final error = await _write(() => _repo.renameBankAccount(id, name));
+    if (error == null && !isClosed) emit(state.copyWith(clearEditing: true));
+    return error;
+  }
+
   Future<String?> addBankAccount(String name) =>
       _write(() => _repo.addBankAccount(name));
 

@@ -1,4 +1,6 @@
 import 'package:finance_tracker/core/data/mock_finance_repository.dart';
+import 'package:finance_tracker/core/models/source_input.dart';
+import 'package:finance_tracker/core/models/tx_type.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -8,7 +10,7 @@ void main() {
     for (final s in await repo.sourceSummaries(DateTime(2026, 11))) {
       expect(
         s.closing,
-        s.opening + s.income - s.expense - s.invested - s.saved,
+        s.opening + s.income - s.expense - s.invested - s.saved - s.partner,
         reason: s.source.name,
       );
     }
@@ -26,9 +28,10 @@ void main() {
   test('monthly report totals', () async {
     final report = await repo.monthlyReport(DateTime(2026, 11));
     expect(report.income, 228000);
-    expect(report.expense, 82600);
+    expect(report.expense, 74600);
     expect(report.invested, 30000);
     expect(report.saved, 16000);
+    expect(report.partner, 8000);
     expect(report.opening, 33000);
     expect(report.closing, 132400);
     expect(report.savingsRate, closeTo(0.20, 0.005));
@@ -36,7 +39,19 @@ void main() {
       0,
       (sum, c) => sum + c.amount,
     );
-    expect(categoryTotal, 82600);
+    expect(categoryTotal, 74600);
+  });
+
+  test('partner category exists and Partner is not in the expense list', () async {
+    final categories = await repo.categories();
+    expect(categories, hasLength(8));
+    final partner = categories.firstWhere((c) => c.name == 'Partner allowance');
+    expect(partner.kind, TxType.partner);
+    final report = await repo.monthlyReport(DateTime(2026, 11));
+    expect(
+      report.expenseByCategory.map((c) => c.name),
+      isNot(contains('Partner allowance')),
+    );
   });
 
   test('transactions and recent entries', () async {
@@ -63,6 +78,9 @@ void main() {
     final report = await repo.sourceReport('aqua-105');
     expect(report.months, hasLength(6));
     expect(report.months.first.month, DateTime(2026, 11));
+    final sep = report.months.firstWhere((m) => m.month == DateTime(2026, 9));
+    expect(sep.partner, 5000);
+    expect(report.partnerThisMonth, 0);
   });
 
   test('sources() is active only; allSources() includes archived', () async {
@@ -77,7 +95,7 @@ void main() {
 
   test('category usage counts', () async {
     final usage = await repo.categoryUsage();
-    expect(usage, hasLength(7));
+    expect(usage, hasLength(8));
     expect(usage.fold<int>(0, (sum, u) => sum + u.entryCount), 85);
   });
 
@@ -138,6 +156,76 @@ void main() {
       expect(byName['Old freelance'], 'HDFC Salary');
       expect(byName['Aqua 105'], 'SBI Rentals');
       expect(byName['VR'], 'SBI Rentals');
+    });
+  });
+
+  group('editing', () {
+    SourceInput input(String account, {String name = 'Salary'}) => SourceInput(
+      name: name,
+      kind: 'Employment',
+      openingBalance: 2000,
+      openingDate: DateTime(2026, 10),
+      bankAccountId: account,
+    );
+
+    test('renaming a source shows everywhere in sample mode', () async {
+      final fresh = MockFinanceRepository();
+      await fresh.updateSource('salary', input('hdfc-salary', name: 'Pay'));
+      final sources = await fresh.allSources();
+      expect(sources.map((s) => s.name), contains('Pay'));
+      final summaries = await fresh.sourceSummaries(DateTime(2026, 11));
+      expect(summaries.first.source.name, 'Pay');
+      expect(summaries.first.closing, 53200);
+    });
+
+    test('moving a source moves its balance between accounts', () async {
+      final fresh = MockFinanceRepository();
+      await fresh.updateSource('salary', input('sbi-rentals'));
+      final rec = await fresh.reconciliation();
+      expect(rec.accounts[0].sourcesTotal, 75600 - 53200);
+      expect(rec.accounts[1].sourcesTotal, 56800 + 53200);
+      expect(rec.sourcesTotal, 132400);
+      final salary = (await fresh.allSources()).firstWhere(
+        (s) => s.id == 'salary',
+      );
+      expect(salary.bankAccountName, 'SBI Rentals');
+    });
+
+    test('an in-memory source can change its opening balance', () async {
+      final fresh = MockFinanceRepository();
+      await fresh.addSource(input('hdfc-salary', name: 'Extra'));
+      final added = (await fresh.allSources()).firstWhere(
+        (s) => s.name == 'Extra',
+      );
+      await fresh.updateSource(
+        added.id,
+        SourceInput(
+          name: 'Extra',
+          kind: 'Employment',
+          openingBalance: 2500,
+          openingDate: DateTime(2026, 10),
+          bankAccountId: 'hdfc-salary',
+        ),
+      );
+      final rec = await fresh.reconciliation();
+      expect(rec.accounts[0].sourcesTotal, 75600 + 2500);
+    });
+
+    test('renaming an account renames it on its sources', () async {
+      final fresh = MockFinanceRepository();
+      await fresh.renameBankAccount('sbi-rentals', 'SBI Property');
+      expect(
+        (await fresh.bankAccounts()).map((a) => a.name),
+        contains('SBI Property'),
+      );
+      final aqua = (await fresh.allSources()).firstWhere(
+        (s) => s.id == 'aqua-105',
+      );
+      expect(aqua.bankAccountName, 'SBI Property');
+      expect(
+        (await fresh.reconciliation()).accounts[1].account.name,
+        'SBI Property',
+      );
     });
   });
 }

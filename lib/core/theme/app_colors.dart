@@ -26,6 +26,8 @@ abstract final class AppColors {
   static const investmentBg = Color(0xFFE3EBFA);
   static const savingsFg = Color(0xFF6B3F06);
   static const savingsBg = Color(0xFFFAEFD9);
+  static const partnerFg = Color(0xFF4C1D95);
+  static const partnerBg = Color(0xFFEFE6FA);
   // Chart
   static const chartIncome = primary;
   static const chartExpense = Color(0xFFE8B04A);

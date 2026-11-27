@@ -21,8 +21,13 @@ class NewCategoryCard extends StatefulWidget {
 }
 
 class _NewCategoryCardState extends State<NewCategoryCard> {
-  /// Categories belong to expense, investment or savings; never income.
-  static const _kinds = [TxType.expense, TxType.investment, TxType.savings];
+  /// Categories belong to expense, investment, savings or partner; never income.
+  static const _kinds = [
+    TxType.expense,
+    TxType.investment,
+    TxType.savings,
+    TxType.partner,
+  ];
 
   final _name = TextEditingController();
   TxType _kind = TxType.expense;

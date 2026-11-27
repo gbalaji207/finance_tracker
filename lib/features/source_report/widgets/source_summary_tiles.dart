@@ -28,6 +28,10 @@ class SourceSummaryTiles extends StatelessWidget {
           value: Money.plain(report.expenseThisMonth),
         ),
         KpiTile(
+          label: 'Jillu this month',
+          value: Money.plain(report.partnerThisMonth),
+        ),
+        KpiTile(
           label: 'Invested / saved to date',
           value: Money.plain(report.investedSavedToDate),
         ),

@@ -14,11 +14,15 @@ class SourcesCard extends StatelessWidget {
     super.key,
     required this.sources,
     required this.onEdit,
+    this.editingId,
     required this.onToggleActive,
   });
 
   final List<Source> sources;
   final ValueChanged<Source> onEdit;
+
+  /// The source being edited; its row is highlighted.
+  final String? editingId;
   final ValueChanged<Source> onToggleActive;
 
   @override
@@ -51,34 +55,37 @@ class SourcesCard extends StatelessWidget {
             ],
             rows: [
               for (final s in sources)
-                AppTableRow([
-                  AppTableText(s.name, bold: true),
-                  AppTableText(s.kind, secondary: true),
-                  AppTableText(s.bankAccountName ?? '—'),
-                  AppTableText(Money.plain(s.openingBalance)),
-                  s.isActive
-                      ? const AppBadge(
-                          text: 'Active',
-                          background: AppColors.incomeBg,
-                          foreground: AppColors.income,
-                        )
-                      : const AppBadge(
-                          text: 'Archived',
-                          background: AppColors.neutralBg,
-                          foreground: AppColors.neutralFg,
+                AppTableRow(
+                  background: s.id == editingId ? AppColors.rowSelected : null,
+                  [
+                    AppTableText(s.name, bold: true),
+                    AppTableText(s.kind, secondary: true),
+                    AppTableText(s.bankAccountName ?? '—'),
+                    AppTableText(Money.plain(s.openingBalance)),
+                    s.isActive
+                        ? const AppBadge(
+                            text: 'Active',
+                            background: AppColors.incomeBg,
+                            foreground: AppColors.income,
+                          )
+                        : const AppBadge(
+                            text: 'Archived',
+                            background: AppColors.neutralBg,
+                            foreground: AppColors.neutralFg,
+                          ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: AppSpacing.s16,
+                      children: [
+                        AppTextLink(label: 'Edit', onPressed: () => onEdit(s)),
+                        AppTextLink(
+                          label: s.isActive ? 'Archive' : 'Restore',
+                          onPressed: () => onToggleActive(s),
                         ),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: AppSpacing.s16,
-                    children: [
-                      AppTextLink(label: 'Edit', onPressed: () => onEdit(s)),
-                      AppTextLink(
-                        label: s.isActive ? 'Archive' : 'Restore',
-                        onPressed: () => onToggleActive(s),
-                      ),
-                    ],
-                  ),
-                ]),
+                      ],
+                    ),
+                  ],
+                ),
             ],
           ),
         ],

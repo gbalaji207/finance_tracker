@@ -11,6 +11,7 @@ class SourceSummary extends Equatable {
     required this.closing,
     required this.investedSavedToDate,
     this.monthOpening,
+    this.partner = 0,
   });
 
   final Source source;
@@ -24,6 +25,10 @@ class SourceSummary extends Equatable {
   /// Balance at the start of the month (from the database).
   final double? monthOpening;
 
+  /// Sent to the partner this month. Not an expense, but it leaves the source:
+  /// closing = opening + income − expense − invested − saved − partner.
+  final double partner;
+
   double get opening => monthOpening ?? source.openingBalance;
 
   @override
@@ -36,5 +41,6 @@ class SourceSummary extends Equatable {
     closing,
     investedSavedToDate,
     monthOpening,
+    partner,
   ];
 }

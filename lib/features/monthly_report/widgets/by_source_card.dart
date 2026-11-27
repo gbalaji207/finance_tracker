@@ -22,7 +22,7 @@ class BySourceCard extends StatelessWidget {
           Text('By source', style: AppTextStyles.sectionTitle),
           const SizedBox(height: AppSpacing.s8),
           AppTable(
-            minWidth: 640,
+            minWidth: 720,
             columns: const [
               AppTableColumn('Source', flex: 1.3),
               AppTableColumn('Opening', align: TextAlign.right),
@@ -30,6 +30,7 @@ class BySourceCard extends StatelessWidget {
               AppTableColumn('Expense', align: TextAlign.right),
               AppTableColumn('Invested', align: TextAlign.right),
               AppTableColumn('Saved', align: TextAlign.right),
+              AppTableColumn('Jillu', align: TextAlign.right),
               AppTableColumn('Closing', align: TextAlign.right),
             ],
             rows: [
@@ -44,6 +45,7 @@ class BySourceCard extends StatelessWidget {
                   AppTableText(Money.signed(s.expense, TxType.expense)),
                   AppTableText(Money.signed(s.invested, TxType.investment)),
                   AppTableText(Money.signed(s.saved, TxType.savings)),
+                  AppTableText(Money.signed(s.partner, TxType.partner)),
                   AppTableText(Money.plain(s.closing), bold: true),
                 ]),
               AppTableRow(
@@ -58,6 +60,7 @@ class BySourceCard extends StatelessWidget {
                   AppTableText(Money.plain(report.expense), bold: true),
                   AppTableText(Money.plain(report.invested), bold: true),
                   AppTableText(Money.plain(report.saved), bold: true),
+                  AppTableText(Money.plain(report.partner), bold: true),
                   AppTableText(Money.plain(report.closing), bold: true),
                 ],
                 highlight: true,
@@ -66,7 +69,7 @@ class BySourceCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.s12),
           Text(
-            'Closing = opening + income − expense − invested − saved',
+            'Closing = opening + income − expense − invested − saved − Jillu',
             style: AppTextStyles.caption,
           ),
         ],

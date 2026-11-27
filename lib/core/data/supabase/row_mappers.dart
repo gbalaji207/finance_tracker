@@ -12,6 +12,9 @@ import 'package:finance_tracker/core/models/tx_type.dart';
 /// Money and counts arrive as a JSON number or as a string such as "32000.00".
 double toDouble(Object? v) => v is num ? v.toDouble() : double.parse('$v');
 
+/// For columns added later: a row without the key counts as 0.
+double _toDoubleOrZero(Object? v) => v == null ? 0 : toDouble(v);
+
 int _toInt(Object? v) => v is num ? v.toInt() : int.parse('$v');
 
 Source sourceFromRow(Map<String, dynamic> r) => Source(
@@ -83,6 +86,7 @@ SourceSummary sourceSummaryFromRow(Map<String, dynamic> r) => SourceSummary(
   saved: toDouble(r['saved']),
   closing: toDouble(r['closing']),
   investedSavedToDate: toDouble(r['invested_saved_to_date']),
+  partner: _toDoubleOrZero(r['partner']),
 );
 
 SourceMonthRow sourceMonthRowFromRow(Map<String, dynamic> r) => SourceMonthRow(
@@ -91,6 +95,7 @@ SourceMonthRow sourceMonthRowFromRow(Map<String, dynamic> r) => SourceMonthRow(
   expense: toDouble(r['expense']),
   investedSaved: toDouble(r['invested_saved']),
   closing: toDouble(r['closing']),
+  partner: _toDoubleOrZero(r['partner']),
 );
 
 BankAccount bankAccountFromRow(Map<String, dynamic> r) => BankAccount(

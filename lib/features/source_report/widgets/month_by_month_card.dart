@@ -27,12 +27,13 @@ class MonthByMonthCard extends StatelessWidget {
             const EmptyNote('No history yet.')
           else
             AppTable(
-              minWidth: 520,
+              minWidth: 600,
               columns: const [
                 AppTableColumn('Month', flex: 1.2),
                 AppTableColumn('Income', align: TextAlign.right),
                 AppTableColumn('Expense', align: TextAlign.right),
                 AppTableColumn('Invested / saved', align: TextAlign.right),
+                AppTableColumn('Jillu', align: TextAlign.right),
                 AppTableColumn('Closing balance', align: TextAlign.right),
               ],
               rows: [
@@ -45,6 +46,7 @@ class MonthByMonthCard extends StatelessWidget {
                     ),
                     AppTableText(Money.plain(m.expense)),
                     AppTableText(Money.plain(m.investedSaved)),
+                    AppTableText(Money.plain(m.partner)),
                     AppTableText(Money.plain(m.closing), bold: true),
                   ]),
               ],

@@ -77,6 +77,11 @@ abstract interface class FinanceRepository {
   Future<void> addBankAccount(String name);
   Future<void> setBankAccountActive(String id, bool active);
   Future<void> addSource(SourceInput input);
+
+  /// Changes a source: the same fields as when creating it.
+  Future<void> updateSource(String id, SourceInput input);
+
+  Future<void> renameBankAccount(String id, String name);
   Future<void> setSourceActive(String id, bool active);
   Future<void> addCategory(CategoryInput input);
   Future<void> setCategoryActive(String id, bool active);

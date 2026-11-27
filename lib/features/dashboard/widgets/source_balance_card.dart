@@ -81,6 +81,10 @@ class SourceBalanceCard extends StatelessWidget {
                   label: 'Saved',
                   value: Money.signed(summary.saved, TxType.savings),
                 ),
+                KeyValueRow(
+                  label: 'Jillu',
+                  value: Money.signed(summary.partner, TxType.partner),
+                ),
               ],
             ),
           ),

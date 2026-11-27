@@ -29,6 +29,7 @@ class MonthlyReport extends Equatable {
   double get invested => _sum((s) => s.invested);
   double get saved => _sum((s) => s.saved);
   double get closing => _sum((s) => s.closing);
+  double get partner => _sum((s) => s.partner);
 
   double get savingsRate => income == 0 ? 0 : (invested + saved) / income;
 

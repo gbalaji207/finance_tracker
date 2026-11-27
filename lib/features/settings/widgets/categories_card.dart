@@ -33,7 +33,7 @@ class CategoriesCard extends StatelessWidget {
           Text('Categories', style: AppTextStyles.sectionTitle),
           const SizedBox(height: AppSpacing.s4),
           Text(
-            'Used for expense, investment and savings entries. '
+            'Used for expense, investment, savings and Jillu entries. '
             'Income entries use sources instead.',
             style: AppTextStyles.subtitle,
           ),

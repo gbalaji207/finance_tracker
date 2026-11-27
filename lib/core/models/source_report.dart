@@ -8,6 +8,7 @@ class SourceMonthRow extends Equatable {
     required this.expense,
     required this.investedSaved,
     required this.closing,
+    this.partner = 0,
   });
 
   final DateTime month;
@@ -16,8 +17,18 @@ class SourceMonthRow extends Equatable {
   final double investedSaved;
   final double closing;
 
+  /// Sent to the partner in this month.
+  final double partner;
+
   @override
-  List<Object?> get props => [month, income, expense, investedSaved, closing];
+  List<Object?> get props => [
+    month,
+    income,
+    expense,
+    investedSaved,
+    closing,
+    partner,
+  ];
 }
 
 class SourceReport extends Equatable {
@@ -28,6 +39,7 @@ class SourceReport extends Equatable {
     required this.expenseThisMonth,
     required this.investedSavedToDate,
     required this.months,
+    this.partnerThisMonth = 0,
   });
 
   final Source source;
@@ -35,6 +47,7 @@ class SourceReport extends Equatable {
   final double incomeThisMonth;
   final double expenseThisMonth;
   final double investedSavedToDate;
+  final double partnerThisMonth;
 
   /// Newest first.
   final List<SourceMonthRow> months;
@@ -46,6 +59,7 @@ class SourceReport extends Equatable {
     incomeThisMonth,
     expenseThisMonth,
     investedSavedToDate,
+    partnerThisMonth,
     months,
   ];
 }
