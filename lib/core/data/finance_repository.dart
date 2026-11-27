@@ -16,6 +16,9 @@ abstract interface class FinanceRepository {
   /// Active and archived sources.
   Future<List<Source>> allSources();
   Future<List<Category>> categories();
+
+  /// Active and archived categories.
+  Future<List<Category>> allCategories();
   Future<List<CategoryUsage>> categoryUsage();
 
   /// Current closing balance of a source.

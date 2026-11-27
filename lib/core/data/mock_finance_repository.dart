@@ -64,13 +64,19 @@ class MockFinanceRepository implements FinanceRepository {
       entryCount: 12,
     ),
     CategoryUsage(
-      category:
-          Category(id: 'groceries', name: 'Groceries', kind: TxType.expense),
+      category: Category(
+        id: 'groceries',
+        name: 'Groceries',
+        kind: TxType.expense,
+      ),
       entryCount: 28,
     ),
     CategoryUsage(
-      category:
-          Category(id: 'utilities', name: 'Utilities', kind: TxType.expense),
+      category: Category(
+        id: 'utilities',
+        name: 'Utilities',
+        kind: TxType.expense,
+      ),
       entryCount: 14,
     ),
     CategoryUsage(
@@ -404,8 +410,8 @@ class MockFinanceRepository implements FinanceRepository {
   ];
 
   List<EntryTemplate> _templatesById(List<String> ids) => [
-        for (final id in ids) _templates.firstWhere((t) => t.id == id),
-      ];
+    for (final id in ids) _templates.firstWhere((t) => t.id == id),
+  ];
 
   @override
   Future<List<Source>> sources() async => _sources;
@@ -430,11 +436,14 @@ class MockFinanceRepository implements FinanceRepository {
   Future<List<Category>> categories() async => _categories;
 
   @override
+  Future<List<Category>> allCategories() async => _categories;
+
+  @override
   Future<BankReconciliation> reconciliation() async => BankReconciliation(
-        sourcesTotal: 132400,
-        bankBalance: 132400,
-        asOf: mockToday,
-      );
+    sourcesTotal: 132400,
+    bankBalance: 132400,
+    asOf: mockToday,
+  );
 
   @override
   Future<List<SourceSummary>> sourceSummaries(DateTime month) async =>
@@ -442,18 +451,13 @@ class MockFinanceRepository implements FinanceRepository {
 
   @override
   Future<List<Transaction>> recentTransactions() async => [
-        for (final id in const ['t1', 't3', 't4', 't6', 't7', 't8'])
-          _transactions.firstWhere((t) => t.id == id),
-      ];
+    for (final id in const ['t1', 't3', 't4', 't6', 't7', 't8'])
+      _transactions.firstWhere((t) => t.id == id),
+  ];
 
   @override
   Future<TransactionPage> transactions({int page = 1}) async =>
-      TransactionPage(
-        items: _transactions,
-        total: 38,
-        page: 1,
-        pageCount: 4,
-      );
+      TransactionPage(items: _transactions, total: 38, page: 1, pageCount: 4);
 
   @override
   Future<List<EntryTemplate>> templates() async => _templates;
@@ -475,11 +479,11 @@ class MockFinanceRepository implements FinanceRepository {
 
   @override
   Future<SourceReport> sourceReport(String sourceId) async => SourceReport(
-        source: _aqua105,
-        balanceToday: 31000,
-        incomeThisMonth: 45000,
-        expenseThisMonth: 12000,
-        investedSavedToDate: 180000,
-        months: _aquaMonths,
-      );
+    source: _aqua105,
+    balanceToday: 31000,
+    incomeThisMonth: 45000,
+    expenseThisMonth: 12000,
+    investedSavedToDate: 180000,
+    months: _aquaMonths,
+  );
 }

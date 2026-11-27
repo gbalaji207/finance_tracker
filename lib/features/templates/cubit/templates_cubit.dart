@@ -16,8 +16,8 @@ class TemplatesCubit extends Cubit<TemplatesState> {
   Future<void> load() async {
     emit(state.copyWith(status: LoadStatus.loading, clearError: true));
     try {
-      final sources = await _repo.sources();
-      final categories = await _repo.categories();
+      final sources = await _repo.allSources();
+      final categories = await _repo.allCategories();
       final templates = await _repo.templates();
       final previous = await _repo.previousMonthEntries(
         DateTime(appMonth().year, appMonth().month - 1),

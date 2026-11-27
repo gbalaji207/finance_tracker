@@ -13,7 +13,7 @@ class DashboardCubit extends Cubit<DashboardState> {
   Future<void> load() async {
     emit(state.copyWith(status: LoadStatus.loading, clearError: true));
     try {
-      final sources = await _repo.sources();
+      final sources = await _repo.allSources();
       final reconciliation = await _repo.reconciliation();
       final summaries = await _repo.sourceSummaries(state.month);
       final recent = await _repo.recentTransactions();

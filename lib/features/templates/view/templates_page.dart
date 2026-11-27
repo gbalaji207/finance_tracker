@@ -75,8 +75,8 @@ class _TemplatesView extends StatelessWidget {
                 onEdit: (_) => _notWired(context),
               ),
               secondary: NewTemplateCard(
-                sources: state.sources,
-                categories: state.categories,
+                sources: state.activeSources,
+                categories: state.activeCategories,
                 onSave: () => _notWired(context),
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:finance_tracker/core/data/mock_auth_repository.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/mock_finance_repository.dart';
 import 'package:finance_tracker/core/data/supabase/supabase_auth_repository.dart';
+import 'package:finance_tracker/core/data/supabase/supabase_finance_repository.dart';
 import 'package:finance_tracker/core/theme/app_theme.dart';
 import 'package:finance_tracker/features/auth/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,9 @@ class _AppState extends State<App> {
       child: BlocProvider<AuthCubit>.value(
         value: _auth,
         child: RepositoryProvider<FinanceRepository>(
-          create: (_) => const MockFinanceRepository(),
+          create: (_) => AppConfig.useSupabase
+              ? SupabaseFinanceRepository(Supabase.instance.client)
+              : const MockFinanceRepository(),
           child: MaterialApp.router(
             title: 'Money Tracker',
             theme: AppTheme.light(),

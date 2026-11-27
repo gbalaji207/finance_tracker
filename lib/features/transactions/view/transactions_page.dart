@@ -86,8 +86,8 @@ class _TransactionsView extends StatelessWidget {
             // and the panel shows them.
             BlocProvider(
               create: (_) => AddEntryCubit(
-                categories: state.categories,
-                sources: state.sources,
+                categories: state.activeCategories,
+                sources: state.activeSources,
               ),
               child: Builder(
                 builder: (context) => TwoPane(
@@ -116,8 +116,8 @@ class _TransactionsView extends StatelessWidget {
                     editing: state.selected,
                     templates: state.templates,
                     sourceName: state.sourceName,
-                    sources: state.sources,
-                    categories: state.categories,
+                    sources: state.activeSources,
+                    categories: state.activeCategories,
                     onDelete: (entry) => _confirmDelete(context, state, entry),
                   ),
                 ),

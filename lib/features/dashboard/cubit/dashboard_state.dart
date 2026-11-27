@@ -28,6 +28,8 @@ class DashboardState extends Equatable {
   final List<EntryTemplate> quickAdd;
   final String? errorMessage;
 
+  List<Source> get activeSources => sources.where((s) => s.isActive).toList();
+
   /// The source name for [id], or [id] itself if the source is unknown.
   String sourceName(String id) {
     for (final s in sources) {

@@ -1,0 +1,59 @@
+import 'package:finance_tracker/core/models/category.dart';
+import 'package:finance_tracker/core/models/category_usage.dart';
+import 'package:finance_tracker/core/models/entry_template.dart';
+import 'package:finance_tracker/core/models/source.dart';
+import 'package:finance_tracker/core/models/transaction.dart';
+import 'package:finance_tracker/core/models/tx_type.dart';
+
+/// Money and counts arrive as a JSON number or as a string such as "32000.00".
+double toDouble(Object? v) => v is num ? v.toDouble() : double.parse('$v');
+
+int _toInt(Object? v) => v is num ? v.toInt() : int.parse('$v');
+
+Source sourceFromRow(Map<String, dynamic> r) => Source(
+  id: r['id'] as String,
+  name: r['name'] as String,
+  kind: r['kind'] as String,
+  openingBalance: toDouble(r['opening_balance']),
+  isActive: r['is_active'] as bool,
+  openingDate: r['opening_date'] == null
+      ? null
+      : DateTime.parse(r['opening_date'] as String),
+);
+
+Category categoryFromRow(Map<String, dynamic> r) => Category(
+  id: r['id'] as String,
+  name: r['name'] as String,
+  kind: TxType.values.byName(r['kind'] as String),
+  isActive: r['is_active'] as bool,
+);
+
+CategoryUsage categoryUsageFromRow(Map<String, dynamic> r) => CategoryUsage(
+  category: Category(
+    id: r['category_id'] as String,
+    name: r['name'] as String,
+    kind: TxType.values.byName(r['kind'] as String),
+    isActive: r['is_active'] as bool,
+  ),
+  entryCount: _toInt(r['entry_count']),
+);
+
+EntryTemplate templateFromRow(Map<String, dynamic> r) => EntryTemplate(
+  id: r['id'] as String,
+  name: r['name'] as String,
+  type: TxType.values.byName(r['type'] as String),
+  sourceId: r['source_id'] as String,
+  categoryId: r['category_id'] as String?,
+  amount: r['amount'] == null ? null : toDouble(r['amount']),
+  description: (r['description'] as String?) ?? '',
+);
+
+Transaction transactionFromRow(Map<String, dynamic> r) => Transaction(
+  id: r['id'] as String,
+  date: DateTime.parse(r['tx_date'] as String),
+  type: TxType.values.byName(r['type'] as String),
+  sourceId: r['source_id'] as String,
+  categoryId: r['category_id'] as String?,
+  amount: toDouble(r['amount']),
+  description: (r['description'] as String?) ?? '',
+);

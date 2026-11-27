@@ -31,8 +31,16 @@ class _NewTemplateCardState extends State<NewTemplateCard> {
   final _description = TextEditingController();
 
   TxType _type = TxType.expense;
-  String _sourceId = 'vr';
-  String? _categoryId = 'utilities';
+  late String _sourceId;
+  String? _categoryId;
+
+  @override
+  void initState() {
+    super.initState();
+    // No hardcoded ids: the first source and first expense category.
+    _sourceId = widget.sources.isEmpty ? '' : widget.sources.first.id;
+    _categoryId = _firstCategory(TxType.expense);
+  }
 
   @override
   void dispose() {

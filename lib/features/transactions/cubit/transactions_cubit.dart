@@ -13,8 +13,8 @@ class TransactionsCubit extends Cubit<TransactionsState> {
   Future<void> load() async {
     emit(state.copyWith(status: LoadStatus.loading, clearError: true));
     try {
-      final sources = await _repo.sources();
-      final categories = await _repo.categories();
+      final sources = await _repo.allSources();
+      final categories = await _repo.allCategories();
       final templates = await _repo.templates();
       final page = await _repo.transactions();
       emit(

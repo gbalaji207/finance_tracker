@@ -75,8 +75,8 @@ Implement other repository methods. Change any widget's look.
 
 ## Verify (Supabase mode, signed in)
 
-- [ ] Settings shows 5 sources: Salary ₹2,000, Side hustle ₹3,000, Aqua 105 ₹6,000, VR ₹2,100 (all Active) and Old freelance ₹0 (Archived).
-- [ ] Settings categories show counts: Housing 2, Groceries 7, Utilities 6, Property upkeep 8, Other 7, Mutual funds 4, Fixed deposit 10.
-- [ ] Templates page: the list shows the six templates (Internet bill with no default amount). The "Copy from October 2026" card is not final yet: it lists the 17 entries of October, all ticked, and is completed in B09.
-- [ ] Dashboard, Transactions and reports show the error card for now ("Something went wrong").
-- [ ] Sample mode still works on every page. `flutter analyze` and `flutter test` pass.
+- [x] Settings shows 5 sources: Salary ₹2,000, Side hustle ₹3,000, Aqua 105 ₹6,000, VR ₹2,100 (all Active) and Old freelance ₹0 (Archived).
+- [x] Settings categories show counts: Housing 2, Groceries 7, Utilities 6, Property upkeep 8, Other 7, Mutual funds 4, Fixed deposit 10.
+- [x] Templates page: the list shows the six templates (Internet bill with no default amount). The "Copy from October 2026" card is not final yet: it lists the 17 entries of October, all ticked, and is completed in B09.
+- [x] Dashboard, Transactions and reports show the error card for now ("Something went wrong").
+- [x] Sample mode still works on every page. `flutter analyze` and `flutter test` pass.

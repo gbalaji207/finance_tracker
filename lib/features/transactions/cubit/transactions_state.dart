@@ -51,6 +51,11 @@ class TransactionsState extends Equatable {
     return null;
   }
 
+  List<Source> get activeSources => sources.where((s) => s.isActive).toList();
+
+  List<Category> get activeCategories =>
+      categories.where((c) => c.isActive).toList();
+
   /// The source name for [id], or [id] itself if the source is unknown.
   String sourceName(String id) {
     for (final s in sources) {

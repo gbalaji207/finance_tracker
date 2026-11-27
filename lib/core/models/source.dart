@@ -7,6 +7,7 @@ class Source extends Equatable {
     required this.kind,
     required this.openingBalance,
     this.isActive = true,
+    this.openingDate,
   });
 
   final String id;
@@ -17,14 +18,25 @@ class Source extends Equatable {
   /// Archived sources are inactive and are not offered for new entries.
   final bool isActive;
 
+  /// Entries before this date are not counted. Null in sample data.
+  final DateTime? openingDate;
+
   Source copyWith({bool? isActive}) => Source(
-        id: id,
-        name: name,
-        kind: kind,
-        openingBalance: openingBalance,
-        isActive: isActive ?? this.isActive,
-      );
+    id: id,
+    name: name,
+    kind: kind,
+    openingBalance: openingBalance,
+    isActive: isActive ?? this.isActive,
+    openingDate: openingDate,
+  );
 
   @override
-  List<Object?> get props => [id, name, kind, openingBalance, isActive];
+  List<Object?> get props => [
+    id,
+    name,
+    kind,
+    openingBalance,
+    isActive,
+    openingDate,
+  ];
 }
