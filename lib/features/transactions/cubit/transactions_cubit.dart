@@ -31,16 +31,16 @@ class TransactionsCubit extends Cubit<TransactionsState> {
 
   /// Pass null for all sources.
   void setSourceFilter(String? sourceId) => emit(
-        state.copyWith(
-          sourceFilter: sourceId,
-          clearSourceFilter: sourceId == null,
-        ),
-      );
+    state.copyWith(sourceFilter: sourceId, clearSourceFilter: sourceId == null),
+  );
 
   /// Pass null for all types.
-  void setTypeFilter(TxType? type) => emit(
-        state.copyWith(typeFilter: type, clearTypeFilter: type == null),
-      );
+  void setTypeFilter(TxType? type) =>
+      emit(state.copyWith(typeFilter: type, clearTypeFilter: type == null));
 
   void setQuery(String query) => emit(state.copyWith(query: query));
+
+  /// Selects the entry being edited; null leaves edit mode.
+  void select(String? id) =>
+      emit(state.copyWith(selectedId: id, clearSelected: id == null));
 }

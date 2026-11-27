@@ -8,6 +8,7 @@ class AddEntryState extends Equatable {
     this.sourceId = 'salary',
     this.categoryId = 'groceries',
     DateTime? date,
+    this.editingId,
   }) : date = date ?? mockToday;
 
   final TxType type;
@@ -17,6 +18,9 @@ class AddEntryState extends Equatable {
   final String? categoryId;
   final DateTime date;
 
+  /// Id of the entry being edited; null when adding a new entry.
+  final String? editingId;
+
   /// `categoryId` is nullable and null is meaningful (income), so it is always
   /// passed explicitly instead of falling back to the current value.
   AddEntryState copyWith({
@@ -25,14 +29,15 @@ class AddEntryState extends Equatable {
     String? categoryId,
     bool clearCategory = false,
     DateTime? date,
-  }) =>
-      AddEntryState(
-        type: type ?? this.type,
-        sourceId: sourceId ?? this.sourceId,
-        categoryId: clearCategory ? null : (categoryId ?? this.categoryId),
-        date: date ?? this.date,
-      );
+    String? editingId,
+  }) => AddEntryState(
+    type: type ?? this.type,
+    sourceId: sourceId ?? this.sourceId,
+    categoryId: clearCategory ? null : (categoryId ?? this.categoryId),
+    date: date ?? this.date,
+    editingId: editingId ?? this.editingId,
+  );
 
   @override
-  List<Object?> get props => [type, sourceId, categoryId, date];
+  List<Object?> get props => [type, sourceId, categoryId, date, editingId];
 }

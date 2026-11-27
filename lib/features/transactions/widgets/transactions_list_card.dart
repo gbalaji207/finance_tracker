@@ -1,6 +1,8 @@
 import 'package:finance_tracker/core/models/source.dart';
+import 'package:finance_tracker/core/models/transaction.dart';
 import 'package:finance_tracker/core/models/transaction_page.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
+import 'package:finance_tracker/core/theme/app_colors.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
 import 'package:finance_tracker/core/utils/app_dates.dart';
@@ -9,6 +11,7 @@ import 'package:finance_tracker/core/widgets/app_card.dart';
 import 'package:finance_tracker/core/widgets/app_dropdown.dart';
 import 'package:finance_tracker/core/widgets/app_table.dart';
 import 'package:finance_tracker/core/widgets/app_text_field.dart';
+import 'package:finance_tracker/core/widgets/app_text_link.dart';
 import 'package:finance_tracker/core/widgets/type_badge.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +29,8 @@ class TransactionsListCard extends StatelessWidget {
     required this.onSourceChanged,
     required this.onTypeChanged,
     required this.onQueryChanged,
+    required this.selectedId,
+    required this.onEdit,
   });
 
   final TransactionPage page;
@@ -39,6 +44,10 @@ class TransactionsListCard extends StatelessWidget {
   final ValueChanged<String?> onSourceChanged;
   final ValueChanged<TxType?> onTypeChanged;
   final ValueChanged<String> onQueryChanged;
+
+  /// Id of the entry being edited, highlighted in the list.
+  final String? selectedId;
+  final ValueChanged<Transaction> onEdit;
 
   /// Sentinel for "all": a dropdown item with a null value does not show as
   /// selected, so "all" is a real value that is mapped back to null.
@@ -54,7 +63,7 @@ class TransactionsListCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.s16),
           AppTable(
             // Scrolls sideways instead of overflowing in a narrow card.
-            minWidth: 640,
+            minWidth: 720,
             columns: const [
               AppTableColumn('Date', width: 56),
               AppTableColumn('Description'),
@@ -62,17 +71,32 @@ class TransactionsListCard extends StatelessWidget {
               AppTableColumn('Category', width: 112),
               AppTableColumn('Type', width: 100),
               AppTableColumn('Amount', width: 100, align: TextAlign.right),
+              AppTableColumn('', width: 56, align: TextAlign.right),
             ],
             rows: [
               for (final t in page.items)
-                AppTableRow([
-                  AppTableText(AppDates.dayMonth(t.date), secondary: true),
-                  AppTableText(t.description),
-                  AppTableText(sourceName(t.sourceId)),
-                  AppTableText(categoryName(t.categoryId), secondary: true),
-                  TypeBadge(t.type),
-                  AmountText(amount: t.amount, type: t.type),
-                ]),
+                AppTableRow(
+                  background: t.id == selectedId ? AppColors.rowSelected : null,
+                  [
+                    AppTableText(AppDates.dayMonth(t.date), secondary: true),
+                    AppTableText(t.description),
+                    AppTableText(sourceName(t.sourceId)),
+                    AppTableText(categoryName(t.categoryId), secondary: true),
+                    TypeBadge(t.type),
+                    AmountText(amount: t.amount, type: t.type),
+                    t.id == selectedId
+                        ? Text(
+                            'Editing',
+                            style: AppTextStyles.buttonSmall.copyWith(
+                              color: AppColors.primaryDark,
+                            ),
+                          )
+                        : AppTextLink(
+                            label: 'Edit',
+                            onPressed: () => onEdit(t),
+                          ),
+                  ],
+                ),
             ],
           ),
           const SizedBox(height: AppSpacing.s16),

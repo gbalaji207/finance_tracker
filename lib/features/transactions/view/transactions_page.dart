@@ -8,7 +8,7 @@ import 'package:finance_tracker/core/widgets/two_pane.dart';
 import 'package:finance_tracker/features/transactions/cubit/add_entry_cubit.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_cubit.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_state.dart';
-import 'package:finance_tracker/features/transactions/widgets/add_entry_panel.dart';
+import 'package:finance_tracker/features/transactions/widgets/entry_panel.dart';
 import 'package:finance_tracker/features/transactions/widgets/transactions_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,32 +52,43 @@ class _TransactionsView extends StatelessWidget {
                 ),
               ],
             ),
-            TwoPane(
-              primaryMin: 560,
-              secondaryWidth: 340,
-              primary: TransactionsListCard(
-                page: state.page!,
+            // The AddEntryCubit sits above both panes: the list starts edits
+            // and the panel shows them.
+            BlocProvider(
+              create: (_) => AddEntryCubit(
+                categories: state.categories,
                 sources: state.sources,
-                month: state.month,
-                sourceFilter: state.sourceFilter,
-                typeFilter: state.typeFilter,
-                sourceName: state.sourceName,
-                categoryName: state.categoryName,
-                onMonthChanged: cubit.setMonth,
-                onSourceChanged: cubit.setSourceFilter,
-                onTypeChanged: cubit.setTypeFilter,
-                onQueryChanged: cubit.setQuery,
               ),
-              secondary: BlocProvider(
-                create: (_) => AddEntryCubit(
-                  categories: state.categories,
-                  sources: state.sources,
-                ),
-                child: AddEntryPanel(
-                  templates: state.templates,
-                  sourceName: state.sourceName,
-                  sources: state.sources,
-                  categories: state.categories,
+              child: Builder(
+                builder: (context) => TwoPane(
+                  primaryMin: 560,
+                  secondaryWidth: 340,
+                  primary: TransactionsListCard(
+                    page: state.page!,
+                    sources: state.sources,
+                    month: state.month,
+                    sourceFilter: state.sourceFilter,
+                    typeFilter: state.typeFilter,
+                    sourceName: state.sourceName,
+                    categoryName: state.categoryName,
+                    onMonthChanged: cubit.setMonth,
+                    onSourceChanged: cubit.setSourceFilter,
+                    onTypeChanged: cubit.setTypeFilter,
+                    onQueryChanged: cubit.setQuery,
+                    selectedId: state.selectedId,
+                    onEdit: (t) {
+                      cubit.select(t.id);
+                      context.read<AddEntryCubit>().startEdit(t);
+                    },
+                  ),
+                  secondary: EntryPanel(
+                    key: ValueKey(state.selected?.id ?? 'new'),
+                    editing: state.selected,
+                    templates: state.templates,
+                    sourceName: state.sourceName,
+                    sources: state.sources,
+                    categories: state.categories,
+                  ),
                 ),
               ),
             ),

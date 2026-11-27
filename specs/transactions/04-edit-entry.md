@@ -53,8 +53,8 @@ Persist changes or change the list contents. Do not build the delete dialog (spe
 
 ## Verify
 
-- [ ] Every row has an underlined "Edit" link in a new narrow column; the header cell for it is empty.
-- [ ] Clicking Edit on "Home EMI" highlights that row in pale teal, shows "Editing" in its last cell, and turns the right panel into "Edit entry" with subtitle "Home EMI · 25 Nov 2026" and the fields prefilled (Expense, Salary, Housing, 32000, 25 Nov 2026, Home EMI).
-- [ ] Clicking Edit on "Rent received" (Aqua 105) refills the panel as Income with no Category field.
-- [ ] Cancel and Save changes return the panel to "New entry" and clear the highlight.
-- [ ] "Delete entry" appears as a red-outline button under a divider. `flutter analyze` is clean.
+- [x] Every row has an underlined "Edit" link in a new narrow column; the header cell for it is empty.
+- [x] Clicking Edit on "Home EMI" highlights that row in pale teal, shows "Editing" in its last cell, and turns the right panel into "Edit entry" with subtitle "Home EMI · 25 Nov 2026" and the fields prefilled (Expense, Salary, Housing, 32000, 25 Nov 2026, Home EMI).
+- [x] Clicking Edit on "Rent received" (Aqua 105) refills the panel as Income with no Category field.
+- [x] Cancel and Save changes return the panel to "New entry" and clear the highlight.
+- [x] "Delete entry" appears as a red-outline button under a divider. `flutter analyze` is clean.
