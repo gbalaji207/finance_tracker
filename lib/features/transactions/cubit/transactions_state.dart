@@ -22,6 +22,7 @@ class TransactionsState extends Equatable {
     this.errorMessage,
     this.listLoading = false,
     this.actionError,
+    this.saving = false,
   });
 
   final LoadStatus status;
@@ -51,6 +52,9 @@ class TransactionsState extends Equatable {
 
   /// One-shot message for the page to show as a SnackBar, then clear.
   final String? actionError;
+
+  /// True while an entry is being added, changed or deleted.
+  final bool saving;
 
   List<Source> get activeSources => sources.where((s) => s.isActive).toList();
 
@@ -106,6 +110,7 @@ class TransactionsState extends Equatable {
     bool? listLoading,
     String? actionError,
     bool clearActionError = false,
+    bool? saving,
   }) => TransactionsState(
     status: status ?? this.status,
     page: page ?? this.page,
@@ -122,6 +127,7 @@ class TransactionsState extends Equatable {
     errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     listLoading: listLoading ?? this.listLoading,
     actionError: clearActionError ? null : (actionError ?? this.actionError),
+    saving: saving ?? this.saving,
   );
 
   @override
@@ -139,5 +145,6 @@ class TransactionsState extends Equatable {
     errorMessage,
     listLoading,
     actionError,
+    saving,
   ];
 }

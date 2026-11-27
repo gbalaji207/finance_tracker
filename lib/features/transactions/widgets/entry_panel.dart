@@ -1,4 +1,6 @@
+import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/models/category.dart';
+import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/source.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
@@ -7,10 +9,12 @@ import 'package:finance_tracker/core/theme/app_colors.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
 import 'package:finance_tracker/core/utils/app_dates.dart';
+import 'package:finance_tracker/core/utils/entry_validation.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/app_card.dart';
 import 'package:finance_tracker/core/widgets/app_date_field.dart';
 import 'package:finance_tracker/core/widgets/app_dropdown.dart';
+import 'package:finance_tracker/core/widgets/app_snack.dart';
 import 'package:finance_tracker/core/widgets/app_text_field.dart';
 import 'package:finance_tracker/core/widgets/type_selector.dart';
 import 'package:finance_tracker/features/transactions/cubit/add_entry_cubit.dart';
@@ -35,7 +39,11 @@ class EntryPanel extends StatefulWidget {
 
   final List<EntryTemplate> templates;
   final String Function(String sourceId) sourceName;
+
+  /// Active sources, plus the archived one the edited entry uses (if any).
   final List<Source> sources;
+
+  /// Active categories, plus the archived one the edited entry uses (if any).
   final List<Category> categories;
 
   /// The entry being edited; null for add mode.
@@ -53,9 +61,13 @@ class EntryPanel extends StatefulWidget {
 class _EntryPanelState extends State<EntryPanel> {
   late final TextEditingController _amount;
   late final TextEditingController _description;
+  final _amountFocus = FocusNode();
 
   /// The template last chosen in the "Fill from template" dropdown.
   String? _templateId;
+
+  /// Validation message shown under the buttons.
+  String? _error;
 
   bool get _isEditing => widget.editing != null;
 
@@ -73,13 +85,12 @@ class _EntryPanelState extends State<EntryPanel> {
   void dispose() {
     _amount.dispose();
     _description.dispose();
+    _amountFocus.dispose();
     super.dispose();
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+  void _clearError() {
+    if (_error != null) setState(() => _error = null);
   }
 
   void _applyTemplate(String? id) {
@@ -91,13 +102,68 @@ class _EntryPanelState extends State<EntryPanel> {
     _description.text = applied.description;
   }
 
-  /// Add mode: show the message, then clear the form.
-  void _save() {
-    _showMessage('Saved (sample data, nothing is stored yet)');
-    context.read<AddEntryCubit>().reset();
+  /// Validates the form; returns the input to save, or null after showing the
+  /// problem.
+  EntryInput? _buildInput() {
+    final form = context.read<AddEntryCubit>().state;
+    final problem = validateEntry(
+      amountText: _amount.text,
+      sourceId: form.sourceId,
+      type: form.type,
+      categoryId: form.categoryId,
+    );
+    if (problem != null) {
+      setState(() => _error = problem);
+      return null;
+    }
+    return EntryInput(
+      date: form.date,
+      type: form.type,
+      sourceId: form.sourceId,
+      categoryId: form.type == TxType.income ? null : form.categoryId,
+      amount: parseAmount(_amount.text)!,
+      description: _description.text.trim(),
+    );
+  }
+
+  /// Add mode. [addAnother] keeps type, source, category and date and moves
+  /// focus to the amount field; otherwise the form returns to its defaults.
+  Future<void> _save({required bool addAnother}) async {
+    final input = _buildInput();
+    if (input == null) return;
+    final error = await context.read<TransactionsCubit>().addEntry(input);
+    if (!mounted) return;
+    if (error != null) {
+      AppSnack.error(context, error);
+      return;
+    }
+    AppSnack.info(context, AppConfig.note('Entry saved'));
     _amount.clear();
     _description.clear();
     setState(() => _templateId = null);
+    if (addAnother) {
+      _amountFocus.requestFocus();
+    } else {
+      context.read<AddEntryCubit>().reset();
+    }
+  }
+
+  Future<void> _saveChanges() async {
+    final editing = widget.editing;
+    if (editing == null) return;
+    final input = _buildInput();
+    if (input == null) return;
+    final error = await context.read<TransactionsCubit>().updateEntry(
+      editing.id,
+      input,
+    );
+    if (!mounted) return;
+    if (error != null) {
+      AppSnack.error(context, error);
+      return;
+    }
+    AppSnack.info(context, AppConfig.note('Changes saved'));
+    _leaveEditMode();
   }
 
   /// Leaving edit mode: clear the selection and reset the form.
@@ -111,18 +177,25 @@ class _EntryPanelState extends State<EntryPanel> {
     if (editing == null) return;
     final confirmed = await widget.onDelete(editing);
     if (!confirmed || !mounted) return;
-    _showMessage('Entry deleted (sample data, nothing is stored yet)');
-    _leaveEditMode();
-  }
-
-  void _saveChanges() {
-    _showMessage('Changes saved (sample data, nothing is stored yet)');
+    final error = await context.read<TransactionsCubit>().deleteEntry(
+      editing.id,
+    );
+    if (!mounted) return;
+    if (error != null) {
+      AppSnack.error(context, error);
+      return;
+    }
+    AppSnack.info(context, AppConfig.note('Entry deleted'));
     _leaveEditMode();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddEntryCubit, AddEntryState>(
+    final saving = context.select<TransactionsCubit, bool>(
+      (c) => c.state.saving,
+    );
+    return BlocConsumer<AddEntryCubit, AddEntryState>(
+      listener: (context, state) => _clearError(),
       builder: (context, state) {
         final cubit = context.read<AddEntryCubit>();
         final categories = widget.categories
@@ -183,6 +256,8 @@ class _EntryPanelState extends State<EntryPanel> {
                       label: 'Amount (₹)',
                       hintText: '0',
                       controller: _amount,
+                      focusNode: _amountFocus,
+                      onChanged: (_) => _clearError(),
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -201,8 +276,21 @@ class _EntryPanelState extends State<EntryPanel> {
                 label: 'Description',
                 hintText: 'Where it went, e.g. SBI FD',
                 controller: _description,
+                onChanged: (_) => _clearError(),
               ),
-              ..._buttons(),
+              ..._buttons(saving),
+              if (_error != null)
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    _error!,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.danger,
+                    ),
+                  ),
+                ),
               if (!_isEditing)
                 Text(
                   'Keyboard: N new entry · Enter save · Esc close',
@@ -233,7 +321,7 @@ class _EntryPanelState extends State<EntryPanel> {
     );
   }
 
-  List<Widget> _buttons() {
+  List<Widget> _buttons(bool saving) {
     if (!_isEditing) {
       return [
         Column(
@@ -244,14 +332,14 @@ class _EntryPanelState extends State<EntryPanel> {
               label: 'Save entry',
               size: AppButtonSize.large,
               expand: true,
-              onPressed: _save,
+              onPressed: saving ? null : () => _save(addAnother: false),
             ),
             AppButton(
               label: 'Save and add another',
               variant: AppButtonVariant.secondary,
               size: AppButtonSize.large,
               expand: true,
-              onPressed: _save,
+              onPressed: saving ? null : () => _save(addAnother: true),
             ),
           ],
         ),
@@ -266,14 +354,14 @@ class _EntryPanelState extends State<EntryPanel> {
             label: 'Save changes',
             size: AppButtonSize.large,
             expand: true,
-            onPressed: _saveChanges,
+            onPressed: saving ? null : _saveChanges,
           ),
           AppButton(
             label: 'Cancel',
             variant: AppButtonVariant.secondary,
             size: AppButtonSize.large,
             expand: true,
-            onPressed: _leaveEditMode,
+            onPressed: saving ? null : _leaveEditMode,
           ),
         ],
       ),
@@ -286,7 +374,7 @@ class _EntryPanelState extends State<EntryPanel> {
           label: 'Delete entry',
           variant: AppButtonVariant.dangerOutline,
           expand: true,
-          onPressed: _delete,
+          onPressed: saving ? null : _delete,
         ),
       ),
     ];

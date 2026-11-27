@@ -3,6 +3,7 @@ import 'package:finance_tracker/core/data/mock_clock.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
+import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
@@ -499,4 +500,13 @@ class MockFinanceRepository implements FinanceRepository {
     investedSavedToDate: 180000,
     months: _aquaMonths,
   );
+
+  @override
+  Future<void> addEntry(EntryInput input) async {}
+
+  @override
+  Future<void> updateEntry(String id, EntryInput input) async {}
+
+  @override
+  Future<void> deleteEntry(String id) async {}
 }

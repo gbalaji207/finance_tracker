@@ -15,6 +15,7 @@ class AppTextField extends StatelessWidget {
     this.textInputAction,
     this.onSubmitted,
     this.autofillHints,
+    this.focusNode,
   });
 
   final String? label;
@@ -27,6 +28,7 @@ class AppTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onSubmitted;
   final Iterable<String>? autofillHints;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,7 @@ class AppTextField extends StatelessWidget {
       helperText: helperText,
       child: TextField(
         controller: controller,
+        focusNode: focusNode,
         keyboardType: keyboardType,
         onChanged: onChanged,
         obscureText: obscureText,

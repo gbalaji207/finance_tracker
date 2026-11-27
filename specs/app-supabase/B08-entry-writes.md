@@ -76,12 +76,12 @@ Add undo, bulk delete or a trash. Change the dialog's look.
 
 ## Verify (Supabase mode)
 
-- [ ] Add an expense: type Expense, Source Salary, Category Groceries, Amount 500, today's date, description "Test coffee", Save entry. The SnackBar says "Entry saved", the form resets, and the list (month = current) shows the new row at the top; footer total goes from 27 to 28.
-- [ ] Open the Dashboard: Salary's balance dropped by ₹500 and Expense by ₹500; the Monthly report's Groceries and the total expense moved by ₹500. (Check the database too: **Table Editor, transactions** has the row with your `user_id`.)
-- [ ] "Save and add another" keeps the type and source, clears the amount and puts the cursor in Amount.
-- [ ] Empty amount, then Save: "Enter an amount above zero." shows and nothing is saved. Income with no category saves fine.
-- [ ] Edit your test entry: change the amount to 800, Save changes; the row shows ₹800, the panel returns to "New entry".
-- [ ] Delete it: the dialog shows `Salary balance ₹…` before and after (before minus/plus 800 as appropriate); confirming removes the row and the totals return to the original (27 entries, Salary ₹53,200).
-- [ ] Try saving with the network off: a red SnackBar "Could not reach the server..." and the form keeps its values.
-- [ ] Sample mode: saving shows "Entry saved (sample data, nothing is stored yet)" and nothing changes in the list.
-- [ ] `flutter analyze` and `flutter test` pass.
+- [x] Add an expense: type Expense, Source Salary, Category Groceries, Amount 500, today's date, description "Test coffee", Save entry. The SnackBar says "Entry saved", the form resets, and the list (month = current) shows the new row at the top; footer total goes from 27 to 28.
+- [x] Open the Dashboard: Salary's balance dropped by ₹500 and Expense by ₹500; the Monthly report's Groceries and the total expense moved by ₹500. (Check the database too: **Table Editor, transactions** has the row with your `user_id`.)
+- [x] "Save and add another" keeps the type and source, clears the amount and puts the cursor in Amount.
+- [x] Empty amount, then Save: "Enter an amount above zero." shows and nothing is saved. Income with no category saves fine.
+- [x] Edit your test entry: change the amount to 800, Save changes; the row shows ₹800, the panel returns to "New entry".
+- [x] Delete it: the dialog shows `Salary balance ₹…` before and after (before minus/plus 800 as appropriate); confirming removes the row and the totals return to the original (27 entries, Salary ₹53,200).
+- [x] Try saving with the network off: a red SnackBar "Could not reach the server..." and the form keeps its values.
+- [x] Sample mode: saving shows "Entry saved (sample data, nothing is stored yet)" and nothing changes in the list.
+- [x] `flutter analyze` and `flutter test` pass.

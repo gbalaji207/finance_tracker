@@ -1,6 +1,7 @@
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
+import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
@@ -41,4 +42,8 @@ abstract interface class FinanceRepository {
   Future<List<Transaction>> previousMonthEntries(DateTime month);
   Future<MonthlyReport> monthlyReport(DateTime month);
   Future<SourceReport> sourceReport(String sourceId);
+
+  Future<void> addEntry(EntryInput input);
+  Future<void> updateEntry(String id, EntryInput input);
+  Future<void> deleteEntry(String id);
 }

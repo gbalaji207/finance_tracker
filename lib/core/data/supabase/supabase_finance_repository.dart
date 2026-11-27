@@ -4,6 +4,7 @@ import 'package:finance_tracker/core/data/supabase/row_mappers.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_usage.dart';
+import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/monthly_report.dart';
 import 'package:finance_tracker/core/models/source.dart';
@@ -223,5 +224,41 @@ class SupabaseFinanceRepository implements FinanceRepository {
       investedSavedToDate: thisMonth?.investedSavedToDate ?? 0,
       months: _rows(data).map(sourceMonthRowFromRow).toList(),
     );
+  }
+
+  Map<String, dynamic> _entryRow(EntryInput input) => {
+    'tx_date': sqlDate(input.date),
+    'type': input.type.name,
+    'source_id': input.sourceId,
+    'category_id': input.categoryId,
+    'amount': input.amount,
+    'description': input.description.trim(),
+  };
+
+  @override
+  Future<void> addEntry(EntryInput input) async {
+    // user_id is filled by the database default.
+    await _client.from('transactions').insert(_entryRow(input));
+  }
+
+  @override
+  Future<void> updateEntry(String id, EntryInput input) async {
+    final rows = await _client
+        .from('transactions')
+        .update(_entryRow(input))
+        .eq('id', id)
+        .select('id');
+    // A row you cannot see is treated as missing.
+    if (rows.isEmpty) throw StateError('Entry not found');
+  }
+
+  @override
+  Future<void> deleteEntry(String id) async {
+    final rows = await _client
+        .from('transactions')
+        .delete()
+        .eq('id', id)
+        .select('id');
+    if (rows.isEmpty) throw StateError('Entry not found');
   }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
+import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/core/models/transaction_page.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
@@ -109,6 +110,34 @@ class TransactionsCubit extends Cubit<TransactionsState> {
   }
 
   void goToPage(int page) => _loadList(page);
+
+  /// Runs a write, then reloads the list. Returns an error message, or null
+  /// on success.
+  Future<String?> _write(
+    Future<void> Function() action, {
+    required bool firstPage,
+  }) async {
+    emit(state.copyWith(saving: true));
+    try {
+      await action();
+      if (isClosed) return null;
+      await (firstPage ? _loadList(1) : reloadList());
+      if (!isClosed) emit(state.copyWith(saving: false));
+      return null;
+    } catch (e) {
+      if (!isClosed) emit(state.copyWith(saving: false));
+      return friendlyError(e);
+    }
+  }
+
+  Future<String?> addEntry(EntryInput input) =>
+      _write(() => _repo.addEntry(input), firstPage: true);
+
+  Future<String?> updateEntry(String id, EntryInput input) =>
+      _write(() => _repo.updateEntry(id, input), firstPage: false);
+
+  Future<String?> deleteEntry(String id) =>
+      _write(() => _repo.deleteEntry(id), firstPage: false);
 
   /// Selects the entry being edited; null leaves edit mode.
   void select(String? id) =>

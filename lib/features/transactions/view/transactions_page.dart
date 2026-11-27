@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/utils/error_message.dart';
 import 'package:finance_tracker/core/widgets/app_snack.dart';
 import 'package:finance_tracker/core/widgets/info_box.dart';
 import 'package:finance_tracker/core/widgets/error_view.dart';
@@ -41,9 +42,15 @@ class _TransactionsView extends StatelessWidget {
     TransactionsState state,
     Transaction entry,
   ) async {
-    final balance = await context.read<FinanceRepository>().sourceBalance(
-      entry.sourceId,
-    );
+    final double balance;
+    try {
+      balance = await context.read<FinanceRepository>().sourceBalance(
+        entry.sourceId,
+      );
+    } catch (e) {
+      if (context.mounted) AppSnack.error(context, friendlyError(e));
+      return false;
+    }
     if (!context.mounted) return false;
     final confirmed = await showDeleteEntryDialog(
       context,
@@ -131,8 +138,18 @@ class _TransactionsView extends StatelessWidget {
                           editing: state.selected,
                           templates: state.templates,
                           sourceName: state.sourceName,
-                          sources: state.activeSources,
-                          categories: state.activeCategories,
+                          sources: [
+                            for (final s in state.sources)
+                              if (s.isActive ||
+                                  s.id == state.selected?.sourceId)
+                                s,
+                          ],
+                          categories: [
+                            for (final c in state.categories)
+                              if (c.isActive ||
+                                  c.id == state.selected?.categoryId)
+                                c,
+                          ],
                           onDelete: (entry) =>
                               _confirmDelete(context, state, entry),
                         ),
