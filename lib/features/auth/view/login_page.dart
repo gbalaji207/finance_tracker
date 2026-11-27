@@ -30,9 +30,10 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     final auth = context.read<AuthCubit>();
-    auth.signIn(_email.text, _password.text);
+    await auth.signIn(_email.text, _password.text);
+    if (!mounted) return;
     // Covers the case where the user was already signed in (login not
     // required): signing in again emits an identical state, so the listener
     // below would not fire.
@@ -140,13 +141,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.expenseBg,
-                      borderRadius:
-                          BorderRadius.circular(AppSpacing.radiusControl),
+                      borderRadius: BorderRadius.circular(
+                        AppSpacing.radiusControl,
+                      ),
                     ),
                     child: Text(
                       message,
-                      style: AppTextStyles.buttonSmall
-                          .copyWith(color: AppColors.expenseFg),
+                      style: AppTextStyles.buttonSmall.copyWith(
+                        color: AppColors.expenseFg,
+                      ),
                     ),
                   ),
                 );

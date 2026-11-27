@@ -62,9 +62,9 @@ Build sign-up, password reset or "change password". Store the password anywhere.
 
 ## Verify
 
-- [ ] Supabase mode: the app opens on `/login`. A wrong password shows "Wrong email or password. Try again."; your real login goes to the Dashboard (it will show an error card until B05; that is fine).
-- [ ] Reload the browser while signed in: you stay signed in. In a private window you are asked to sign in.
-- [ ] Settings, Sign out: back to `/login`; typing `/transactions` in the address bar then redirects to `/login`.
-- [ ] `/dev/supabase` shows `Session: <your email>` when signed in.
-- [ ] Sample mode: opens straight on the Dashboard as before; `/login` still shows the form and password `wrong` still fails.
-- [ ] `flutter analyze` and `flutter test` pass.
+- [x] Supabase mode: the app opens on `/login`. A wrong password shows "Wrong email or password. Try again."; your real login goes to the Dashboard (it will show an error card until B05; that is fine).
+- [x] Reload the browser while signed in: you stay signed in. In a private window you are asked to sign in.
+- [x] Settings, Sign out: back to `/login`; typing `/transactions` in the address bar then redirects to `/login`.
+- [x] `/dev/supabase` shows `Session: <your email>` when signed in.
+- [x] Sample mode: opens straight on the Dashboard as before; `/login` still shows the form and password `wrong` still fails.
+- [x] `flutter analyze` and `flutter test` pass.
