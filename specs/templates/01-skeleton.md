@@ -43,5 +43,5 @@ Build the sections.
 
 ## Verify
 
-- [ ] `/templates` shows the header with the long subtitle and three placeholders: a wide one with a 340px one beside it (stacked when narrow), then a full-width one.
-- [ ] `flutter analyze` is clean.
+- [x] `/templates` shows the header with the long subtitle and three placeholders: a wide one with a 340px one beside it (stacked when narrow), then a full-width one.
+- [x] `flutter analyze` is clean.

@@ -31,6 +31,6 @@ Validate, persist, or add the new template to the list.
 
 ## Verify
 
-- [ ] The card shows the fields in the order above with defaults Expense, VR, Utilities.
-- [ ] Changing Type to Investment changes the Category options to Mutual funds only; Income hides the category dropdown.
-- [ ] "Save template" shows the SnackBar. `flutter analyze` is clean.
+- [x] The card shows the fields in the order above with defaults Expense, VR, Utilities.
+- [x] Changing Type to Investment changes the Category options to Mutual funds only; Income hides the category dropdown.
+- [x] "Save template" shows the SnackBar. `flutter analyze` is clean.

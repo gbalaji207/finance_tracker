@@ -45,6 +45,6 @@ In the page: `onUse` → `context.go(AppRoutes.transactions)`; `onEdit` → Snac
 
 ## Verify
 
-- [ ] Six rows as above with colored badges; each row has underlined "Use" and "Edit" links.
-- [ ] "Use" opens `/transactions`; "Edit" shows the SnackBar.
-- [ ] Narrower than about 900px the table scrolls horizontally. `flutter analyze` is clean.
+- [x] Six rows as above with colored badges; each row has underlined "Use" and "Edit" links.
+- [x] "Use" opens `/transactions`; "Edit" shows the SnackBar.
+- [x] Narrower than about 900px the table scrolls horizontally. `flutter analyze` is clean.

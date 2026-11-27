@@ -42,7 +42,7 @@ Initially checked: all rows except the electricity bill. Button reads `Copy 5 se
 
 ## Verify
 
-- [ ] Rows and checkboxes match the table; the button says "Copy 5 selected to November".
-- [ ] Ticking the electricity bill changes the button to "Copy 6 selected…"; unticking everything disables the button (greyed).
-- [ ] Clicking the button with items ticked shows the SnackBar with the right count.
-- [ ] The full Templates page matches the wireframe and no placeholder boxes remain. `flutter analyze` is clean.
+- [x] Rows and checkboxes match the table; the button says "Copy 5 selected to November".
+- [x] Ticking the electricity bill changes the button to "Copy 6 selected…"; unticking everything disables the button (greyed).
+- [x] Clicking the button with items ticked shows the SnackBar with the right count.
+- [x] The full Templates page matches the wireframe and no placeholder boxes remain. `flutter analyze` is clean.
