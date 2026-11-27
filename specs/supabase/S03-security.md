@@ -20,8 +20,8 @@ The SQL Editor runs as an admin role that bypasses RLS, so "I can see my data in
 
 ## Verify
 
-- [ ] **Table Editor**: all five tables now show RLS enabled, with one policy each.
-- [ ] Anonymous access is blocked. Run this; it must **fail** with "permission denied for table transactions":
+- [x] **Table Editor**: all five tables now show RLS enabled, with one policy each.
+- [x] Anonymous access is blocked. Run this; it must **fail** with "permission denied for table transactions":
   ```sql
   begin;
   set local role anon;
@@ -29,7 +29,7 @@ The SQL Editor runs as an admin role that bypasses RLS, so "I can see my data in
   rollback;
   ```
   If the editor leaves the transaction open after the error, run `rollback;` on its own.
-- [ ] Signed-in access works (and returns 0 rows for now). Replace the id with yours from S01:
+- [x] Signed-in access works (and returns 0 rows for now). Replace the id with yours from S01:
   ```sql
   begin;
   set local role authenticated;

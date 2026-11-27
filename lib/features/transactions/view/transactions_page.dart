@@ -2,6 +2,7 @@ import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/core/models/transaction.dart';
+import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
@@ -65,7 +66,7 @@ class _TransactionsView extends StatelessWidget {
           children: [
             PageHeader(
               title: 'Transactions',
-              subtitle: 'Sample data',
+              subtitle: AppConfig.useSupabase ? 'Your entries' : 'Sample data',
               actions: [
                 AppButton(
                   label: 'Copy from last month',

@@ -1,5 +1,6 @@
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
+import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/app_dropdown.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
@@ -39,7 +40,9 @@ class _SourceReportView extends StatelessWidget {
           children: [
             PageHeader(
               title: 'Source-wise report',
-              subtitle: 'Sample data · one source over time',
+              subtitle: AppConfig.useSupabase
+                  ? 'One source over time'
+                  : 'Sample data · one source over time',
               crossAlignment: WrapCrossAlignment.end,
               actions: [
                 SizedBox(

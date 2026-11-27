@@ -1,5 +1,5 @@
 import 'package:finance_tracker/core/data/finance_repository.dart';
-import 'package:finance_tracker/core/data/mock_clock.dart';
+import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/features/templates/cubit/templates_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +17,7 @@ class TemplatesCubit extends Cubit<TemplatesState> {
     final categories = await _repo.categories();
     final templates = await _repo.templates();
     final previous = await _repo.previousMonthEntries(
-      DateTime(mockMonth.year, mockMonth.month - 1),
+      DateTime(appMonth().year, appMonth().month - 1),
     );
     emit(
       state.copyWith(

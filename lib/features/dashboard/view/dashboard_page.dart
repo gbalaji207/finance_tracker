@@ -1,7 +1,8 @@
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
-import 'package:finance_tracker/core/data/mock_clock.dart';
+import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
+import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/utils/app_dates.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
@@ -62,9 +63,10 @@ class _DashboardView extends StatelessWidget {
           children: [
             PageHeader(
               title: 'Dashboard',
-              subtitle:
-                  'Sample data · balances as on '
-                  '${AppDates.dayMonthYear(mockToday)}',
+              subtitle: AppConfig.useSupabase
+                  ? 'Balances as on ${AppDates.dayMonthYear(appToday())}'
+                  : 'Sample data · balances as on '
+                      '${AppDates.dayMonthYear(appToday())}',
               actions: [
                 MonthSelector(month: state.month, onChanged: cubit.changeMonth),
                 AppButton(

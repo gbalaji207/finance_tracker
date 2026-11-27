@@ -7,6 +7,7 @@ import 'package:finance_tracker/core/widgets/app_text_link.dart';
 import 'package:finance_tracker/core/widgets/page_body.dart';
 import 'package:finance_tracker/dev/component_gallery.dart';
 import 'package:finance_tracker/dev/design_system_preview.dart';
+import 'package:finance_tracker/dev/supabase_check_page.dart';
 import 'package:finance_tracker/features/auth/cubit/auth_cubit.dart';
 import 'package:finance_tracker/features/auth/cubit/auth_state.dart';
 import 'package:finance_tracker/features/auth/view/login_page.dart';
@@ -37,13 +38,12 @@ class _AuthRefresh extends ChangeNotifier {
 
 GoRouter createRouter(AuthCubit auth) {
   GoRoute page(String path, Widget Function() build) => GoRoute(
-        path: path,
-        pageBuilder: (context, state) =>
-            NoTransitionPage(
-              key: state.pageKey,
-              child: PageBody(child: build()),
-            ),
-      );
+    path: path,
+    pageBuilder: (context, state) => NoTransitionPage(
+      key: state.pageKey,
+      child: PageBody(child: build()),
+    ),
+  );
 
   return GoRouter(
     initialLocation: AppRoutes.dashboard,
@@ -60,10 +60,8 @@ GoRouter createRouter(AuthCubit auth) {
     routes: [
       GoRoute(
         path: AppRoutes.login,
-        pageBuilder: (context, state) => NoTransitionPage(
-          key: state.pageKey,
-          child: const LoginPage(),
-        ),
+        pageBuilder: (context, state) =>
+            NoTransitionPage(key: state.pageKey, child: const LoginPage()),
       ),
       ShellRoute(
         builder: (context, state, child) => AppShell(
@@ -87,9 +85,12 @@ GoRouter createRouter(AuthCubit auth) {
               const Scaffold(body: DesignSystemPreview()),
         ),
         GoRoute(
+          path: '/dev/supabase',
+          builder: (context, state) => const SupabaseCheckPage(),
+        ),
+        GoRoute(
           path: '/dev/gallery',
-          builder: (context, state) =>
-              const Scaffold(body: ComponentGallery()),
+          builder: (context, state) => const Scaffold(body: ComponentGallery()),
         ),
       ],
     ],

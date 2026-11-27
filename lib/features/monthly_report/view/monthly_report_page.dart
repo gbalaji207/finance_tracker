@@ -1,5 +1,6 @@
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
+import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/month_selector.dart';
@@ -49,8 +50,9 @@ class _MonthlyReportView extends StatelessWidget {
           children: [
             PageHeader(
               title: 'Monthly report',
-              subtitle:
-                  'Sample data · all sources together, then split by source',
+              subtitle: AppConfig.useSupabase
+                  ? 'All sources together, then split by source'
+                  : 'Sample data · all sources together, then split by source',
               actions: [
                 MonthSelector(month: state.month, onChanged: cubit.changeMonth),
                 AppButton(

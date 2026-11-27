@@ -27,10 +27,10 @@ Rules enforced by the database (the app does not have to re-check them, but shou
 
 ## Verify
 
-- [ ] **Table Editor** lists the five tables. They show a warning that RLS is not enabled; S03 fixes that.
-- [ ] Run this query; it returns 5 rows:
+- [x] **Table Editor** lists the five tables. They show a warning that RLS is not enabled; S03 fixes that.
+- [x] Run this query; it returns 5 rows:
   ```sql
   select table_name from information_schema.tables
   where table_schema = 'public' order by 1;
   ```
-- [ ] In **Table Editor**, `transactions` has the columns `id, user_id, tx_date, type, source_id, category_id, amount, description, created_at`.
+- [x] In **Table Editor**, `transactions` has the columns `id, user_id, tx_date, type, source_id, category_id, amount, description, created_at`.

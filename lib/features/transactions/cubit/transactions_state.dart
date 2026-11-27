@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:finance_tracker/core/data/mock_clock.dart';
+import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
@@ -20,7 +20,7 @@ class TransactionsState extends Equatable {
     this.typeFilter,
     this.query = '',
     this.selectedId,
-  }) : month = month ?? mockMonth;
+  }) : month = month ?? appMonth();
 
   final LoadStatus status;
   final TransactionPage? page;

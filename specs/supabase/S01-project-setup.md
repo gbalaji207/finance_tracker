@@ -20,6 +20,6 @@ Put any key in the Flutter repo yet. Phase B passes them in at run time, not in 
 
 ## Verify
 
-- [ ] **Authentication, Users** lists exactly one user: your email.
-- [ ] The sign-ups switch is off.
-- [ ] In the SQL Editor, `select id, email from auth.users;` returns one row. Keep this tab or copy the `id`, you will use it in S05.
+- [x] **Authentication, Users** lists exactly one user: your email.
+- [x] The sign-ups switch is off.
+- [x] In the SQL Editor, `select id, email from auth.users;` returns one row. Keep this tab or copy the `id`, you will use it in S05.

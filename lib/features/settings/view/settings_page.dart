@@ -1,6 +1,7 @@
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
+import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
 import 'package:finance_tracker/core/widgets/two_pane.dart';
@@ -53,7 +54,9 @@ class _SettingsView extends StatelessWidget {
           children: [
             const PageHeader(
               title: 'Settings',
-              subtitle: 'Sample data · sources, categories and your account',
+              subtitle: AppConfig.useSupabase
+                  ? 'Sources, categories and your account'
+                  : 'Sample data · sources, categories and your account',
             ),
             TwoPane(
               primaryMin: 560,

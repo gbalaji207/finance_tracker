@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:finance_tracker/core/data/mock_clock.dart';
+import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
 
 class AddEntryState extends Equatable {
@@ -9,7 +9,7 @@ class AddEntryState extends Equatable {
     this.categoryId = 'groceries',
     DateTime? date,
     this.editingId,
-  }) : date = date ?? mockToday;
+  }) : date = date ?? appToday();
 
   final TxType type;
   final String sourceId;

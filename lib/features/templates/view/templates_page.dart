@@ -1,6 +1,7 @@
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
+import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
 import 'package:finance_tracker/core/widgets/two_pane.dart';
@@ -48,10 +49,13 @@ class _TemplatesView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: AppSpacing.s24,
           children: [
-            const PageHeader(
+            PageHeader(
               title: 'Templates and copy last month',
-              subtitle: 'Sample data · nothing is created automatically; '
-                  'these only pre-fill the entry form',
+              subtitle: AppConfig.useSupabase
+                  ? 'Nothing is created automatically; '
+                      'these only pre-fill the entry form'
+                  : 'Sample data · nothing is created automatically; '
+                      'these only pre-fill the entry form',
             ),
             TwoPane(
               primaryMin: 560,

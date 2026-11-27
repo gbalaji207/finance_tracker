@@ -125,3 +125,7 @@ app.*.symbols
 # IntelliJ / Android Studio
 .idea/
 *.iml
+
+# Local environment files (keep the example)
+env/*.json
+!env/*.example.json

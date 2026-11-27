@@ -19,7 +19,7 @@ SQL Editor, paste `supabase-sql/04-seed.sql`, Run. It refuses to run if no user 
 
 The SQL Editor runs as admin, so these see all data.
 
-- [ ] Monthly figures:
+- [x] Monthly figures:
   ```sql
   select name, month_opening, income, expense, invested, saved, closing
   from public.source_summaries('2026-11-01');
@@ -32,16 +32,16 @@ The SQL Editor runs as admin, so these see all data.
   | VR | 4000 | 28000 | 6200 | 0 | 0 | 25800 |
 
   Column sums: income 228000, expense 82600, invested 30000, saved 16000, closing 132400.
-- [ ] Categories: `select * from public.expense_by_category('2026-11-01');` returns Housing 32000, Groceries 15000, Property upkeep 14600, Other 12000, Utilities 9000.
-- [ ] Reconciliation: `select * from public.current_reconciliation();` returns 132400, 132400, 2026-11-26.
-- [ ] Aqua 105 history:
+- [x] Categories: `select * from public.expense_by_category('2026-11-01');` returns Housing 32000, Groceries 15000, Property upkeep 14600, Other 12000, Utilities 9000.
+- [x] Reconciliation: `select * from public.current_reconciliation();` returns 132400, 132400, 2026-11-26.
+- [x] Aqua 105 history:
   ```sql
   select * from public.source_month_rows(
     (select id from public.sources where name = 'Aqua 105'), '2026-11-26', 6);
   ```
   Closing, newest first: 31000, 8000, 13500, 9500, 8000, 2000 (November back to June); incomes all 45000.
-- [ ] `select count(*) from public.transactions;` is 56.
-- [ ] Row Level Security with data. Replace the id with yours; it must return **56** for you and **0** for a made-up id:
+- [x] `select count(*) from public.transactions;` is 56.
+- [x] Row Level Security with data. Replace the id with yours; it must return **56** for you and **0** for a made-up id:
   ```sql
   begin;
   set local role authenticated;
@@ -55,7 +55,7 @@ The SQL Editor runs as admin, so these see all data.
   select count(*) from public.transactions;
   rollback;
   ```
-- [ ] Rules reject bad data. This must fail with a check-constraint error (an expense without a category):
+- [x] Rules reject bad data. This must fail with a check-constraint error (an expense without a category):
   ```sql
   insert into public.transactions (user_id, tx_date, type, source_id, amount)
   select id, '2026-11-01', 'expense', (select id from public.sources limit 1), 5

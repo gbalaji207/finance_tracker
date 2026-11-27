@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:finance_tracker/core/data/mock_clock.dart';
+import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
@@ -16,7 +16,7 @@ class DashboardState extends Equatable {
     this.summaries = const [],
     this.recent = const [],
     this.quickAdd = const [],
-  }) : month = month ?? mockMonth;
+  }) : month = month ?? appMonth();
 
   final LoadStatus status;
   final DateTime month;
