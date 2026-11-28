@@ -8,6 +8,7 @@ import 'package:finance_tracker/core/widgets/page_body.dart';
 import 'package:finance_tracker/dev/component_gallery.dart';
 import 'package:finance_tracker/dev/design_system_preview.dart';
 import 'package:finance_tracker/dev/supabase_check_page.dart';
+import 'package:finance_tracker/features/accounts_report/view/accounts_report_page.dart';
 import 'package:finance_tracker/features/auth/cubit/auth_cubit.dart';
 import 'package:finance_tracker/features/auth/cubit/auth_state.dart';
 import 'package:finance_tracker/features/auth/view/login_page.dart';
@@ -80,6 +81,7 @@ GoRouter createRouter(AuthCubit auth) {
           ),
           page(AppRoutes.monthlyReport, (_) => const MonthlyReportPage()),
           page(AppRoutes.sourceReport, (_) => const SourceReportPage()),
+          page(AppRoutes.accountsReport, (_) => const AccountsReportPage()),
           page(AppRoutes.templates, (_) => const TemplatesPage()),
           page(AppRoutes.settings, (_) => const SettingsPage()),
         ],

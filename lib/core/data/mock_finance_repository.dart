@@ -1,5 +1,6 @@
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/mock_clock.dart';
+import 'package:finance_tracker/core/models/account_ledger.dart';
 import 'package:finance_tracker/core/models/bank_account.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
@@ -629,6 +630,85 @@ class MockFinanceRepository implements FinanceRepository {
     int page = 1,
   }) async =>
       TransactionPage(items: _transactions, total: 38, page: 1, pageCount: 4);
+
+  /// Built from the sample entries `t1` to `t10` (they do not add up to the
+  /// fixed Dashboard figures, like the Transactions list).
+  @override
+  Future<AccountLedger> accountLedger({
+    required DateTime from,
+    required DateTime to,
+    String? bankAccountId,
+    String? sourceId,
+    TxType? type,
+    int page = 1,
+  }) async {
+    DateTime day(DateTime d) => DateTime(d.year, d.month, d.day);
+    final start = day(from);
+    final end = day(to);
+    // The sources in scope: the chosen bank account's, then the chosen one.
+    final scope = _currentSources
+        .where(
+          (s) =>
+              (bankAccountId == null || s.bankAccountId == bankAccountId) &&
+              (sourceId == null || s.id == sourceId),
+        )
+        .toList();
+    final scopeIds = {for (final s in scope) s.id};
+    final opening = scope.fold<double>(0, (sum, s) => sum + s.openingBalance);
+    final kept =
+        [
+          for (final t in _transactions)
+            if (!day(t.date).isBefore(start) &&
+                !day(t.date).isAfter(end) &&
+                scopeIds.contains(t.sourceId) &&
+                (type == null || t.type == type))
+              t,
+        ]..sort((a, b) {
+          final byDate = a.date.compareTo(b.date);
+          return byDate != 0 ? byDate : a.id.compareTo(b.id);
+        });
+
+    var running = opening;
+    var totalCredit = 0.0;
+    var totalDebit = 0.0;
+    final rows = <LedgerRow>[];
+    for (final t in kept) {
+      if (t.type == TxType.income) {
+        running += t.amount;
+        totalCredit += t.amount;
+      } else {
+        running -= t.amount;
+        totalDebit += t.amount;
+      }
+      rows.add(
+        LedgerRow(
+          id: t.id,
+          date: t.date,
+          description: t.description,
+          type: t.type,
+          sourceId: t.sourceId,
+          amount: t.amount,
+          closing: running,
+        ),
+      );
+    }
+
+    final newestFirst = rows.reversed.toList();
+    final pageCount = newestFirst.isEmpty
+        ? 1
+        : (newestFirst.length / kLedgerPageSize).ceil();
+    final current = page.clamp(1, pageCount);
+    final offset = (current - 1) * kLedgerPageSize;
+    return AccountLedger(
+      rows: newestFirst.skip(offset).take(kLedgerPageSize).toList(),
+      total: newestFirst.length,
+      page: current,
+      pageCount: pageCount,
+      opening: opening,
+      totalCredit: totalCredit,
+      totalDebit: totalDebit,
+    );
+  }
 
   @override
   Future<List<EntryTemplate>> templates() async => _templates;

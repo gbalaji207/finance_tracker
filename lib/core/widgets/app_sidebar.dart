@@ -19,6 +19,7 @@ class AppSidebar extends StatelessWidget {
     ('Transactions', AppRoutes.transactions),
     ('Monthly report', AppRoutes.monthlyReport),
     ('Source report', AppRoutes.sourceReport),
+    ('Accounts report', AppRoutes.accountsReport),
     ('Templates', AppRoutes.templates),
     ('Settings', AppRoutes.settings),
   ];

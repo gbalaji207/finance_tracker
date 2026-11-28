@@ -228,6 +228,42 @@ void main() {
     expect(s.source.bankAccountName, 'HDFC Salary');
   });
 
+  group('ledger', () {
+    Map<String, dynamic> row(String type, Object amount, Object closing) => {
+      'entry_id': 'e1',
+      'entry_date': '2026-11-25',
+      'description': 'Home EMI',
+      'entry_type': type,
+      'source_id': 's1',
+      'amount': amount,
+      'closing': closing,
+    };
+
+    test('ledgerRowFromRow reads numbers given as strings or numbers', () {
+      final fromStrings = ledgerRowFromRow(
+        row('expense', '32000.00', '1500.50'),
+      );
+      expect(fromStrings.amount, 32000);
+      expect(fromStrings.closing, 1500.5);
+      expect(fromStrings.date, DateTime(2026, 11, 25));
+      final fromNumbers = ledgerRowFromRow(row('expense', 32000, -200.0));
+      expect(fromNumbers.closing, -200);
+    });
+
+    test('an income row is a credit', () {
+      final r = ledgerRowFromRow(row('income', '45000.00', '1'));
+      expect(r.credit, 45000);
+      expect(r.debit, 0);
+    });
+
+    test('a partner row is a debit', () {
+      final r = ledgerRowFromRow(row('partner', '8000.00', '1'));
+      expect(r.type, TxType.partner);
+      expect(r.debit, 8000);
+      expect(r.credit, 0);
+    });
+  });
+
   group('partner', () {
     final summaryRow = {
       'source_id': 'a',

@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/models/account_ledger.dart';
 import 'package:finance_tracker/core/models/bank_account.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
@@ -96,6 +97,17 @@ SourceMonthRow sourceMonthRowFromRow(Map<String, dynamic> r) => SourceMonthRow(
   investedSaved: toDouble(r['invested_saved']),
   closing: toDouble(r['closing']),
   partner: _toDoubleOrZero(r['partner']),
+);
+
+/// A row of the `account_ledger` rpc.
+LedgerRow ledgerRowFromRow(Map<String, dynamic> r) => LedgerRow(
+  id: r['entry_id'] as String,
+  date: DateTime.parse(r['entry_date'] as String),
+  description: (r['description'] as String?) ?? '',
+  type: TxType.values.byName(r['entry_type'] as String),
+  sourceId: r['source_id'] as String,
+  amount: toDouble(r['amount']),
+  closing: toDouble(r['closing']),
 );
 
 BankAccount bankAccountFromRow(Map<String, dynamic> r) => BankAccount(

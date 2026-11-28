@@ -1,3 +1,4 @@
+import 'package:finance_tracker/core/models/account_ledger.dart';
 import 'package:finance_tracker/core/models/bank_account.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
@@ -16,6 +17,9 @@ import 'package:finance_tracker/core/models/transaction_page.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
 
 const kPageSize = 10;
+
+/// Rows per page on the Accounts report.
+const kLedgerPageSize = 25;
 
 abstract interface class FinanceRepository {
   /// Active sources only (these are the ones offered for new entries).
@@ -50,6 +54,18 @@ abstract interface class FinanceRepository {
     String? sourceId,
     TxType? type,
     String query = '',
+    int page = 1,
+  });
+  /// The Accounts report: the entries between [from] and [to] (both
+  /// inclusive) with a running balance, newest first, one page at a time. The
+  /// balance starts from the chosen sources' balance just before [from] and
+  /// runs oldest to newest over the entries that match the filters.
+  Future<AccountLedger> accountLedger({
+    required DateTime from,
+    required DateTime to,
+    String? bankAccountId, // null = all bank accounts
+    String? sourceId, // null = all sources (of the chosen bank account)
+    TxType? type, // null = all types
     int page = 1,
   });
   Future<List<EntryTemplate>> templates();

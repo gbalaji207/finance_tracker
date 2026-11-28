@@ -1,6 +1,7 @@
 import 'package:finance_tracker/core/data/app_clock.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/data/supabase/row_mappers.dart';
+import 'package:finance_tracker/core/models/account_ledger.dart';
 import 'package:finance_tracker/core/models/bank_account.dart';
 import 'package:finance_tracker/core/models/bank_reconciliation.dart';
 import 'package:finance_tracker/core/models/category.dart';
@@ -224,6 +225,50 @@ class SupabaseFinanceRepository implements FinanceRepository {
       pageCount: pageCount,
     );
   }
+
+  @override
+  Future<AccountLedger> accountLedger({
+    required DateTime from,
+    required DateTime to,
+    String? bankAccountId,
+    String? sourceId,
+    TxType? type,
+    int page = 1,
+  }) async {
+    final filters = {
+      'p_from': sqlDate(from),
+      'p_to': sqlDate(to),
+      'p_bank_account': bankAccountId,
+      'p_source': sourceId,
+      'p_type': type?.name,
+    };
+    final results = await Future.wait<Object?>([
+      _client.rpc(
+        'account_ledger',
+        params: {
+          ...filters,
+          'p_limit': kLedgerPageSize,
+          'p_offset': (page - 1) * kLedgerPageSize,
+        },
+      ),
+      _client.rpc('account_ledger_summary', params: filters),
+    ]);
+    final rows = _rows(results[0]).map(ledgerRowFromRow).toList();
+    final summary = _rows(results[1]).first;
+    final total = _toCount(summary['entry_count']);
+    return AccountLedger(
+      rows: rows,
+      total: total,
+      page: page,
+      pageCount: total == 0 ? 1 : (total / kLedgerPageSize).ceil(),
+      opening: toDouble(summary['opening_balance']),
+      totalCredit: toDouble(summary['total_credit']),
+      totalDebit: toDouble(summary['total_debit']),
+    );
+  }
+
+  /// A count arrives as a JSON number or a string.
+  int _toCount(Object? v) => v is num ? v.toInt() : int.parse('$v');
 
   @override
   Future<MonthlyReport> monthlyReport(DateTime month) async {
