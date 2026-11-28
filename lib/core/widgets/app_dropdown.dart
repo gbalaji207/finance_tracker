@@ -48,7 +48,12 @@ class AppDropdown<T> extends StatelessWidget {
           for (final item in items)
             DropdownMenuItem<T>(
               value: item.value,
-              child: Text(item.label, style: AppTextStyles.body),
+              child: Text(
+                item.label,
+                style: AppTextStyles.body,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
         ],
         onChanged: onChanged,

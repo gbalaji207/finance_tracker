@@ -25,7 +25,12 @@ class AppBadge extends StatelessWidget {
         color: background,
         borderRadius: BorderRadius.circular(AppSpacing.radiusBadge),
       ),
-      child: Text(text, style: AppTextStyles.badge.copyWith(color: foreground)),
+      child: Text(
+        text,
+        style: AppTextStyles.badge.copyWith(color: foreground),
+        maxLines: 1,
+        softWrap: false,
+      ),
     );
   }
 }

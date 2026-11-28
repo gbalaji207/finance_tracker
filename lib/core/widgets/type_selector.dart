@@ -4,6 +4,8 @@ import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
+/// One button per [TxType]. The buttons keep their natural width and wrap onto
+/// a second line when the space is narrow, instead of being squeezed.
 class TypeSelector extends StatelessWidget {
   const TypeSelector({
     super.key,
@@ -25,16 +27,15 @@ class TypeSelector extends StatelessWidget {
           Text(label!, style: AppTextStyles.label),
           const SizedBox(height: AppSpacing.s6),
         ],
-        Row(
-          spacing: AppSpacing.s6,
+        Wrap(
+          spacing: AppSpacing.s8,
+          runSpacing: AppSpacing.s8,
           children: [
             for (final type in TxType.values)
-              Expanded(
-                child: _TypeButton(
-                  type: type,
-                  selected: type == value,
-                  onTap: () => onChanged(type),
-                ),
+              _TypeButton(
+                type: type,
+                selected: type == value,
+                onTap: () => onChanged(type),
               ),
           ],
         ),
@@ -61,12 +62,12 @@ class _TypeButton extends StatelessWidget {
       selected: selected,
       button: true,
       child: SizedBox(
-        height: AppSpacing.controlHeight,
+        height: AppSpacing.buttonSmall,
         child: OutlinedButton(
           onPressed: onTap,
           style: ButtonStyle(
             padding: const WidgetStatePropertyAll(
-              EdgeInsets.symmetric(horizontal: AppSpacing.s4),
+              EdgeInsets.symmetric(horizontal: AppSpacing.s12),
             ),
             minimumSize: const WidgetStatePropertyAll(Size.zero),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -83,15 +84,14 @@ class _TypeButton extends StatelessWidget {
             ),
             mouseCursor: const WidgetStatePropertyAll(SystemMouseCursors.click),
           ),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              type.label,
-              style: AppTextStyles.body.copyWith(
-                fontSize: 13,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-                color: selected ? AppColors.primaryDark : AppColors.textPrimary,
-              ),
+          child: Text(
+            type.label,
+            maxLines: 1,
+            softWrap: false,
+            style: AppTextStyles.body.copyWith(
+              fontSize: 13,
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+              color: selected ? AppColors.primaryDark : AppColors.textPrimary,
             ),
           ),
         ),

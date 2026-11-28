@@ -96,25 +96,33 @@ class TransactionsListCard extends StatelessWidget {
   Widget _table() {
     return AppTable(
       // Scrolls sideways instead of overflowing in a narrow card.
-      minWidth: 720,
+      minWidth: 900,
       columns: const [
-        AppTableColumn('Date', width: 56),
+        AppTableColumn('Date', width: 72),
         AppTableColumn('Description'),
-        AppTableColumn('Source', width: 104),
-        AppTableColumn('Category', width: 112),
-        AppTableColumn('Type', width: 100),
-        AppTableColumn('Amount', width: 100, align: TextAlign.right),
-        AppTableColumn('', width: 56, align: TextAlign.right),
+        AppTableColumn('Source', width: 140),
+        AppTableColumn('Category', width: 150),
+        AppTableColumn('Type', width: 112),
+        AppTableColumn('Amount', width: 120, align: TextAlign.right),
+        AppTableColumn('', width: 64, align: TextAlign.right),
       ],
       rows: [
         for (final t in page.items)
           AppTableRow(
             background: t.id == selectedId ? AppColors.rowSelected : null,
             [
-              AppTableText(AppDates.dayMonth(t.date), secondary: true),
-              AppTableText(t.description),
-              AppTableText(sourceName(t.sourceId)),
-              AppTableText(categoryName(t.categoryId), secondary: true),
+              AppTableText(
+                AppDates.dayMonth(t.date),
+                secondary: true,
+                maxLines: 1,
+              ),
+              AppTableText(t.description, maxLines: 1),
+              AppTableText(sourceName(t.sourceId), maxLines: 1),
+              AppTableText(
+                categoryName(t.categoryId),
+                secondary: true,
+                maxLines: 1,
+              ),
               TypeBadge(t.type),
               AmountText(amount: t.amount, type: t.type),
               t.id == selectedId

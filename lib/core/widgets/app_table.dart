@@ -37,6 +37,7 @@ class AppTableText extends StatelessWidget {
     this.bold = false,
     this.color,
     this.secondary = false,
+    this.maxLines,
   });
 
   final String text;
@@ -44,12 +45,27 @@ class AppTableText extends StatelessWidget {
   final Color? color;
   final bool secondary;
 
+  /// Limits the text to this many lines and ends it with an ellipsis. Null
+  /// (the default) lets the text wrap.
+  final int? maxLines;
+
   @override
   Widget build(BuildContext context) {
     var style = secondary ? AppTextStyles.bodySecondary : AppTextStyles.body;
     if (bold) style = style.copyWith(fontWeight: FontWeight.w600);
     if (color != null) style = style.copyWith(color: color);
-    return Text(text, style: style, softWrap: true);
+    final limit = maxLines;
+    if (limit == null) return Text(text, style: style, softWrap: true);
+    return Tooltip(
+      message: text,
+      waitDuration: const Duration(milliseconds: 500),
+      child: Text(
+        text,
+        style: style,
+        maxLines: limit,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
   }
 }
 
@@ -71,10 +87,7 @@ class AppTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final table = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _headerRow(),
-        for (final row in rows) _bodyRow(row),
-      ],
+      children: [_headerRow(), for (final row in rows) _bodyRow(row)],
     );
 
     final min = minWidth;
@@ -90,43 +103,43 @@ class AppTable extends StatelessWidget {
   }
 
   Widget _headerRow() => Container(
-        padding: const EdgeInsets.only(
-          top: AppSpacing.s4,
-          bottom: AppSpacing.s12,
-          left: AppSpacing.s4,
-          right: AppSpacing.s4,
-        ),
-        decoration: const BoxDecoration(border: Border(bottom: _border)),
-        child: _cellRow([
-          for (final c in columns)
-            Text(c.title, style: AppTextStyles.label, textAlign: c.align),
-        ]),
-      );
+    padding: const EdgeInsets.only(
+      top: AppSpacing.s4,
+      bottom: AppSpacing.s12,
+      left: AppSpacing.s4,
+      right: AppSpacing.s4,
+    ),
+    decoration: const BoxDecoration(border: Border(bottom: _border)),
+    child: _cellRow([
+      for (final c in columns)
+        Text(c.title, style: AppTextStyles.label, textAlign: c.align),
+    ]),
+  );
 
   Widget _bodyRow(AppTableRow row) => Container(
-        constraints: const BoxConstraints(minHeight: AppSpacing.controlHeight),
-        padding: const EdgeInsets.symmetric(
-          vertical: AppSpacing.s12,
-          horizontal: AppSpacing.s4,
-        ),
-        decoration: row.highlight
-            ? BoxDecoration(
-                color: AppColors.pageBg,
-                borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
-              )
-            : BoxDecoration(
-                color: row.background,
-                border: const Border(bottom: _border),
-              ),
-        child: _cellRow(row.cells),
-      );
+    constraints: const BoxConstraints(minHeight: AppSpacing.controlHeight),
+    padding: const EdgeInsets.symmetric(
+      vertical: AppSpacing.s12,
+      horizontal: AppSpacing.s4,
+    ),
+    decoration: row.highlight
+        ? BoxDecoration(
+            color: AppColors.pageBg,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
+          )
+        : BoxDecoration(
+            color: row.background,
+            border: const Border(bottom: _border),
+          ),
+    child: _cellRow(row.cells),
+  );
 
   Widget _cellRow(List<Widget> cells) => Row(
-        spacing: AppSpacing.s12,
-        children: [
-          for (var i = 0; i < columns.length; i++) _cell(columns[i], cells[i]),
-        ],
-      );
+    spacing: AppSpacing.s12,
+    children: [
+      for (var i = 0; i < columns.length; i++) _cell(columns[i], cells[i]),
+    ],
+  );
 
   Widget _cell(AppTableColumn column, Widget child) {
     final aligned = Align(
@@ -138,7 +151,10 @@ class AppTable extends StatelessWidget {
     if (column.width != null) {
       return SizedBox(width: column.width, child: aligned);
     }
-    return Expanded(flex: math.max(1, (column.flex * 10).round()), child: aligned);
+    return Expanded(
+      flex: math.max(1, (column.flex * 10).round()),
+      child: aligned,
+    );
   }
 }
 

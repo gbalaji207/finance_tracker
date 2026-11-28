@@ -1,7 +1,6 @@
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/utils/error_message.dart';
 import 'package:finance_tracker/core/widgets/app_snack.dart';
-import 'package:finance_tracker/core/widgets/info_box.dart';
 import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
@@ -11,12 +10,11 @@ import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
-import 'package:finance_tracker/core/widgets/two_pane.dart';
 import 'package:finance_tracker/features/transactions/cubit/add_entry_cubit.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_cubit.dart';
 import 'package:finance_tracker/features/transactions/cubit/transactions_state.dart';
 import 'package:finance_tracker/features/transactions/widgets/delete_entry_dialog.dart';
-import 'package:finance_tracker/features/transactions/widgets/entry_panel.dart';
+import 'package:finance_tracker/features/transactions/widgets/entry_drawer.dart';
 import 'package:finance_tracker/features/transactions/widgets/transactions_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,37 +98,45 @@ class _TransactionsViewState extends State<_TransactionsView> {
           initialTemplate = state.templates
               .where((t) => t.id == widget.templateId)
               .firstOrNull;
-          WidgetsBinding.instance.addPostFrameCallback(
-            (_) => _templateApplied = true,
-          );
+          _templateApplied = true;
         }
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: AppSpacing.s20,
-          children: [
-            PageHeader(
-              title: 'Transactions',
-              subtitle: AppConfig.useSupabase ? 'Your entries' : 'Sample data',
-              actions: [
-                AppButton(
-                  label: 'Copy from last month',
-                  variant: AppButtonVariant.secondary,
-                  onPressed: () => context.go(AppRoutes.templates),
-                ),
-              ],
-            ),
-            // The AddEntryCubit sits above both panes: the list starts edits
-            // and the panel shows them.
-            BlocProvider(
-              create: (_) => AddEntryCubit(
-                categories: state.activeCategories,
-                sources: state.activeSources,
-              ),
-              child: Builder(
-                builder: (context) => TwoPane(
-                  primaryMin: 560,
-                  secondaryWidth: 340,
-                  primary: TransactionsListCard(
+        // The AddEntryCubit sits above the whole page: the list and the
+        // header button start the form, and the drawer shows it.
+        return BlocProvider(
+          create: (_) => AddEntryCubit(
+            categories: state.activeCategories,
+            sources: state.activeSources,
+          ),
+          child: Builder(
+            builder: (context) {
+              if (initialTemplate != null) {
+                final template = initialTemplate;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) _openDrawer(context, template: template);
+                });
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: AppSpacing.s20,
+                children: [
+                  PageHeader(
+                    title: 'Transactions',
+                    subtitle: AppConfig.useSupabase
+                        ? 'Your entries'
+                        : 'Sample data',
+                    actions: [
+                      AppButton(
+                        label: 'Copy from last month',
+                        variant: AppButtonVariant.secondary,
+                        onPressed: () => context.go(AppRoutes.templates),
+                      ),
+                      AppButton(
+                        label: 'New entry',
+                        onPressed: () => _openDrawer(context),
+                      ),
+                    ],
+                  ),
+                  TransactionsListCard(
                     page: state.page!,
                     sources: state.sources,
                     month: state.month,
@@ -145,44 +151,43 @@ class _TransactionsViewState extends State<_TransactionsView> {
                     onQueryChanged: cubit.setQuery,
                     onPageChanged: cubit.goToPage,
                     selectedId: state.selectedId,
-                    onEdit: (t) {
-                      cubit.select(t.id);
-                      context.read<AddEntryCubit>().startEdit(t);
-                    },
+                    onEdit: (t) => _openDrawer(context, editing: t),
                   ),
-                  secondary: state.activeSources.isEmpty
-                      ? const InfoBox(
-                          child: Text(
-                            'Add a source in Settings before adding entries.',
-                          ),
-                        )
-                      : EntryPanel(
-                          key: ValueKey(state.selected?.id ?? 'new'),
-                          editing: state.selected,
-                          templates: state.templates,
-                          initialTemplate: initialTemplate,
-                          sourceName: state.sourceName,
-                          sources: [
-                            for (final s in state.sources)
-                              if (s.isActive ||
-                                  s.id == state.selected?.sourceId)
-                                s,
-                          ],
-                          categories: [
-                            for (final c in state.categories)
-                              if (c.isActive ||
-                                  c.id == state.selected?.categoryId)
-                                c,
-                          ],
-                          onDelete: (entry) =>
-                              _confirmDelete(context, state, entry),
-                        ),
-                ),
-              ),
-            ),
-          ],
+                ],
+              );
+            },
+          ),
         );
       },
     );
+  }
+
+  /// Opens the entry drawer: add mode, or edit mode for [editing]. When the
+  /// drawer closes without finishing (Esc, the backdrop, the X) any edit is
+  /// dropped.
+  Future<void> _openDrawer(
+    BuildContext context, {
+    Transaction? editing,
+    EntryTemplate? template,
+  }) async {
+    final cubit = context.read<TransactionsCubit>();
+    final form = context.read<AddEntryCubit>();
+    if (editing == null) {
+      cubit.select(null);
+      form.reset();
+    } else {
+      cubit.select(editing.id);
+      form.startEdit(editing);
+    }
+    await showEntryDrawer(
+      context,
+      editing: editing,
+      initialTemplate: template,
+      // Read the state when asked, not when the drawer opened.
+      onDelete: (entry) => _confirmDelete(context, cubit.state, entry),
+    );
+    if (!mounted) return;
+    if (cubit.state.selectedId != null) cubit.select(null);
+    form.reset();
   }
 }
