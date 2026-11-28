@@ -6,13 +6,15 @@ class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(AppSpacing.cardPadding),
+    this.padding,
     this.borderColor,
     this.width,
   });
 
   final Widget child;
-  final EdgeInsets padding;
+
+  /// Defaults to [AppSpacing.cardPadding], or the compact value on phones.
+  final EdgeInsets? padding;
   final Color? borderColor;
   final double? width;
 
@@ -20,7 +22,13 @@ class AppCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: width,
-      padding: padding,
+      padding:
+          padding ??
+          EdgeInsets.all(
+            MediaQuery.sizeOf(context).width < AppSpacing.mobileBreakpoint
+                ? AppSpacing.cardPaddingCompact
+                : AppSpacing.cardPadding,
+          ),
       decoration: BoxDecoration(
         color: AppColors.surface,
         border: Border.all(color: borderColor ?? AppColors.cardBorder),

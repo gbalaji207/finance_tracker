@@ -52,14 +52,13 @@ class MonthSelector extends StatelessWidget {
     required IconData icon,
     required String tooltip,
     required VoidCallback onPressed,
-  }) =>
-      SizedBox(
-        width: AppSpacing.controlHeight,
-        height: AppSpacing.controlHeight,
-        child: IconButton(
-          onPressed: onPressed,
-          tooltip: tooltip,
-          icon: Icon(icon, size: 22, color: AppColors.textPrimary),
-        ),
-      );
+  }) => SizedBox(
+    width: AppSpacing.controlHeight,
+    height: AppSpacing.controlHeight,
+    child: IconButton(
+      onPressed: onPressed,
+      tooltip: tooltip,
+      icon: Icon(icon, size: 22, color: AppColors.textPrimary),
+    ),
+  );
 }

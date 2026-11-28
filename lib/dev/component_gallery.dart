@@ -43,7 +43,9 @@ class _ComponentGalleryState extends State<ComponentGallery> {
   void _notWired() {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(content: Text('Not wired yet (sample data)')));
+      ..showSnackBar(
+        const SnackBar(content: Text('Not wired yet (sample data)')),
+      );
   }
 
   @override
@@ -86,7 +88,10 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                   AppTextLink(label: 'View all', onPressed: _notWired),
                 ]),
                 _section('Fields', [
-                  const AppTextField(label: 'Description', hintText: 'e.g. Groceries'),
+                  const AppTextField(
+                    label: 'Description',
+                    hintText: 'e.g. Groceries',
+                  ),
                   const AppTextField(
                     label: 'Amount',
                     hintText: '0',
@@ -134,7 +139,10 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                   LabeledCheckbox(
                     value: _checkB,
                     onChanged: (v) => setState(() => _checkB = v),
-                    label: Text('Repeat every month', style: AppTextStyles.body),
+                    label: Text(
+                      'Repeat every month',
+                      style: AppTextStyles.body,
+                    ),
                   ),
                 ]),
                 Text('Display', style: AppTextStyles.pageTitle),
@@ -149,9 +157,7 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                   Wrap(
                     spacing: AppSpacing.s8,
                     runSpacing: AppSpacing.s8,
-                    children: [
-                      for (final t in TxType.values) TypeBadge(t),
-                    ],
+                    children: [for (final t in TxType.values) TypeBadge(t)],
                   ),
                   const Wrap(
                     spacing: AppSpacing.s16,
@@ -194,7 +200,10 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                     spacing: AppSpacing.s12,
                     children: [
                       StatusPill(text: 'Matches'),
-                      StatusPill(text: 'Needs review', tone: StatusTone.warning),
+                      StatusPill(
+                        text: 'Needs review',
+                        tone: StatusTone.warning,
+                      ),
                     ],
                   ),
                 ]),
@@ -223,7 +232,10 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                       child: SizedBox(height: 160, child: Text('Primary pane')),
                     ),
                     secondary: AppCard(
-                      child: SizedBox(height: 80, child: Text('Secondary pane')),
+                      child: SizedBox(
+                        height: 80,
+                        child: Text('Secondary pane'),
+                      ),
                     ),
                   ),
                 ]),
@@ -235,7 +247,11 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                         AppTableColumn('Date', width: 64),
                         AppTableColumn('Description'),
                         AppTableColumn('Type', width: 104),
-                        AppTableColumn('Amount', width: 110, align: TextAlign.right),
+                        AppTableColumn(
+                          'Amount',
+                          width: 110,
+                          align: TextAlign.right,
+                        ),
                       ],
                       rows: [
                         AppTableRow([
@@ -254,17 +270,17 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                           const AppTableText('12 Nov', secondary: true),
                           const AppTableText('Index fund SIP'),
                           const TypeBadge(TxType.investment),
-                          const AmountText(amount: 20000, type: TxType.investment),
+                          const AmountText(
+                            amount: 20000,
+                            type: TxType.investment,
+                          ),
                         ]),
-                        AppTableRow(
-                          [
-                            const AppTableText(''),
-                            const AppTableText('Total', bold: true),
-                            const AppTableText(''),
-                            const AppTableText('₹97,000', bold: true),
-                          ],
-                          highlight: true,
-                        ),
+                        AppTableRow([
+                          const AppTableText(''),
+                          const AppTableText('Total', bold: true),
+                          const AppTableText(''),
+                          const AppTableText('₹97,000', bold: true),
+                        ], highlight: true),
                       ],
                     ),
                   ),
@@ -325,8 +341,14 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                       child: const Column(
                         spacing: AppSpacing.s8,
                         children: [
-                          KeyValueRow(label: 'Opening balance', value: '₹50,000'),
-                          KeyValueRow(label: 'Closing balance', value: '₹1,32,400'),
+                          KeyValueRow(
+                            label: 'Opening balance',
+                            value: '₹50,000',
+                          ),
+                          KeyValueRow(
+                            label: 'Closing balance',
+                            value: '₹1,32,400',
+                          ),
                         ],
                       ),
                     ),
@@ -344,13 +366,10 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                           AppTableText('Salary'),
                           AppTableText('Active', secondary: true),
                         ]),
-                        AppTableRow(
-                          [
-                            AppTableText('Side hustle', bold: true),
-                            AppTableText('Selected', secondary: true),
-                          ],
-                          background: AppColors.rowSelected,
-                        ),
+                        AppTableRow([
+                          AppTableText('Side hustle', bold: true),
+                          AppTableText('Selected', secondary: true),
+                        ], background: AppColors.rowSelected),
                         AppTableRow([
                           AppTableText('VR'),
                           AppTableText('Active', secondary: true),
@@ -379,11 +398,13 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                               AppButton(
                                 label: 'Cancel',
                                 variant: AppButtonVariant.secondary,
-                                onPressed: () => Navigator.of(dialogContext).pop(),
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
                               ),
                               AppButton(
                                 label: 'Save',
-                                onPressed: () => Navigator.of(dialogContext).pop(),
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
                               ),
                             ],
                           ),
@@ -404,12 +425,14 @@ class _ComponentGalleryState extends State<ComponentGallery> {
                               AppButton(
                                 label: 'Cancel',
                                 variant: AppButtonVariant.secondary,
-                                onPressed: () => Navigator.of(dialogContext).pop(),
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
                               ),
                               AppButton(
                                 label: 'Delete',
                                 variant: AppButtonVariant.danger,
-                                onPressed: () => Navigator.of(dialogContext).pop(),
+                                onPressed: () =>
+                                    Navigator.of(dialogContext).pop(),
                               ),
                             ],
                           ),
@@ -427,11 +450,11 @@ class _ComponentGalleryState extends State<ComponentGallery> {
   }
 
   Widget _section(String title, List<Widget> children) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: AppSpacing.s12,
-        children: [
-          Text(title, style: AppTextStyles.sectionTitle),
-          ...children,
-        ],
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    spacing: AppSpacing.s12,
+    children: [
+      Text(title, style: AppTextStyles.sectionTitle),
+      ...children,
+    ],
+  );
 }

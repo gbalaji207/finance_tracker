@@ -38,7 +38,12 @@ class RecentEntriesCard extends StatelessWidget {
               AppTableColumn('Description'),
               AppTableColumn('Source', width: 110),
               AppTableColumn('Type', width: 104),
-              AppTableColumn('Amount', width: 110, align: TextAlign.right),
+              AppTableColumn(
+                'Amount',
+                width: 110,
+                align: TextAlign.right,
+                mobile: AppTableMobile.trailing,
+              ),
             ],
             rows: [
               for (final e in entries)

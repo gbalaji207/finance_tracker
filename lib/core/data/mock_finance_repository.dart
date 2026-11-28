@@ -9,6 +9,7 @@ import 'package:finance_tracker/core/models/category_usage.dart';
 import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/monthly_report.dart';
+import 'package:finance_tracker/core/models/kinds.dart';
 import 'package:finance_tracker/core/models/source.dart';
 import 'package:finance_tracker/core/models/source_input.dart';
 import 'package:finance_tracker/core/models/source_report.dart';
@@ -723,7 +724,10 @@ class MockFinanceRepository implements FinanceRepository {
 
   @override
   Future<MonthlyReport> monthlyReport(DateTime month) async => MonthlyReport(
-    bySource: _summariesNow,
+    bySource: [
+      for (final s in _summariesNow)
+        if (s.source.kind != kLoanKind) s,
+    ],
     expenseByCategory: _expenseByCategory,
   );
 

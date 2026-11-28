@@ -34,7 +34,11 @@ class MonthByMonthCard extends StatelessWidget {
                 AppTableColumn('Expense', align: TextAlign.right),
                 AppTableColumn('Invested / saved', align: TextAlign.right),
                 AppTableColumn('Jillu', align: TextAlign.right),
-                AppTableColumn('Closing balance', align: TextAlign.right),
+                AppTableColumn(
+                  'Closing balance',
+                  align: TextAlign.right,
+                  mobile: AppTableMobile.trailing,
+                ),
               ],
               rows: [
                 for (final m in months)

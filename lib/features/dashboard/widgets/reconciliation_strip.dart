@@ -145,7 +145,12 @@ class _ReconciliationStripState extends State<ReconciliationStrip> {
                     align: TextAlign.right,
                   ),
                   AppTableColumn('Status', width: 150),
-                  AppTableColumn('', width: 80, align: TextAlign.right),
+                  AppTableColumn(
+                    '',
+                    width: 80,
+                    align: TextAlign.right,
+                    mobile: AppTableMobile.action,
+                  ),
                 ],
                 rows: [
                   for (final row in data.accounts)

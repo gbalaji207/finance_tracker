@@ -7,6 +7,6 @@ abstract final class BalanceMath {
   /// type (expense, investment, savings) was subtracted, so deleting it adds.
   static double afterDeleting(Transaction entry, double balance) =>
       entry.type == TxType.income
-          ? balance - entry.amount
-          : balance + entry.amount;
+      ? balance - entry.amount
+      : balance + entry.amount;
 }

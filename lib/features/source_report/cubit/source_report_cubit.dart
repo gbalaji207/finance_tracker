@@ -1,4 +1,5 @@
 import 'package:finance_tracker/core/data/finance_repository.dart';
+import 'package:finance_tracker/core/models/kinds.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/core/utils/error_message.dart';
 import 'package:finance_tracker/features/source_report/cubit/source_report_state.dart';
@@ -14,7 +15,10 @@ class SourceReportCubit extends Cubit<SourceReportState> {
     final request = ++_request;
     emit(state.copyWith(status: LoadStatus.loading, clearError: true));
     try {
-      final sources = await _repo.allSources();
+      final sources = [
+        for (final s in await _repo.allSources())
+          if (s.kind != kLoanKind) s,
+      ];
       // The current choice, else the first active source, else the first one.
       String? id = state.selectedSourceId;
       if (id == null || !sources.any((s) => s.id == id)) {

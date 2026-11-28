@@ -56,6 +56,7 @@ abstract interface class FinanceRepository {
     String query = '',
     int page = 1,
   });
+
   /// The Accounts report: the entries between [from] and [to] (both
   /// inclusive) with a running balance, newest first, one page at a time. The
   /// balance starts from the chosen sources' balance just before [from] and

@@ -24,10 +24,7 @@ class CategoryBarRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       spacing: AppSpacing.s16,
       children: [
-        SizedBox(
-          width: 150,
-          child: Text(label, style: AppTextStyles.body),
-        ),
+        SizedBox(width: 150, child: Text(label, style: AppTextStyles.body)),
         Expanded(
           child: Container(
             height: _barHeight,

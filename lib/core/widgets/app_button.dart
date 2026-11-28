@@ -24,10 +24,10 @@ class AppButton extends StatelessWidget {
   final bool expand;
 
   double get _height => switch (size) {
-        AppButtonSize.small => AppSpacing.buttonSmall,
-        AppButtonSize.medium => AppSpacing.controlHeight,
-        AppButtonSize.large => AppSpacing.buttonLarge,
-      };
+    AppButtonSize.small => AppSpacing.buttonSmall,
+    AppButtonSize.medium => AppSpacing.controlHeight,
+    AppButtonSize.large => AppSpacing.buttonLarge,
+  };
 
   double get _hPadding =>
       size == AppButtonSize.small ? AppSpacing.s16 : AppSpacing.s20;
@@ -38,7 +38,8 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filled = variant == AppButtonVariant.primary ||
+    final filled =
+        variant == AppButtonVariant.primary ||
         variant == AppButtonVariant.danger;
     final fg = switch (variant) {
       AppButtonVariant.primary || AppButtonVariant.danger => Colors.white,
@@ -49,19 +50,21 @@ class AppButton extends StatelessWidget {
       AppButtonVariant.primary => AppColors.primary,
       AppButtonVariant.danger => AppColors.danger,
       AppButtonVariant.secondary ||
-      AppButtonVariant.dangerOutline =>
-        AppColors.surface,
+      AppButtonVariant.dangerOutline => AppColors.surface,
     };
     final border = switch (variant) {
       AppButtonVariant.primary || AppButtonVariant.danger => null,
       AppButtonVariant.secondary => const BorderSide(color: AppColors.primary),
-      AppButtonVariant.dangerOutline =>
-        const BorderSide(color: AppColors.danger),
+      AppButtonVariant.dangerOutline => const BorderSide(
+        color: AppColors.danger,
+      ),
     };
     final style = ButtonStyle(
       elevation: const WidgetStatePropertyAll(0),
       minimumSize: WidgetStatePropertyAll(Size(0, _height)),
-      fixedSize: expand ? WidgetStatePropertyAll(Size.fromHeight(_height)) : null,
+      fixedSize: expand
+          ? WidgetStatePropertyAll(Size.fromHeight(_height))
+          : null,
       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       padding: WidgetStatePropertyAll(
         EdgeInsets.symmetric(horizontal: _hPadding),

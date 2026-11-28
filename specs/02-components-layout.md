@@ -35,7 +35,9 @@ abstract final class AppRoutes {
 
 - Width `AppSpacing.sidebarWidth` (232), background `AppColors.surface`, a 1px right border `AppColors.cardBorder`, padding 24 vertical and 16 horizontal, full height.
 - Top: text "Money Tracker" in `AppTextStyles.brand`, padding `0 12 20 12`.
-- Nav items in this order, 4px apart: **Dashboard**, **Transactions**, **Monthly report**, **Source report**, **Templates**, **Settings** (routes from `AppRoutes`). No icons.
+- Nav items in this order, 4px apart: **Dashboard**, **Transactions**, **Monthly report**, **Source report**, **Accounts report**, **Templates**, **Settings** (routes from `AppRoutes`), each with a 20px outlined icon before the label.
+- Optional `collapsed` and `onToggleCollapsed`: a chevron button beside the brand flips between expanded and a `AppSpacing.sidebarRailWidth` (72) icon rail (icons only, `Tooltip` with the label, brand hidden). Width animates over 180ms.
+- Below `AppSpacing.mobileBreakpoint` (600) there is no sidebar: `AppShell` shows an `AppBar` (brand title, hamburger) and `AppNavDrawer`, the same items with labels; tapping one closes the drawer then navigates.
 - Item: min height 44, padding 12 all round, radius 8, text `navItem`.
   - Active (when `location.startsWith(route)`): background `primaryTint`, text `navItemActive`.
   - Hover (inactive): background `navHover`.
@@ -44,6 +46,8 @@ abstract final class AppRoutes {
 ## AppShell
 
 `AppShell({required String location, required ValueChanged<String> onNavigate, required Widget child})`.
+
+`AppShell` is stateful: it loads and saves the collapsed flag in `SharedPreferences` under `sidebar_collapsed` (default expanded; storage errors are ignored). `PageBody` uses padding `20/16` instead of `32/40` below the breakpoint.
 
 `Scaffold(backgroundColor: pageBg)` with a `Row`: `AppSidebar` on the left (stretch height) and `Expanded` content on the right. The content is a `SingleChildScrollView` with padding `vertical 32, horizontal 40` whose child is `SizedBox(width: double.infinity, child: child)`.
 

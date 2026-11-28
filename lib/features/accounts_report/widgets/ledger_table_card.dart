@@ -100,7 +100,12 @@ class LedgerTableCard extends StatelessWidget {
         AppTableColumn('Description'),
         AppTableColumn('Credit', width: 120, align: TextAlign.right),
         AppTableColumn('Debit', width: 120, align: TextAlign.right),
-        AppTableColumn('Closing', width: 130, align: TextAlign.right),
+        AppTableColumn(
+          'Closing',
+          width: 130,
+          align: TextAlign.right,
+          mobile: AppTableMobile.trailing,
+        ),
       ],
       rows: [
         for (final r in ledger.rows)

@@ -7,7 +7,7 @@ create table public.sources (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null default auth.uid() references auth.users (id) on delete cascade,
   name            text not null check (length(trim(name)) > 0),
-  kind            text not null check (kind in ('Employment', 'Freelance', 'Rental', 'Other')),
+  kind            text not null check (kind in ('Employment', 'Freelance', 'Rental', 'Loan', 'Other')),
   opening_balance numeric(14,2) not null default 0,
   opening_date    date not null default current_date,   -- entries before this date are not counted
   is_active       boolean not null default true,        -- false = archived
