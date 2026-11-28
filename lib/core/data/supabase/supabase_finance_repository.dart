@@ -10,6 +10,7 @@ import 'package:finance_tracker/core/models/category_usage.dart';
 import 'package:finance_tracker/core/models/entry_input.dart';
 import 'package:finance_tracker/core/models/entry_template.dart';
 import 'package:finance_tracker/core/models/monthly_report.dart';
+import 'package:finance_tracker/core/models/kinds.dart';
 import 'package:finance_tracker/core/models/source.dart';
 import 'package:finance_tracker/core/models/source_input.dart';
 import 'package:finance_tracker/core/models/source_report.dart';
@@ -279,7 +280,10 @@ class SupabaseFinanceRepository implements FinanceRepository {
     final summaries = results[0] as List<SourceSummary>;
     final rows = _rows(results[1]);
     return MonthlyReport(
-      bySource: summaries,
+      bySource: [
+        for (final s in summaries)
+          if (s.source.kind != kLoanKind) s,
+      ],
       expenseByCategory: [
         for (final r in rows)
           CategoryTotal(
