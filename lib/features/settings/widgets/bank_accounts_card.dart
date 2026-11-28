@@ -6,18 +6,21 @@ import 'package:finance_tracker/core/widgets/app_badge.dart';
 import 'package:finance_tracker/core/widgets/app_card.dart';
 import 'package:finance_tracker/core/widgets/app_table.dart';
 import 'package:finance_tracker/core/widgets/app_text_link.dart';
+import 'package:finance_tracker/features/settings/widgets/list_card_header.dart';
 import 'package:flutter/material.dart';
 
 class BankAccountsCard extends StatelessWidget {
   const BankAccountsCard({
     super.key,
     required this.accounts,
+    required this.onAdd,
     required this.onEdit,
     this.editingId,
     required this.onToggleActive,
   });
 
   final List<BankAccountUsage> accounts;
+  final VoidCallback onAdd;
   final ValueChanged<BankAccount> onEdit;
 
   /// The account being renamed; its row is highlighted.
@@ -33,15 +36,16 @@ class BankAccountsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Bank accounts', style: AppTextStyles.sectionTitle),
-          const SizedBox(height: AppSpacing.s4),
-          Text(
-            'Each source belongs to one bank account. The dashboard compares '
-            "each account's statement balance with the balances of its "
-            'sources.',
-            style: AppTextStyles.subtitle,
+          ListCardHeader(
+            title: 'Bank accounts',
+            subtitle:
+                'Each source belongs to one bank account. The dashboard '
+                "compares each account's statement balance with the balances "
+                'of its sources.',
+            addLabel: 'Add bank account',
+            onAdd: onAdd,
           ),
-          const SizedBox(height: AppSpacing.s8),
+          const SizedBox(height: AppSpacing.s16),
           AppTable(
             minWidth: 480,
             columns: const [
