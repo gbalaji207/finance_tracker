@@ -6,18 +6,39 @@ import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
+/// How a column is shown when the table is stacked into cards on a narrow
+/// width.
+enum AppTableMobile {
+  /// A `title: value` line under the main line.
+  normal,
+
+  /// The main line of the card (the first `primary` column; column 0 if none).
+  primary,
+
+  /// Right-aligned on the main line, e.g. an amount.
+  trailing,
+
+  /// A row of links or buttons at the bottom of the card, without a label.
+  action,
+
+  /// Left out when stacked.
+  hidden,
+}
+
 class AppTableColumn {
   const AppTableColumn(
     this.title, {
     this.flex = 1,
     this.width,
     this.align = TextAlign.left,
+    this.mobile = AppTableMobile.normal,
   });
 
   final String title;
   final double flex;
   final double? width;
   final TextAlign align;
+  final AppTableMobile mobile;
 }
 
 class AppTableRow {
@@ -75,32 +96,129 @@ class AppTable extends StatelessWidget {
     required this.columns,
     required this.rows,
     this.minWidth,
+    this.stackBelow = AppSpacing.mobileBreakpoint,
   });
 
   final List<AppTableColumn> columns;
   final List<AppTableRow> rows;
   final double? minWidth;
 
+  /// Below this available width the rows are stacked into cards (see
+  /// [AppTableMobile]) instead of a header plus columns.
+  final double stackBelow;
+
   static const _border = BorderSide(color: AppColors.divider);
 
   @override
   Widget build(BuildContext context) {
-    final table = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [_headerRow(), for (final row in rows) _bodyRow(row)],
-    );
-
-    final min = minWidth;
-    if (min == null) return table;
     return LayoutBuilder(
-      builder: (context, constraints) => _HorizontalScroll(
-        child: SizedBox(
-          width: math.max(min, constraints.maxWidth),
-          child: table,
-        ),
+      builder: (context, constraints) {
+        if (constraints.maxWidth < stackBelow) return _stacked();
+
+        final table = Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [_headerRow(), for (final row in rows) _bodyRow(row)],
+        );
+        final min = minWidth;
+        if (min == null) return table;
+        return _HorizontalScroll(
+          child: SizedBox(
+            width: math.max(min, constraints.maxWidth),
+            child: table,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _stacked() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [for (final row in rows) _stackedRow(row)],
+  );
+
+  Widget _stackedRow(AppTableRow row) {
+    var primary = columns.indexWhere((c) => c.mobile == AppTableMobile.primary);
+    if (primary < 0) primary = 0;
+    final trailing = [
+      for (var i = 0; i < columns.length; i++)
+        if (i != primary && columns[i].mobile == AppTableMobile.trailing) i,
+    ];
+    final actions = [
+      for (var i = 0; i < columns.length; i++)
+        if (i != primary && columns[i].mobile == AppTableMobile.action) i,
+    ];
+    final details = [
+      for (var i = 0; i < columns.length; i++)
+        if (i != primary &&
+            columns[i].mobile == AppTableMobile.normal &&
+            columns[i].title.isNotEmpty)
+          i,
+    ];
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSpacing.s12,
+        horizontal: AppSpacing.s4,
+      ),
+      decoration: row.highlight
+          ? BoxDecoration(
+              color: AppColors.pageBg,
+              borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
+            )
+          : BoxDecoration(
+              color: row.background,
+              border: const Border(bottom: _border),
+            ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: AppSpacing.s8,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: AppSpacing.s12,
+            children: [
+              Expanded(child: _wrapText(row.cells[primary])),
+              for (final i in trailing) row.cells[i],
+            ],
+          ),
+          for (final i in details)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: AppSpacing.s12,
+              children: [
+                SizedBox(
+                  width: 96,
+                  child: Text(columns[i].title, style: AppTextStyles.caption),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: _wrapText(row.cells[i]),
+                  ),
+                ),
+              ],
+            ),
+          if (actions.isNotEmpty)
+            Wrap(
+              spacing: AppSpacing.s16,
+              runSpacing: AppSpacing.s8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [for (final i in actions) row.cells[i]],
+            ),
+        ],
       ),
     );
   }
+
+  /// Single-line ellipsised text is allowed to wrap once the columns are gone.
+  Widget _wrapText(Widget cell) => cell is AppTableText && cell.maxLines != null
+      ? AppTableText(
+          cell.text,
+          bold: cell.bold,
+          color: cell.color,
+          secondary: cell.secondary,
+        )
+      : cell;
 
   Widget _headerRow() => Container(
     padding: const EdgeInsets.only(

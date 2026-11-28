@@ -30,10 +30,7 @@ class StatusPill extends StatelessWidget {
         color: bg,
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(
-        text,
-        style: AppTextStyles.buttonSmall.copyWith(color: fg),
-      ),
+      child: Text(text, style: AppTextStyles.buttonSmall.copyWith(color: fg)),
     );
   }
 }

@@ -55,8 +55,17 @@ class BankAccountsCard extends StatelessWidget {
                 width: 110,
                 align: TextAlign.right,
               ),
-              AppTableColumn('Status', width: 96),
-              AppTableColumn('Actions', width: 130, align: TextAlign.right),
+              AppTableColumn(
+                'Status',
+                width: 96,
+                mobile: AppTableMobile.trailing,
+              ),
+              AppTableColumn(
+                'Actions',
+                width: 130,
+                align: TextAlign.right,
+                mobile: AppTableMobile.action,
+              ),
             ],
             rows: [
               for (final u in accounts)

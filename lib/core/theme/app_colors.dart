@@ -15,8 +15,12 @@ abstract final class AppColors {
   static const textSecondary = Color(0xFF5B6168);
   // Brand
   static const primary = Color(0xFF0F766E);
-  static const primaryDark = Color(0xFF0B4F49); // text on tinted backgrounds, links
-  static const primaryTint = Color(0xFFE2EFEC); // selected nav item, selected segment
+  static const primaryDark = Color(
+    0xFF0B4F49,
+  ); // text on tinted backgrounds, links
+  static const primaryTint = Color(
+    0xFFE2EFEC,
+  ); // selected nav item, selected segment
   // Money and type colors
   static const income = Color(0xFF14532D); // income amounts, "matches" text
   static const incomeBg = Color(0xFFE3F1E8);

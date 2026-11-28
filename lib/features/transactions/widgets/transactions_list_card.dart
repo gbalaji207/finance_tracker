@@ -103,8 +103,18 @@ class TransactionsListCard extends StatelessWidget {
         AppTableColumn('Source', width: 140),
         AppTableColumn('Category', width: 150),
         AppTableColumn('Type', width: 112),
-        AppTableColumn('Amount', width: 120, align: TextAlign.right),
-        AppTableColumn('', width: 64, align: TextAlign.right),
+        AppTableColumn(
+          'Amount',
+          width: 120,
+          align: TextAlign.right,
+          mobile: AppTableMobile.trailing,
+        ),
+        AppTableColumn(
+          '',
+          width: 64,
+          align: TextAlign.right,
+          mobile: AppTableMobile.action,
+        ),
       ],
       rows: [
         for (final t in page.items)

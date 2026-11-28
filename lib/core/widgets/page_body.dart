@@ -13,10 +13,12 @@ class PageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final narrow =
+        MediaQuery.sizeOf(context).width < AppSpacing.mobileBreakpoint;
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(
-        vertical: AppSpacing.pageV,
-        horizontal: AppSpacing.pageH,
+      padding: EdgeInsets.symmetric(
+        vertical: narrow ? AppSpacing.s20 : AppSpacing.pageV,
+        horizontal: narrow ? AppSpacing.s16 : AppSpacing.pageH,
       ),
       child: SizedBox(width: double.infinity, child: child),
     );

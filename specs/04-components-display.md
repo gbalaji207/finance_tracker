@@ -23,7 +23,7 @@
 
 ## Specs
 
-**AppCard** `({required Widget child, EdgeInsets padding = const EdgeInsets.all(20), Color? borderColor, double? width})`: background `surface`, 1px border (`borderColor ?? cardBorder`), radius 12, `child` inside the padding.
+**AppCard** `({required Widget child, EdgeInsets? padding, Color? borderColor, double? width})`: background `surface`, 1px border (`borderColor ?? cardBorder`), radius 12, `child` inside the padding. `padding` defaults to `AppSpacing.cardPadding` (20), or `cardPaddingCompact` (16) when the screen is narrower than `mobileBreakpoint`.
 
 **SectionHeader** `({required String title, String? actionLabel, VoidCallback? onAction})`: `Row` space-between, vertically centered; title `sectionTitle`; if `actionLabel` is set show an `AppTextLink`. Adds 8px below itself.
 
@@ -59,6 +59,11 @@ AppTableText(String text, {bool bold = false, Color? color, bool secondary = fal
 - `highlight` row (totals): background `pageBg`, radius 8, no border.
 - If `minWidth` is set, wrap in a horizontal `SingleChildScrollView` with the content width `max(minWidth, available width)`.
 - `AppTableText` must not truncate: allow wrapping, `softWrap: true`.
+- **Stacked mode (narrow):** `AppTableColumn` has `mobile: AppTableMobile` (`normal` default, `primary`, `trailing`, `action`, `hidden`) and `AppTable` has `stackBelow` (default `AppSpacing.mobileBreakpoint`, 600). When the available width (`LayoutBuilder`) is below `stackBelow`, drop the header and horizontal scroll and render each row as a block with the same row decoration (`highlight`, `background`, bottom border):
+  - Main line: the first `primary` column (column 0 if none), expanded, plus any `trailing` cells on the right.
+  - One `title` (caption, 96px wide) + value line for each `normal` column that has a title; `hidden` columns and untitled `normal` columns are skipped.
+  - A `Wrap` of the `action` cells at the bottom, without labels.
+  - `AppTableText` with `maxLines` wraps instead of truncating in this mode.
 
 ## Gallery additions (`component_gallery.dart`)
 

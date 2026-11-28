@@ -44,7 +44,12 @@ class TemplatesListCard extends StatelessWidget {
                 width: 130,
                 align: TextAlign.right,
               ),
-              AppTableColumn('Actions', width: 120, align: TextAlign.right),
+              AppTableColumn(
+                'Actions',
+                width: 120,
+                align: TextAlign.right,
+                mobile: AppTableMobile.action,
+              ),
             ],
             rows: [
               for (final t in templates)

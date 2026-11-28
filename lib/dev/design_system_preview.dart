@@ -99,8 +99,9 @@ class DesignSystemPreview extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: t.badgeBg,
-                        borderRadius:
-                            BorderRadius.circular(AppSpacing.radiusBadge),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radiusBadge,
+                        ),
                       ),
                       child: Text(
                         t.label,
@@ -112,10 +113,14 @@ class DesignSystemPreview extends StatelessWidget {
             ]),
             _section('Money', [
               _moneyRow('Money.plain(132400)', Money.plain(132400)),
-              _moneyRow('Money.signed(45000, income)',
-                  Money.signed(45000, TxType.income)),
-              _moneyRow('Money.signed(32000, expense)',
-                  Money.signed(32000, TxType.expense)),
+              _moneyRow(
+                'Money.signed(45000, income)',
+                Money.signed(45000, TxType.income),
+              ),
+              _moneyRow(
+                'Money.signed(32000, expense)',
+                Money.signed(32000, TxType.expense),
+              ),
               _moneyRow('Money.plain(0)', Money.plain(0)),
             ]),
           ],
@@ -125,46 +130,46 @@ class DesignSystemPreview extends StatelessWidget {
   }
 
   Widget _section(String title, List<Widget> children) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: AppSpacing.s12,
-        children: [
-          Text(title, style: AppTextStyles.pageTitle),
-          ...children,
-        ],
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    spacing: AppSpacing.s12,
+    children: [
+      Text(title, style: AppTextStyles.pageTitle),
+      ...children,
+    ],
+  );
 
   Widget _swatch(String name, Color color) => SizedBox(
-        width: 120,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: AppSpacing.s4,
-          children: [
-            Container(
-              width: 120,
-              height: 72,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
-                border: Border.all(color: AppColors.cardBorder),
-              ),
-            ),
-            Text(name, style: AppTextStyles.captionBold),
-            Text(_hex(color), style: AppTextStyles.caption),
-          ],
+    width: 120,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: AppSpacing.s4,
+      children: [
+        Container(
+          width: 120,
+          height: 72,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
+            border: Border.all(color: AppColors.cardBorder),
+          ),
         ),
-      );
+        Text(name, style: AppTextStyles.captionBold),
+        Text(_hex(color), style: AppTextStyles.caption),
+      ],
+    ),
+  );
 
   Widget _moneyRow(String label, String value) => Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.s4),
-        child: Row(
-          spacing: AppSpacing.s16,
-          children: [
-            SizedBox(
-              width: 260,
-              child: Text(label, style: AppTextStyles.bodySecondary),
-            ),
-            Text(value, style: AppTextStyles.bodyStrong),
-          ],
+    padding: const EdgeInsets.only(bottom: AppSpacing.s4),
+    child: Row(
+      spacing: AppSpacing.s16,
+      children: [
+        SizedBox(
+          width: 260,
+          child: Text(label, style: AppTextStyles.bodySecondary),
         ),
-      );
+        Text(value, style: AppTextStyles.bodyStrong),
+      ],
+    ),
+  );
 }

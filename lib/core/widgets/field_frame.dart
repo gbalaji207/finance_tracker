@@ -20,9 +20,9 @@ class FieldFrame extends StatelessWidget {
   /// Decoration that draws the 44px input box.
   static InputDecoration decoration({String? hintText, Widget? suffixIcon}) {
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
-          borderSide: BorderSide(color: color, width: width),
-        );
+      borderRadius: BorderRadius.circular(AppSpacing.radiusControl),
+      borderSide: BorderSide(color: color, width: width),
+    );
     return InputDecoration(
       hintText: hintText,
       hintStyle: AppTextStyles.body.copyWith(color: AppColors.textSecondary),

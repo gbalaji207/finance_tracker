@@ -31,7 +31,11 @@ class BySourceCard extends StatelessWidget {
               AppTableColumn('Invested', align: TextAlign.right),
               AppTableColumn('Saved', align: TextAlign.right),
               AppTableColumn('Jillu', align: TextAlign.right),
-              AppTableColumn('Closing', align: TextAlign.right),
+              AppTableColumn(
+                'Closing',
+                align: TextAlign.right,
+                mobile: AppTableMobile.trailing,
+              ),
             ],
             rows: [
               for (final s in report.bySource)
@@ -48,23 +52,20 @@ class BySourceCard extends StatelessWidget {
                   AppTableText(Money.signed(s.partner, TxType.partner)),
                   AppTableText(Money.plain(s.closing), bold: true),
                 ]),
-              AppTableRow(
-                [
-                  const AppTableText('Total', bold: true),
-                  AppTableText(Money.plain(report.opening), bold: true),
-                  AppTableText(
-                    Money.plain(report.income),
-                    bold: true,
-                    color: AppColors.income,
-                  ),
-                  AppTableText(Money.plain(report.expense), bold: true),
-                  AppTableText(Money.plain(report.invested), bold: true),
-                  AppTableText(Money.plain(report.saved), bold: true),
-                  AppTableText(Money.plain(report.partner), bold: true),
-                  AppTableText(Money.plain(report.closing), bold: true),
-                ],
-                highlight: true,
-              ),
+              AppTableRow([
+                const AppTableText('Total', bold: true),
+                AppTableText(Money.plain(report.opening), bold: true),
+                AppTableText(
+                  Money.plain(report.income),
+                  bold: true,
+                  color: AppColors.income,
+                ),
+                AppTableText(Money.plain(report.expense), bold: true),
+                AppTableText(Money.plain(report.invested), bold: true),
+                AppTableText(Money.plain(report.saved), bold: true),
+                AppTableText(Money.plain(report.partner), bold: true),
+                AppTableText(Money.plain(report.closing), bold: true),
+              ], highlight: true),
             ],
           ),
           const SizedBox(height: AppSpacing.s12),

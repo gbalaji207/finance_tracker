@@ -91,8 +91,17 @@ class _CategoriesCardState extends State<CategoriesCard> {
                 AppTableColumn('Name', flex: 1.2),
                 AppTableColumn('Kind', width: 112),
                 AppTableColumn('Entries', width: 80, align: TextAlign.right),
-                AppTableColumn('Status', width: 96),
-                AppTableColumn('Actions', width: 130, align: TextAlign.right),
+                AppTableColumn(
+                  'Status',
+                  width: 96,
+                  mobile: AppTableMobile.trailing,
+                ),
+                AppTableColumn(
+                  'Actions',
+                  width: 130,
+                  align: TextAlign.right,
+                  mobile: AppTableMobile.action,
+                ),
               ],
               rows: [
                 for (final u in shown)
