@@ -21,10 +21,14 @@ class CategoriesCard extends StatefulWidget {
     required this.onAdd,
     required this.onEdit,
     required this.onToggleActive,
+    this.editingId,
   });
 
   final List<CategoryUsage> categories;
   final VoidCallback onAdd;
+
+  /// The category being renamed; its row is highlighted.
+  final String? editingId;
   final ValueChanged<Category> onEdit;
 
   /// Archives an active category or restores an archived one.
@@ -92,36 +96,41 @@ class _CategoriesCardState extends State<CategoriesCard> {
               ],
               rows: [
                 for (final u in shown)
-                  AppTableRow([
-                    AppTableText(u.category.name, bold: true, maxLines: 1),
-                    TypeBadge(u.category.kind),
-                    AppTableText('${u.entryCount}'),
-                    u.category.isActive
-                        ? const AppBadge(
-                            text: 'Active',
-                            background: AppColors.incomeBg,
-                            foreground: AppColors.income,
-                          )
-                        : const AppBadge(
-                            text: 'Archived',
-                            background: AppColors.neutralBg,
-                            foreground: AppColors.neutralFg,
+                  AppTableRow(
+                    background: u.category.id == widget.editingId
+                        ? AppColors.rowSelected
+                        : null,
+                    [
+                      AppTableText(u.category.name, bold: true, maxLines: 1),
+                      TypeBadge(u.category.kind),
+                      AppTableText('${u.entryCount}'),
+                      u.category.isActive
+                          ? const AppBadge(
+                              text: 'Active',
+                              background: AppColors.incomeBg,
+                              foreground: AppColors.income,
+                            )
+                          : const AppBadge(
+                              text: 'Archived',
+                              background: AppColors.neutralBg,
+                              foreground: AppColors.neutralFg,
+                            ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: AppSpacing.s16,
+                        children: [
+                          AppTextLink(
+                            label: 'Edit',
+                            onPressed: () => widget.onEdit(u.category),
                           ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      spacing: AppSpacing.s16,
-                      children: [
-                        AppTextLink(
-                          label: 'Edit',
-                          onPressed: () => widget.onEdit(u.category),
-                        ),
-                        AppTextLink(
-                          label: u.category.isActive ? 'Archive' : 'Restore',
-                          onPressed: () => widget.onToggleActive(u.category),
-                        ),
-                      ],
-                    ),
-                  ]),
+                          AppTextLink(
+                            label: u.category.isActive ? 'Archive' : 'Restore',
+                            onPressed: () => widget.onToggleActive(u.category),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
               ],
             ),
         ],

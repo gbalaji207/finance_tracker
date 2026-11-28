@@ -377,6 +377,16 @@ class SupabaseFinanceRepository implements FinanceRepository {
   }
 
   @override
+  Future<void> renameCategory(String id, String name) async {
+    final rows = await _client
+        .from('categories')
+        .update({'name': name.trim()})
+        .eq('id', id)
+        .select('id');
+    if (rows.isEmpty) throw StateError('Not found');
+  }
+
+  @override
   Future<void> setCategoryActive(String id, bool active) async {
     final rows = await _client
         .from('categories')

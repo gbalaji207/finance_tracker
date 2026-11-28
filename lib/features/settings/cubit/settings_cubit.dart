@@ -67,6 +67,10 @@ class SettingsCubit extends Cubit<SettingsState> {
     state.copyWith(clearEditing: true).copyWith(editingBankAccountId: id),
   );
 
+  /// Puts the category form into edit mode (and leaves any other edit).
+  void startEditCategory(String id) =>
+      emit(state.copyWith(clearEditing: true).copyWith(editingCategoryId: id));
+
   void cancelEdit() => emit(state.copyWith(clearEditing: true));
 
   /// Saves the changes, then reloads and leaves edit mode. Returns an error
@@ -105,6 +109,12 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<String?> addCategory(CategoryInput input) =>
       _write(() => _repo.addCategory(input));
+
+  Future<String?> renameCategory(String id, String name) async {
+    final error = await _write(() => _repo.renameCategory(id, name));
+    if (error == null && !isClosed) emit(state.copyWith(clearEditing: true));
+    return error;
+  }
 
   /// Archives an active source or restores an archived one.
   Future<String?> toggleSourceActive(String id) {

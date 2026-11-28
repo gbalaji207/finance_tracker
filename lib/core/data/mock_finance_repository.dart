@@ -36,6 +36,7 @@ class MockFinanceRepository implements FinanceRepository {
   final Map<String, Source> _sourceEdits = {};
   final Map<String, String> _accountNames = {};
   final Map<String, bool> _categoryActive = {};
+  final Map<String, String> _categoryNames = {};
   final List<Source> _addedSources = [];
   final List<Category> _addedCategories = [];
   int _nextNewId = 1;
@@ -83,7 +84,7 @@ class MockFinanceRepository implements FinanceRepository {
 
   Category _categoryNow(Category c) => Category(
     id: c.id,
-    name: c.name,
+    name: _categoryNames[c.id] ?? c.name,
     kind: c.kind,
     isActive: _categoryActive[c.id] ?? c.isActive,
   );
@@ -727,6 +728,14 @@ class MockFinanceRepository implements FinanceRepository {
         kind: input.kind,
       ),
     );
+  }
+
+  @override
+  Future<void> renameCategory(String id, String name) async {
+    if (!_currentCategories.any((c) => c.id == id)) {
+      throw StateError('Not found');
+    }
+    _categoryNames[id] = name.trim();
   }
 
   @override

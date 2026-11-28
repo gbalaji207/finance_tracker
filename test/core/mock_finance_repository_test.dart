@@ -42,17 +42,22 @@ void main() {
     expect(categoryTotal, 74600);
   });
 
-  test('partner category exists and Partner is not in the expense list', () async {
-    final categories = await repo.categories();
-    expect(categories, hasLength(8));
-    final partner = categories.firstWhere((c) => c.name == 'Partner allowance');
-    expect(partner.kind, TxType.partner);
-    final report = await repo.monthlyReport(DateTime(2026, 11));
-    expect(
-      report.expenseByCategory.map((c) => c.name),
-      isNot(contains('Partner allowance')),
-    );
-  });
+  test(
+    'partner category exists and Partner is not in the expense list',
+    () async {
+      final categories = await repo.categories();
+      expect(categories, hasLength(8));
+      final partner = categories.firstWhere(
+        (c) => c.name == 'Partner allowance',
+      );
+      expect(partner.kind, TxType.partner);
+      final report = await repo.monthlyReport(DateTime(2026, 11));
+      expect(
+        report.expenseByCategory.map((c) => c.name),
+        isNot(contains('Partner allowance')),
+      );
+    },
+  );
 
   test('transactions and recent entries', () async {
     final page = await repo.transactions();
@@ -209,6 +214,28 @@ void main() {
       );
       final rec = await fresh.reconciliation();
       expect(rec.accounts[0].sourcesTotal, 75600 + 2500);
+    });
+
+    test('renaming a category keeps its kind and shows everywhere', () async {
+      final fresh = MockFinanceRepository();
+      await fresh.renameCategory('groceries', 'Food');
+      final all = await fresh.allCategories();
+      final renamed = all.firstWhere((c) => c.id == 'groceries');
+      expect(renamed.name, 'Food');
+      expect(renamed.kind, TxType.expense);
+      expect((await fresh.categories()).map((c) => c.name), contains('Food'));
+      final usage = await fresh.categoryUsage();
+      expect(
+        usage.firstWhere((u) => u.category.id == 'groceries').category.name,
+        'Food',
+      );
+    });
+
+    test('renaming an unknown category fails', () async {
+      expect(
+        MockFinanceRepository().renameCategory('nope', 'x'),
+        throwsA(isA<StateError>()),
+      );
     });
 
     test('renaming an account renames it on its sources', () async {

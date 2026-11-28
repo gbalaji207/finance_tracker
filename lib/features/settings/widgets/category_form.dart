@@ -1,4 +1,5 @@
 import 'package:finance_tracker/core/config/app_config.dart';
+import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/category_input.dart';
 import 'package:finance_tracker/core/models/kinds.dart';
 import 'package:finance_tracker/core/models/tx_type.dart';
@@ -11,10 +12,19 @@ import 'package:finance_tracker/core/widgets/app_text_field.dart';
 import 'package:finance_tracker/core/widgets/side_drawer.dart';
 import 'package:flutter/material.dart';
 
-/// Adds a category. Meant to sit inside a [SideDrawer]; [onClose] closes it
-/// after a save or a cancel. (Categories cannot be edited yet.)
+/// Adds a category, or renames one when [editing] is set (its kind is shown
+/// but cannot change). Meant to sit inside a [SideDrawer]; [onClose] closes it
+/// after a save or a cancel.
 class CategoryForm extends StatefulWidget {
-  const CategoryForm({super.key, required this.onSave, required this.onClose});
+  const CategoryForm({
+    super.key,
+    required this.onSave,
+    required this.onClose,
+    this.editing,
+  });
+
+  /// The category being renamed; null when adding.
+  final Category? editing;
 
   /// Saves the category. Resolves to an error message, or null on success.
   final Future<String?> Function(CategoryInput input) onSave;
@@ -26,10 +36,19 @@ class CategoryForm extends StatefulWidget {
 }
 
 class _CategoryFormState extends State<CategoryForm> {
-  final _name = TextEditingController();
-  TxType _kind = TxType.expense;
+  late final TextEditingController _name;
+  late TxType _kind;
   bool _saving = false;
   String? _error;
+
+  bool get _isEditing => widget.editing != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _name = TextEditingController(text: widget.editing?.name ?? '');
+    _kind = widget.editing?.kind ?? TxType.expense;
+  }
 
   @override
   void dispose() {
@@ -52,7 +71,10 @@ class _CategoryFormState extends State<CategoryForm> {
       AppSnack.error(context, error);
       return;
     }
-    AppSnack.info(context, AppConfig.note('Category saved'));
+    AppSnack.info(
+      context,
+      AppConfig.note(_isEditing ? 'Category renamed' : 'Category saved'),
+    );
     widget.onClose();
   }
 
@@ -64,7 +86,10 @@ class _CategoryFormState extends State<CategoryForm> {
       children: [
         Padding(
           padding: SideDrawer.titleGap,
-          child: Text('New category', style: AppTextStyles.sectionTitle),
+          child: Text(
+            _isEditing ? 'Rename category' : 'New category',
+            style: AppTextStyles.sectionTitle,
+          ),
         ),
         AppTextField(
           label: 'Name',
@@ -76,18 +101,24 @@ class _CategoryFormState extends State<CategoryForm> {
         ),
         AppDropdown<TxType>(
           label: 'Kind',
+          helperText: _isEditing
+              ? 'The kind cannot be changed: entries already use it.'
+              : null,
           value: _kind,
           items: [for (final k in kCategoryKinds) AppDropdownItem(k, k.label)],
-          onChanged: (v) {
-            if (v != null) setState(() => _kind = v);
-          },
+          // Locked while renaming.
+          onChanged: _isEditing
+              ? null
+              : (v) {
+                  if (v != null) setState(() => _kind = v);
+                },
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 8,
           children: [
             AppButton(
-              label: 'Save category',
+              label: _isEditing ? 'Save changes' : 'Save category',
               size: AppButtonSize.large,
               expand: true,
               onPressed: _saving ? null : _save,

@@ -2,6 +2,7 @@ import 'package:finance_tracker/app/routes.dart';
 import 'package:finance_tracker/core/config/app_config.dart';
 import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/bank_account.dart';
+import 'package:finance_tracker/core/models/category.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/core/models/source.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
@@ -111,14 +112,21 @@ class _SettingsViewState extends State<_SettingsView> {
     );
   }
 
-  Future<void> _openCategory(BuildContext context) {
+  Future<void> _openCategory(BuildContext context, {Category? editing}) {
     final cubit = context.read<SettingsCubit>();
-    return showSideDrawer<void>(
-      context,
-      builder: (ctx) => SideDrawer(
-        child: CategoryForm(
-          onSave: cubit.addCategory,
-          onClose: () => Navigator.of(ctx).pop(),
+    if (editing != null) cubit.startEditCategory(editing.id);
+    return _whileEditing(
+      cubit,
+      () => showSideDrawer<void>(
+        context,
+        builder: (ctx) => SideDrawer(
+          child: CategoryForm(
+            editing: editing,
+            onSave: editing == null
+                ? cubit.addCategory
+                : (input) => cubit.renameCategory(editing.id, input.name),
+            onClose: () => Navigator.of(ctx).pop(),
+          ),
         ),
       ),
     );
@@ -148,8 +156,9 @@ class _SettingsViewState extends State<_SettingsView> {
       case 2:
         return CategoriesCard(
           categories: state.categoryUsage,
+          editingId: state.editingCategoryId,
           onAdd: () => _openCategory(context),
-          onEdit: (_) => _notWired(context),
+          onEdit: (c) => _openCategory(context, editing: c),
           onToggleActive: (c) =>
               _report(context, cubit.toggleCategoryActive(c.id)),
         );

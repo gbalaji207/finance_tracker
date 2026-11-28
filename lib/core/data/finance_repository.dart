@@ -84,5 +84,9 @@ abstract interface class FinanceRepository {
   Future<void> renameBankAccount(String id, String name);
   Future<void> setSourceActive(String id, bool active);
   Future<void> addCategory(CategoryInput input);
+
+  /// Renames a category. The kind cannot change: entries and templates are
+  /// tied to it.
+  Future<void> renameCategory(String id, String name);
   Future<void> setCategoryActive(String id, bool active);
 }

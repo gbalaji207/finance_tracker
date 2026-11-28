@@ -13,6 +13,7 @@ class SettingsState extends Equatable {
     this.errorMessage,
     this.editingSourceId,
     this.editingBankAccountId,
+    this.editingCategoryId,
   });
 
   final LoadStatus status;
@@ -25,9 +26,10 @@ class SettingsState extends Equatable {
   final List<CategoryUsage> categoryUsage;
   final String? errorMessage;
 
-  /// The source or bank account being edited; both null when adding.
+  /// The source, bank account or category being edited; all null when adding.
   final String? editingSourceId;
   final String? editingBankAccountId;
+  final String? editingCategoryId;
 
   /// The accounts a new source can be placed in.
   List<BankAccount> get activeBankAccounts => [
@@ -74,6 +76,7 @@ class SettingsState extends Equatable {
     bool clearError = false,
     String? editingSourceId,
     String? editingBankAccountId,
+    String? editingCategoryId,
     bool clearEditing = false,
   }) => SettingsState(
     status: status ?? this.status,
@@ -87,6 +90,9 @@ class SettingsState extends Equatable {
     editingBankAccountId: clearEditing
         ? null
         : (editingBankAccountId ?? this.editingBankAccountId),
+    editingCategoryId: clearEditing
+        ? null
+        : (editingCategoryId ?? this.editingCategoryId),
   );
 
   @override
@@ -98,5 +104,6 @@ class SettingsState extends Equatable {
     errorMessage,
     editingSourceId,
     editingBankAccountId,
+    editingCategoryId,
   ];
 }
