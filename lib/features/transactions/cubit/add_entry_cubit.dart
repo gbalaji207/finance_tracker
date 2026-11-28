@@ -13,43 +13,18 @@ class AddEntryCubit extends Cubit<AddEntryState> {
   final List<Category> categories;
   final List<Source> sources;
 
-  /// Expense, the first source, the first expense category, today.
+  /// Expense and today. Source and category are left empty on purpose: a
+  /// preselected first item led to entries on the wrong source or category,
+  /// so the user must choose both (the form validates before saving).
   static AddEntryState _initial(
     List<Source> sources,
     List<Category> categories,
-  ) {
-    String? categoryId;
-    for (final c in categories) {
-      if (c.kind == TxType.expense) {
-        categoryId = c.id;
-        break;
-      }
-    }
-    return AddEntryState(
-      sourceId: sources.isEmpty ? '' : sources.first.id,
-      categoryId: categoryId,
-    );
-  }
+  ) => AddEntryState();
 
-  /// Income has no category; otherwise the first category of that kind.
-  String? _defaultCategory(TxType type) {
-    if (type == TxType.income) return null;
-    for (final c in categories) {
-      if (c.kind == type) return c.id;
-    }
-    return null;
-  }
-
-  void selectType(TxType type) {
-    final categoryId = _defaultCategory(type);
-    emit(
-      state.copyWith(
-        type: type,
-        categoryId: categoryId,
-        clearCategory: categoryId == null,
-      ),
-    );
-  }
+  /// The categories belong to one kind each, so a category chosen for the old
+  /// type is dropped and has to be chosen again.
+  void selectType(TxType type) =>
+      emit(state.copyWith(type: type, clearCategory: true));
 
   void selectSource(String sourceId) =>
       emit(state.copyWith(sourceId: sourceId));
@@ -60,12 +35,13 @@ class AddEntryCubit extends Cubit<AddEntryState> {
 
   void selectDate(DateTime date) => emit(state.copyWith(date: date));
 
-  /// Fills type, source and category from [template]. The widget fills the
-  /// amount and description fields from the returned template.
+  /// Fills type, source and category from [template]; a template without a
+  /// category leaves it to be chosen. The widget fills the amount and
+  /// description fields from the returned template.
   EntryTemplate applyTemplate(EntryTemplate template) {
     final categoryId = template.type == TxType.income
         ? null
-        : (template.categoryId ?? _defaultCategory(template.type));
+        : template.categoryId;
     emit(
       state.copyWith(
         type: template.type,

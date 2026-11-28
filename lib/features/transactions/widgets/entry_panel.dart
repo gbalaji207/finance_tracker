@@ -243,7 +243,9 @@ class _EntryPanelState extends State<EntryPanel> {
               ),
             AppDropdown<String>(
               label: 'Source',
-              value: state.sourceId,
+              hintText: 'Select',
+              // An empty id means nothing is chosen yet.
+              value: state.sourceId.isEmpty ? null : state.sourceId,
               items: [
                 for (final s in widget.sources) AppDropdownItem(s.id, s.name),
               ],
@@ -254,6 +256,7 @@ class _EntryPanelState extends State<EntryPanel> {
             if (state.type != TxType.income)
               AppDropdown<String>(
                 label: 'Category',
+                hintText: 'Select',
                 helperText: 'Hidden for income entries.',
                 value: state.categoryId,
                 items: [

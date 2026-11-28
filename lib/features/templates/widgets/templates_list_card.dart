@@ -33,15 +33,15 @@ class TemplatesListCard extends StatelessWidget {
           Text('Your templates', style: AppTextStyles.sectionTitle),
           const SizedBox(height: AppSpacing.s8),
           AppTable(
-            minWidth: 620,
+            minWidth: 760,
             columns: const [
               AppTableColumn('Name', flex: 1.2),
-              AppTableColumn('Type', width: 104),
-              AppTableColumn('Source', width: 104),
-              AppTableColumn('Category', width: 112),
+              AppTableColumn('Type', width: 112),
+              AppTableColumn('Source', width: 140),
+              AppTableColumn('Category', width: 150),
               AppTableColumn(
                 'Default amount',
-                width: 100,
+                width: 130,
                 align: TextAlign.right,
               ),
               AppTableColumn('Actions', width: 120, align: TextAlign.right),
@@ -49,11 +49,18 @@ class TemplatesListCard extends StatelessWidget {
             rows: [
               for (final t in templates)
                 AppTableRow([
-                  AppTableText(t.name, bold: true),
+                  AppTableText(t.name, bold: true, maxLines: 1),
                   TypeBadge(t.type),
-                  AppTableText(sourceName(t.sourceId)),
-                  AppTableText(categoryName(t.categoryId), secondary: true),
-                  AppTableText(t.amount == null ? '—' : Money.plain(t.amount!)),
+                  AppTableText(sourceName(t.sourceId), maxLines: 1),
+                  AppTableText(
+                    categoryName(t.categoryId),
+                    secondary: true,
+                    maxLines: 1,
+                  ),
+                  AppTableText(
+                    t.amount == null ? '—' : Money.plain(t.amount!),
+                    maxLines: 1,
+                  ),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     spacing: AppSpacing.s16,

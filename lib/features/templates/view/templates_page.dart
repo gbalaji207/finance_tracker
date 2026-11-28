@@ -5,14 +5,15 @@ import 'package:finance_tracker/core/data/finance_repository.dart';
 import 'package:finance_tracker/core/models/load_status.dart';
 import 'package:finance_tracker/core/theme/app_spacing.dart';
 import 'package:finance_tracker/core/utils/app_dates.dart';
+import 'package:finance_tracker/core/widgets/app_button.dart';
 import 'package:finance_tracker/core/widgets/app_snack.dart';
 import 'package:finance_tracker/core/widgets/error_view.dart';
 import 'package:finance_tracker/core/widgets/page_header.dart';
-import 'package:finance_tracker/core/widgets/two_pane.dart';
+import 'package:finance_tracker/core/widgets/side_drawer.dart';
 import 'package:finance_tracker/features/templates/cubit/templates_cubit.dart';
 import 'package:finance_tracker/features/templates/cubit/templates_state.dart';
 import 'package:finance_tracker/features/templates/widgets/copy_last_month_card.dart';
-import 'package:finance_tracker/features/templates/widgets/new_template_card.dart';
+import 'package:finance_tracker/features/templates/widgets/template_form.dart';
 import 'package:finance_tracker/features/templates/widgets/templates_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,6 +36,25 @@ class _TemplatesView extends StatelessWidget {
 
   void _notWired(BuildContext context) =>
       AppSnack.info(context, 'Not wired yet (sample data)');
+
+  /// Opens the New template form in a side drawer. The state is read when the
+  /// button is pressed, so the lists and the sort order are current.
+  Future<void> _openTemplate(BuildContext context) {
+    final cubit = context.read<TemplatesCubit>();
+    final state = cubit.state;
+    return showSideDrawer<void>(
+      context,
+      builder: (ctx) => SideDrawer(
+        child: TemplateForm(
+          sources: state.activeSources,
+          categories: state.activeCategories,
+          nextSortOrder: state.nextSortOrder,
+          onSave: cubit.addTemplate,
+          onClose: () => Navigator.of(ctx).pop(),
+        ),
+      ),
+    );
+  }
 
   Future<void> _copy(BuildContext context, TemplatesState state) async {
     final count = state.selectedCount;
@@ -79,24 +99,20 @@ class _TemplatesView extends StatelessWidget {
                         'these only pre-fill the entry form'
                   : 'Sample data · nothing is created automatically; '
                         'these only pre-fill the entry form',
+              actions: [
+                AppButton(
+                  label: 'New template',
+                  onPressed: () => _openTemplate(context),
+                ),
+              ],
             ),
-            TwoPane(
-              primaryMin: 560,
-              secondaryWidth: 340,
-              primary: TemplatesListCard(
-                templates: state.templates,
-                sourceName: state.sourceName,
-                categoryName: state.categoryName,
-                onUse: (t) =>
-                    context.go('${AppRoutes.transactions}?template=${t.id}'),
-                onEdit: (_) => _notWired(context),
-              ),
-              secondary: NewTemplateCard(
-                sources: state.activeSources,
-                categories: state.activeCategories,
-                nextSortOrder: state.nextSortOrder,
-                onSave: context.read<TemplatesCubit>().addTemplate,
-              ),
+            TemplatesListCard(
+              templates: state.templates,
+              sourceName: state.sourceName,
+              categoryName: state.categoryName,
+              onUse: (t) =>
+                  context.go('${AppRoutes.transactions}?template=${t.id}'),
+              onEdit: (_) => _notWired(context),
             ),
             CopyLastMonthCard(
               entries: state.previousEntries,

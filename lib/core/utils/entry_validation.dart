@@ -17,8 +17,8 @@ String? validateEntry({
   required TxType type,
   required String? categoryId,
 }) {
-  if (sourceId.isEmpty) return 'Choose a source.';
-  if (type != TxType.income && categoryId == null) return 'Choose a category.';
+  if (sourceId.isEmpty) return 'Select a source.';
+  if (type != TxType.income && categoryId == null) return 'Select a category.';
   final amount = parseAmount(amountText);
   if (amount == null || amount <= 0) return 'Enter an amount above zero.';
   return null;

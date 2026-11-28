@@ -39,7 +39,7 @@ void main() {
           type: TxType.expense,
           categoryId: null,
         ),
-        'Choose a source.',
+        'Select a source.',
       );
       expect(
         validateEntry(
@@ -48,7 +48,7 @@ void main() {
           type: TxType.expense,
           categoryId: null,
         ),
-        'Choose a category.',
+        'Select a category.',
       );
       expect(
         validateEntry(

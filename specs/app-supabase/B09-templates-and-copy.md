@@ -35,7 +35,7 @@ Supabase: `addTemplate` inserts `{name, type: type.name, source_id, category_id,
 
 ## New template form
 
-`NewTemplateCard.onSave` becomes `ValueChanged<TemplateInput>`. Add a `LabeledCheckbox` "Show in Dashboard quick add" (unchecked) under the description. Validation messages appear in the red 13px style under the button: `Enter a template name.`, `Choose a source.`, `Choose a category.` (non-income), and `Default amount must be above zero.` when the amount is filled but invalid or not above zero (an empty amount is fine). Choices use `activeSources` and `activeCategories`. On success: `AppSnack.info(AppConfig.note('Template saved'))`, clear the form, reload the templates; on failure `AppSnack.error` and keep the form. Disable the button while saving. `sortOrder` is the cubit's `templates` maximum plus one (1 when none).
+`NewTemplateCard.onSave` becomes `ValueChanged<TemplateInput>`. Add a `LabeledCheckbox` "Show in Dashboard quick add" (unchecked) under the description. Validation messages appear in the red 13px style under the button: `Enter a template name.`, `Select a source.`, `Select a category.` (non-income), and `Default amount must be above zero.` when the amount is filled but invalid or not above zero (an empty amount is fine). Choices use `activeSources` and `activeCategories`. On success: `AppSnack.info(AppConfig.note('Template saved'))`, clear the form, reload the templates; on failure `AppSnack.error` and keep the form. Disable the button while saving. `sortOrder` is the cubit's `templates` maximum plus one (1 when none).
 
 ## "Use" fills the entry form
 
